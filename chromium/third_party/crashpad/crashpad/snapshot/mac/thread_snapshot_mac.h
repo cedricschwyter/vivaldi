@@ -18,7 +18,7 @@
 #include <mach/mach.h>
 #include <stdint.h>
 
-#include "base/basictypes.h"
+#include "base/macros.h"
 #include "build/build_config.h"
 #include "snapshot/cpu_context.h"
 #include "snapshot/mac/memory_snapshot_mac.h"
@@ -59,6 +59,7 @@ class ThreadSnapshotMac final : public ThreadSnapshot {
   int SuspendCount() const override;
   int Priority() const override;
   uint64_t ThreadSpecificDataAddress() const override;
+  std::vector<const MemorySnapshot*> ExtraMemory() const override;
 
  private:
 #if defined(ARCH_CPU_X86_FAMILY)

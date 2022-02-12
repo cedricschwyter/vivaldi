@@ -17,8 +17,9 @@
 #include <mach/mach.h>
 #include <pthread.h>
 #include <string.h>
+#include <sys/types.h>
 
-#include "base/basictypes.h"
+#include "base/macros.h"
 #include "base/strings/stringprintf.h"
 #include "gtest/gtest.h"
 #include "test/mac/mach_errors.h"
@@ -28,6 +29,7 @@
 #include "util/mach/mach_extensions.h"
 #include "util/mach/mach_message.h"
 #include "util/mach/mach_message_server.h"
+#include "util/misc/implicit_cast.h"
 
 namespace crashpad {
 namespace test {

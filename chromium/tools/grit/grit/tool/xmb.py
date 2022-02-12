@@ -28,8 +28,12 @@ _XML_QUOTE_ESCAPES = {
     u"'":  u'&apos;',
     u'"':  u'&quot;',
 }
+# See http://www.w3.org/TR/xml/#charsets
 _XML_BAD_CHAR_REGEX = lazy_re.compile(u'[^\u0009\u000A\u000D'
-                                      u'\u0020-\uD7FF\uE000-\uFFFD]')
+                                      u'\u0020-\uD7FF\uE000-\uFFFD'
+                                      #u'\U00010000-\U0010FFFF'
+                                      ']'
+                                      )
 
 
 def _XmlEscape(s):
@@ -40,7 +44,11 @@ def _XmlEscape(s):
   if not type(s) == unicode:
     s = unicode(s)
   result = saxutils.escape(s, _XML_QUOTE_ESCAPES)
-  return _XML_BAD_CHAR_REGEX.sub(u'', result).encode('utf-8')
+  illegal_chars = _XML_BAD_CHAR_REGEX.search(result)
+  if illegal_chars:
+    raise Exception('String contains characters disallowed in XML: %s' %
+                    repr(result))
+  return result.encode('utf-8')
 
 
 def _WriteAttribute(file, name, value):
@@ -164,6 +172,7 @@ Other options:
     super(OutputXmb, self).__init__()
     self.format = self.FORMAT_XMB
     self.defines = defines or {}
+    self.limit_untranslated_lang = None
 
   def ShortDescription(self):
     return 'Exports all translateable messages into an XMB file.'
@@ -174,7 +183,8 @@ Other options:
     limit_file = None
     limit_is_grd = False
     limit_file_dir = None
-    own_opts, args = getopt.getopt(args, 'l:D:ih')
+    limit_untranslated_lang = False
+    own_opts, args = getopt.getopt(args, 'l:D:E:ihL')
     for key, val in own_opts:
       if key == '-l':
         limit_file = open(val, 'r')
@@ -184,13 +194,15 @@ Other options:
         limit_is_grd = os.path.splitext(val)[1] == '.grd'
       elif key == '-i':
         self.format = self.FORMAT_IDS_ONLY
+      elif key == '-L':
+        limit_untranslated_lang = args[1:] if len(args) > 1 else False 
       elif key == '-D':
         name, val = util.ParseDefine(val)
         self.defines[name] = val
       elif key == '-E':
         (env_name, env_value) = val.split('=', 1)
         os.environ[env_name] = env_value
-    if not len(args) == 1:
+    if not len(args) == 1 and not limit_untranslated_lang:
       print ('grit xmb takes exactly one argument, the path to the XMB file '
              'to output.')
       return 2
@@ -199,18 +211,29 @@ Other options:
     res_tree = grd_reader.Parse(opts.input, debug=opts.extra_verbose)
     res_tree.SetOutputLanguage('en')
     res_tree.SetDefines(self.defines)
-    res_tree.OnlyTheseTranslations([])
+    res_tree.OnlyTheseTranslations(limit_untranslated_lang or [])
     res_tree.RunGatherers()
 
-    with open(xmb_path, 'wb') as output_file:
-      self.Process(
-        res_tree, output_file, limit_file, limit_is_grd, limit_file_dir)
+    lang_jobs = []
+    xmb_prefix, ext = os.path.splitext(xmb_path)
+    for lang in limit_untranslated_lang or []:
+        lang_jobs.append((lang, xmb_prefix+"_"+lang+ext))
+
+    for lang, cur_xmb_path in lang_jobs or [(None, xmb_path)]:
+      try:
+        os.makedirs(os.path.dirname(cur_xmb_path))
+      except:
+        pass
+      with open(cur_xmb_path, 'wb') as output_file:
+        self.Process(
+          res_tree, output_file, limit_file, limit_is_grd, limit_file_dir,
+          missing_translate_for_lang= lang)
     if limit_file:
       limit_file.close()
     print "Wrote %s" % xmb_path
 
   def Process(self, res_tree, output_file, limit_file=None, limit_is_grd=False,
-              dir=None):
+              dir=None, missing_translate_for_lang=None):
     """Writes a document with the contents of res_tree into output_file,
     limiting output to the IDs specified in limit_file, which is a GRD file if
     limit_is_grd is true, otherwise a file with one ID per line.
@@ -245,6 +268,9 @@ Other options:
         # Not a GRD file, so it's just a file with one ID per line
         limit_list = [item.strip() for item in limit_file.read().split('\n')]
 
+    if missing_translate_for_lang:
+      active_nodes = [x.GetCliques()[0].GetId() for x in res_tree.ActiveDescendants() if x.GetCliques()]
+
     ids_already_done = {}
     messages = []
     for node in res_tree:
@@ -274,6 +300,15 @@ Other options:
         if id in ids_already_done:
           continue
         ids_already_done[id] = 1
+        #print missing_translate_for_lang, ":", clique.GetMessage().GetId(),":", clique.GetMessage().GetDescription(), "--::--", clique.MessageForLanguage(missing_translate_for_lang).GetPresentableContent()
+        if missing_translate_for_lang:
+          if id not in active_nodes:
+            continue
+          try:
+            if clique.MessageForLanguage(missing_translate_for_lang, missing_translation_is_error=True):
+              continue
+          except:
+            pass
 
         message = node.UberClique().BestClique(id).GetMessage()
         messages += [message]

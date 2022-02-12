@@ -15,12 +15,16 @@
 #ifndef CRASHPAD_CLIENT_CRASHPAD_INFO_H_
 #define CRASHPAD_CLIENT_CRASHPAD_INFO_H_
 
-#include "base/basictypes.h"
-
 #include <stdint.h>
 
+#include "base/macros.h"
+#include "build/build_config.h"
 #include "client/simple_string_dictionary.h"
 #include "util/misc/tri_state.h"
+
+#if defined(OS_WIN)
+#include <windows.h>
+#endif  // OS_WIN
 
 namespace crashpad {
 
@@ -115,6 +119,10 @@ struct CrashpadInfo {
   TriState system_crash_reporter_forwarding_;
   uint16_t padding_0_;
   SimpleStringDictionary* simple_annotations_;  // weak
+
+#if !defined(NDEBUG) && defined(OS_WIN)
+  uint32_t invalid_read_detection_;
+#endif
 
 #if defined(__clang__)
 #pragma clang diagnostic pop

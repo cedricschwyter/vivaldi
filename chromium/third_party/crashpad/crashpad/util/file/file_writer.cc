@@ -14,13 +14,15 @@
 
 #include "util/file/file_writer.h"
 
-#include <algorithm>
-
 #include <limits.h>
+#include <string.h>
+
+#include <algorithm>
 
 #include "base/logging.h"
 #include "base/numerics/safe_conversions.h"
 #include "build/build_config.h"
+#include "util/misc/implicit_cast.h"
 
 #if defined(OS_POSIX)
 #include <sys/uio.h>

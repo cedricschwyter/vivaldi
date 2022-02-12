@@ -20,9 +20,9 @@
 #include <map>
 #include <string>
 
-#include "base/basictypes.h"
+#include "base/macros.h"
 #include "client/crash_report_database.h"
-#include "handler/mac/crash_report_upload_thread.h"
+#include "handler/crash_report_upload_thread.h"
 #include "util/mach/exc_server_variants.h"
 
 namespace crashpad {

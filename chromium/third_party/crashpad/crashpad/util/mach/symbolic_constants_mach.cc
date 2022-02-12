@@ -15,11 +15,13 @@
 #include "util/mach/symbolic_constants_mach.h"
 
 #include <string.h>
+#include <sys/types.h>
 
-#include "base/basictypes.h"
+#include "base/macros.h"
 #include "base/strings/stringprintf.h"
 #include "util/mach/exception_behaviors.h"
 #include "util/mach/mach_extensions.h"
+#include "util/misc/implicit_cast.h"
 #include "util/stdlib/string_number_conversion.h"
 
 namespace {
@@ -41,6 +43,7 @@ const char* kExceptionNames[] = {
     "CRASH",
     "RESOURCE",
     "GUARD",
+    "CORPSE_NOTIFY",
 };
 static_assert(arraysize(kExceptionNames) == EXC_TYPES_COUNT,
               "kExceptionNames length");

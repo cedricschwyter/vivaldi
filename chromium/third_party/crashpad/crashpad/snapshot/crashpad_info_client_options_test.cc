@@ -15,6 +15,7 @@
 #include "snapshot/crashpad_info_client_options.h"
 
 #include "base/files/file_path.h"
+#include "base/macros.h"
 #include "base/strings/utf_string_conversions.h"
 #include "build/build_config.h"
 #include "client/crashpad_info.h"
@@ -75,7 +76,8 @@ TEST(CrashpadInfoClientOptions, OneModule) {
   ASSERT_TRUE(process_snapshot.Initialize(mach_task_self()));
 #elif defined(OS_WIN)
   ProcessSnapshotWin process_snapshot;
-  ASSERT_TRUE(process_snapshot.Initialize(GetCurrentProcess()));
+  ASSERT_TRUE(process_snapshot.Initialize(
+      GetCurrentProcess(), ProcessSuspensionState::kRunning, 0));
 #else
 #error Port.
 #endif  // OS_MACOSX
@@ -188,7 +190,8 @@ TEST(CrashpadInfoClientOptions, TwoModules) {
   ASSERT_TRUE(process_snapshot.Initialize(mach_task_self()));
 #elif defined(OS_WIN)
   ProcessSnapshotWin process_snapshot;
-  ASSERT_TRUE(process_snapshot.Initialize(GetCurrentProcess()));
+  ASSERT_TRUE(process_snapshot.Initialize(
+      GetCurrentProcess(), ProcessSuspensionState::kRunning, 0));
 #else
 #error Port.
 #endif  // OS_MACOSX

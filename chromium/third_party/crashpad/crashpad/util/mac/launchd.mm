@@ -16,11 +16,11 @@
 
 #import <Foundation/Foundation.h>
 
-#include "base/basictypes.h"
 #include "base/mac/foundation_util.h"
 #include "base/mac/scoped_launch_data.h"
 #include "base/mac/scoped_cftyperef.h"
 #include "base/strings/sys_string_conversions.h"
+#include "util/misc/implicit_cast.h"
 
 namespace crashpad {
 
@@ -51,7 +51,8 @@ launch_data_t CFPropertyToLaunchData(CFPropertyListRef property_cf) {
           return nullptr;
         }
 
-        LaunchDataDictInsert(dictionary_launch, value_launch, [key UTF8String]);
+        LaunchDataDictInsert(
+            dictionary_launch.get(), value_launch, [key UTF8String]);
       }
 
       data_launch = dictionary_launch.release();
@@ -71,7 +72,7 @@ launch_data_t CFPropertyToLaunchData(CFPropertyListRef property_cf) {
           return nullptr;
         }
 
-        LaunchDataArraySetIndex(array_launch, element_launch, index++);
+        LaunchDataArraySetIndex(array_launch.get(), element_launch, index++);
       }
 
       data_launch = array_launch.release();

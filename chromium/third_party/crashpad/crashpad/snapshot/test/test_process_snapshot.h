@@ -21,11 +21,14 @@
 
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
-#include "base/basictypes.h"
+#include "base/macros.h"
 #include "base/memory/scoped_ptr.h"
 #include "snapshot/exception_snapshot.h"
+#include "snapshot/memory_map_region_snapshot.h"
+#include "snapshot/memory_snapshot.h"
 #include "snapshot/module_snapshot.h"
 #include "snapshot/process_snapshot.h"
 #include "snapshot/system_snapshot.h"
@@ -69,7 +72,9 @@ class TestProcessSnapshot final : public ProcessSnapshot {
   //!
   //! \param[in] system The system snapshot that System() will return. The
   //!     TestProcessSnapshot object takes ownership of \a system.
-  void SetSystem(scoped_ptr<SystemSnapshot> system) { system_ = system.Pass(); }
+  void SetSystem(scoped_ptr<SystemSnapshot> system) {
+    system_ = std::move(system);
+  }
 
   //! \brief Adds a thread snapshot to be returned by Threads().
   //!
@@ -92,7 +97,32 @@ class TestProcessSnapshot final : public ProcessSnapshot {
   //! \param[in] exception The exception snapshot that Exception() will return.
   //!     The TestProcessSnapshot object takes ownership of \a exception.
   void SetException(scoped_ptr<ExceptionSnapshot> exception) {
-    exception_ = exception.Pass();
+    exception_ = std::move(exception);
+  }
+
+  //! \brief Adds a memory map region snapshot to be returned by MemoryMap().
+  //!
+  //! \param[in] region The memory map region snapshot that will be included in
+  //!     MemoryMap(). The TestProcessSnapshot object takes ownership of \a
+  //!     region.
+  void AddMemoryMapRegion(scoped_ptr<MemoryMapRegionSnapshot> region) {
+    memory_map_.push_back(region.release());
+  }
+
+  //! \brief Adds a handle snapshot to be returned by Handles().
+  //!
+  //! \param[in] region The handle snapshot that will be included in Handles().
+  void AddHandle(const HandleSnapshot& handle) {
+    handles_.push_back(handle);
+  }
+
+  //! \brief Add a memory snapshot to be returned by ExtraMemory().
+  //!
+  //! \param[in] extra_memory The memory snapshot that will be included in
+  //!     ExtraMemory(). The TestProcessSnapshot object takes ownership of \a
+  //!     extra_memory.
+  void AddExtraMemory(scoped_ptr<MemorySnapshot> extra_memory) {
+    extra_memory_.push_back(extra_memory.release());
   }
 
   // ProcessSnapshot:
@@ -110,6 +140,9 @@ class TestProcessSnapshot final : public ProcessSnapshot {
   std::vector<const ThreadSnapshot*> Threads() const override;
   std::vector<const ModuleSnapshot*> Modules() const override;
   const ExceptionSnapshot* Exception() const override;
+  std::vector<const MemoryMapRegionSnapshot*> MemoryMap() const override;
+  std::vector<HandleSnapshot> Handles() const override;
+  std::vector<const MemorySnapshot*> ExtraMemory() const override;
 
  private:
   pid_t process_id_;
@@ -125,6 +158,9 @@ class TestProcessSnapshot final : public ProcessSnapshot {
   PointerVector<ThreadSnapshot> threads_;
   PointerVector<ModuleSnapshot> modules_;
   scoped_ptr<ExceptionSnapshot> exception_;
+  PointerVector<MemoryMapRegionSnapshot> memory_map_;
+  std::vector<HandleSnapshot> handles_;
+  PointerVector<MemorySnapshot> extra_memory_;
 
   DISALLOW_COPY_AND_ASSIGN(TestProcessSnapshot);
 };

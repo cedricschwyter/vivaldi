@@ -17,11 +17,15 @@
 
 #include <stdint.h>
 
-#include "base/basictypes.h"
+#include <utility>
+#include <vector>
+
+#include "base/macros.h"
 #include "base/memory/scoped_ptr.h"
 #include "snapshot/cpu_context.h"
 #include "snapshot/memory_snapshot.h"
 #include "snapshot/thread_snapshot.h"
+#include "util/stdlib/pointer_container.h"
 
 namespace crashpad {
 namespace test {
@@ -52,13 +56,22 @@ class TestThreadSnapshot final : public ThreadSnapshot {
   //!
   //! \param[in] stack The memory region that Stack() will return. The
   //!     TestThreadSnapshot object takes ownership of \a stack.
-  void SetStack(scoped_ptr<MemorySnapshot> stack) { stack_ = stack.Pass(); }
+  void SetStack(scoped_ptr<MemorySnapshot> stack) { stack_ = std::move(stack); }
 
   void SetThreadID(uint64_t thread_id) { thread_id_ = thread_id; }
   void SetSuspendCount(int suspend_count) { suspend_count_ = suspend_count; }
   void SetPriority(int priority) { priority_ = priority; }
   void SetThreadSpecificDataAddress(uint64_t thread_specific_data_address) {
     thread_specific_data_address_ = thread_specific_data_address;
+  }
+
+  //! \brief Add a memory snapshot to be returned by ExtraMemory().
+  //!
+  //! \param[in] extra_memory The memory snapshot that will be included in
+  //!     ExtraMemory(). The TestThreadSnapshot object takes ownership of \a
+  //!     extra_memory.
+  void AddExtraMemory(scoped_ptr<MemorySnapshot> extra_memory) {
+    extra_memory_.push_back(extra_memory.release());
   }
 
   // ThreadSnapshot:
@@ -69,6 +82,7 @@ class TestThreadSnapshot final : public ThreadSnapshot {
   int SuspendCount() const override;
   int Priority() const override;
   uint64_t ThreadSpecificDataAddress() const override;
+  std::vector<const MemorySnapshot*> ExtraMemory() const override;
 
  private:
   union {
@@ -81,6 +95,7 @@ class TestThreadSnapshot final : public ThreadSnapshot {
   int suspend_count_;
   int priority_;
   uint64_t thread_specific_data_address_;
+  PointerVector<MemorySnapshot> extra_memory_;
 
   DISALLOW_COPY_AND_ASSIGN(TestThreadSnapshot);
 };

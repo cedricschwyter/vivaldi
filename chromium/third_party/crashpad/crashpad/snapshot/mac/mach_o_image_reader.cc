@@ -19,8 +19,8 @@
 #include <string.h>
 
 #include <limits>
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include "base/logging.h"
 #include "base/strings/stringprintf.h"
@@ -29,6 +29,7 @@
 #include "snapshot/mac/mach_o_image_symbol_table_reader.h"
 #include "snapshot/mac/process_reader.h"
 #include "util/mac/checked_mach_address_range.h"
+#include "util/misc/implicit_cast.h"
 
 namespace {
 

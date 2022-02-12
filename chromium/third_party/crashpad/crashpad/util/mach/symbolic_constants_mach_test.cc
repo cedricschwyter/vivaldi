@@ -16,12 +16,14 @@
 
 #include <mach/mach.h>
 #include <string.h>
+#include <sys/types.h>
 
-#include "base/basictypes.h"
+#include "base/macros.h"
 #include "base/strings/string_piece.h"
 #include "base/strings/stringprintf.h"
 #include "gtest/gtest.h"
 #include "util/mach/mach_extensions.h"
+#include "util/misc/implicit_cast.h"
 
 #define NUL_TEST_DATA(string) { string, arraysize(string) - 1 }
 

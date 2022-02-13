@@ -200,7 +200,7 @@ def GetHeaderGuard(path):
   else:
     guard = path
   guard = guard.upper()
-  return guard.replace('/', '_').replace('.', '_').replace('\\', '_') + '_'
+  return guard.replace('/', '_').replace('.', '_').replace('\\', '_').replace('-', '_') + '_'
 
 def GetHeaderContents(path, define, version):
   """

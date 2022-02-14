@@ -47,6 +47,7 @@ enum UpdateEventFields {
   RECURRENCE = 1 << 12,
   ETAG = 1 << 13,
   HREF = 1 << 14,
+  UID = 1 << 15,
 };
 
 // Represents a simplified version of a event.
@@ -69,6 +70,7 @@ struct CalendarEvent {
   EventRecurrence recurrence;
   std::string etag;
   std::string href;
+  std::string uid;
   int updateFields;
 };
 
@@ -93,7 +95,8 @@ class EventRow {
            base::string16 url,
            EventRecurrence recurrence,
            std::string etag,
-           std::string href);
+           std::string href,
+           std::string uid);
   ~EventRow();
 
   EventRow(const EventRow& row);
@@ -153,6 +156,9 @@ class EventRow {
   std::string href() const { return href_; }
   void set_href(std::string href) { href_ = href; }
 
+  std::string uid() const { return uid_; }
+  void set_uid(std::string uid) { uid_ = uid; }
+
   EventRecurrence recurrence() const { return recurrence_; }
   void set_recurrence(EventRecurrence recurrence) { recurrence_ = recurrence; }
 
@@ -172,6 +178,7 @@ class EventRow {
   EventRecurrence recurrence_;
   std::string etag_;
   std::string href_;
+  std::string uid_;
 
  protected:
   void Swap(EventRow* other);

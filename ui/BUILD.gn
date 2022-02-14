@@ -2,8 +2,6 @@ import("//build/config/jumbo.gni")
 
 jumbo_static_library("ui") {
   sources = [
-    "lights/razer_chroma_handler.cc",
-    "lights/razer_chroma_handler.h",
     "views/vivaldi_pin_shortcut.cpp",
     "views/vivaldi_pin_shortcut.h",
     "webgui/notes_ui.cpp",
@@ -33,10 +31,18 @@ jumbo_static_library("ui") {
       "lazy_load_service.h",
       "devtools/devtools_connector.cc",
       "devtools/devtools_connector.h",
+      "lights/razer_chroma_handler.cc",
+      "lights/razer_chroma_handler.h",
     ]
     deps += [
       "//chrome/browser/extensions:extensions",
       "//vivaldi/extensions/schema"
+    ]
+  }
+  if (is_mac) {
+    sources += [
+      "vivaldi_bookmark_menu_mac.h",
+      "vivaldi_bookmark_menu_mac.mm",
     ]
   }
 }

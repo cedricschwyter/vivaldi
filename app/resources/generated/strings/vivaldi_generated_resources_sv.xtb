@@ -19,6 +19,7 @@
 <translation id="1274977772557788323">Lagringsinställningar för Adobe Flash Player</translation>
 <translation id="1297175357211070620">Destination</translation>
 <translation id="1303101771013849280">HTML-fil med bokmärken</translation>
+<translation id="1380436189840894976">Vill du avsluta inkognitoläget ändå?</translation>
 <translation id="1430915738399379752">Skriv ut</translation>
 <translation id="1433811987160647649">Fråga innan informationen används</translation>
 <translation id="1451375123200651445">Webbsida, en enda fil</translation>
@@ -93,7 +94,6 @@
 <translation id="2662876636500006917">Vivaldi webbshop</translation>
 <translation id="2678063897982469759">Aktivera igen</translation>
 <translation id="2721037002783622288">&amp;Sök på <ph name="SEARCH_ENGINE" /> efter bild</translation>
-<translation id="2766006623206032690">Kl&amp;istra in och öppna</translation>
 <translation id="2785873697295365461">Filbeskrivningar</translation>
 <translation id="2809586584051668049">och ytterligare <ph name="NUMBER_ADDITIONAL_DISABLED" /></translation>
 <translation id="2812989263793994277">Visa inga bilder</translation>
@@ -127,14 +127,12 @@
 <translation id="3222066309010235055">För-renderare <ph name="PRERENDER_CONTENTS_NAME" /></translation>
 <translation id="3227137524299004712">Mikrofon</translation>
 <translation id="3241680850019875542">Välj rotkatalogen för tillägget som ska packas. Om du vill uppdatera ett tillägg väljer du också den privata nyckel som ska återanvändas.</translation>
-<translation id="3269093882174072735">Läs in bild</translation>
 <translation id="3280237271814976245">Spara so&amp;m...</translation>
 <translation id="3288047731229977326">Tillägg som körs i utvecklarläge kan skada datorn. Om du inte är en utvecklare bör du inaktivera tillägg som körs i utvecklarläge för att skydda dig.</translation>
 <translation id="329838636886466101">Reparera</translation>
 <translation id="3303818374450886607">Exemplar</translation>
 <translation id="3305661444342691068">Öppna PDF i Förhandsvisning</translation>
 <translation id="3317459757438853210">Dubbelsidig</translation>
-<translation id="3319048459796106952">Nytt &amp;privat fönster</translation>
 <translation id="3341703758641437857">Tillåt tillgång till file-URL:er</translation>
 <translation id="3347086966102161372">K&amp;opiera bildadress</translation>
 <translation id="3360297538363969800">Utskriften misslyckades. Kontrollera skrivaren och försök igen.</translation>
@@ -149,6 +147,7 @@
 <translation id="3505030558724226696">Återkalla enhetsåtkomst</translation>
 <translation id="3523642406908660543">Fråga om en webbplats försöker använda ett insticksprogram för att få åtkomst till datorn (rekommenderas)</translation>
 <translation id="354068948465830244">Kan läsa och ändra webbplatsdata</translation>
+<translation id="3574917942258583917">Vill du avsluta inkognitoläget ändå?</translation>
 <translation id="357886715122934472">&lt;strong&gt;<ph name="SENDER" />&lt;/strong&gt; vill dela skrivaren &lt;strong&gt;<ph name="PRINTER_NAME" />&lt;/strong&gt; med en grupp som du äger: &lt;strong&gt;<ph name="GROUP_NAME" />&lt;/strong&gt;. Om du godtar kan alla medlemmar i gruppen skriva ut till skrivaren.</translation>
 <translation id="3587482841069643663">Alla</translation>
 <translation id="3627588569887975815">Öppna länk i inko&amp;gnitofönster</translation>
@@ -241,11 +240,11 @@
 <translation id="52912272896845572">Den privata nyckelfilen är ogiltig.</translation>
 <translation id="5301954838959518834">OK, jag fattar</translation>
 <translation id="5317780077021120954">Spara</translation>
-<translation id="5329858601952122676">&amp;Ta bort</translation>
 <translation id="5355926466126177564">Tillägget <ph name="EXTENSION_NAME" /> har ändrat vilken sida som visas när du söker i adressfältet.</translation>
 <translation id="5362741141255528695">Välj privat nyckelfil.</translation>
 <translation id="5370819323174483825">&amp;Läs in igen</translation>
 <translation id="5398572795982417028">Sidreferensen faller utanför intervallet, gränsen är <ph name="MAXIMUM_PAGE" /></translation>
+<translation id="5425042808445046667">Fortsätt hämta</translation>
 <translation id="5431318178759467895">Färg</translation>
 <translation id="5483785310822538350">Återkalla åtkomst till enheten och filer</translation>
 <translation id="5485102783864353244">Lägg till app</translation>
@@ -266,6 +265,7 @@
 <translation id="5707185214361380026">Misslyckades läsa tillägg från:</translation>
 <translation id="5715711091495208045">Agent för insticksprogram: <ph name="PLUGIN_NAME" /></translation>
 <translation id="5746169159649715125">Spara som PDF</translation>
+<translation id="5747809636523347288">&amp;Gå till urklipp <ph name="URL" /></translation>
 <translation id="5759728514498647443">Dokument som du skickar till utskrift via <ph name="APP_NAME" /> kan läsas av <ph name="APP_NAME" />.</translation>
 <translation id="5764483294734785780">S&amp;para ljud som...</translation>
 <translation id="577624874850706961">Sök efter kakor</translation>
@@ -314,6 +314,7 @@
 <translation id="6498249116389603658">&amp;Alla dina språk</translation>
 <translation id="6503077044568424649">Mest besökta</translation>
 <translation id="6508261954199872201">App: <ph name="APP_NAME" /></translation>
+<translation id="6516243500644829484">Nytt &amp;privat fönster</translation>
 <translation id="6518014396551869914">Kopiera &amp;bild</translation>
 <translation id="6550675742724504774">Alternativ</translation>
 <translation id="6612358246767739896">Skyddat innehåll</translation>
@@ -398,6 +399,7 @@ Spara nyckelfilen på ett säkert ställe. Den behövs om du ska skapa nya versi
 <translation id="8137559199583651773">Hantera tillägg</translation>
 <translation id="8180239481735238521">sida</translation>
 <translation id="8188120771410500975">&amp;Kontrollera stavning i textfält</translation>
+<translation id="8212008074015601248">{NUM_DOWNLOAD,plural, =1{Hämtning pågår}other{Hämtningar pågår}}</translation>
 <translation id="8230134520748321204">Vill du spara lösenordet för <ph name="ORIGIN" />?</translation>
 <translation id="8261378640211443080">Det här tillägget finns inte i <ph name="IDS_EXTENSION_WEB_STORE_TITLE" /> och kan ha lagts till utan att du vet om det.</translation>
 <translation id="8270242299912238708">PDF-dokument</translation>
@@ -440,6 +442,7 @@ Spara nyckelfilen på ett säkert ställe. Den behövs om du ska skapa nya versi
 <translation id="9003647077635673607">Tillåt på alla webbplatser</translation>
 <translation id="9056810968620647706">Inga träffar hittades.</translation>
 <translation id="9137916601698928395">Öppna länk som <ph name="USER" /></translation>
+<translation id="916607977885256133">Bild i bild</translation>
 <translation id="9170848237812810038">&amp;Ångra</translation>
 <translation id="9215293857209265904"><ph name="EXTENSION_NAME" /> har lagts till</translation>
 <translation id="9218430445555521422">Använd som standard</translation>

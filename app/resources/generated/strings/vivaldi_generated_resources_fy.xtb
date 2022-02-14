@@ -19,6 +19,7 @@
 <translation id="1274977772557788323">Adobe Flash Player ynstellingen fan bewarjen</translation>
 <translation id="1297175357211070620">Bestimming</translation>
 <translation id="1303101771013849280">Makket blêdwizer fan HTML triem</translation>
+<translation id="1380436189840894976">Privee mode dochs slute?</translation>
 <translation id="1430915738399379752">Printsje</translation>
 <translation id="1433811987160647649">Freegje foarôf tagong</translation>
 <translation id="1451375123200651445">Webstee, inkele triem</translation>
@@ -93,7 +94,6 @@
 <translation id="2662876636500006917">Chrome Web Store</translation>
 <translation id="2678063897982469759">Op 'e nij ynskeakelje</translation>
 <translation id="2721037002783622288">&amp;Sykje om ôfbylding mei <ph name="SEARCH_ENGINE" /></translation>
-<translation id="2766006623206032690">Pla&amp;kke en gean</translation>
 <translation id="2785873697295365461">Triem descriptors</translation>
 <translation id="2809586584051668049">en <ph name="NUMBER_ADDITIONAL_DISABLED" /> mear</translation>
 <translation id="2812989263793994277">Lit gjin ôfbyldings sjen</translation>
@@ -127,14 +127,12 @@
 <translation id="3222066309010235055">Foar rendearje <ph name="PRERENDER_CONTENTS_NAME" /></translation>
 <translation id="3227137524299004712">Mikrofoan</translation>
 <translation id="3241680850019875542">Selektearje de haad triemtafel fan de tafoeging om yn te pakken. Foar it fernijen fan in tafoeging, selektearje jo de privee kaai triem om dit op 'e nij te brûken.</translation>
-<translation id="3269093882174072735">Ofbylding lade</translation>
 <translation id="3280237271814976245">Bewarje &amp;as...</translation>
 <translation id="3288047731229977326">Tafoegings útfierd yn ûntwikkelders modus kinne jo kompjûter kwea dwaan. As jo gjin ûntwikkelder binne, dan soenen jo it útfieren fan tafoegings yn ûntwikkelders modus útskeakelje moatte om feilich te bliuwen.</translation>
 <translation id="329838636886466101">Werstelle</translation>
 <translation id="3303818374450886607">Kopiën</translation>
 <translation id="3305661444342691068">PDF iepenje yn foarbyld werjefte</translation>
 <translation id="3317459757438853210">Twa sidich</translation>
-<translation id="3319048459796106952">Nij &amp;privee finster</translation>
 <translation id="3341703758641437857">Tagong op triem URL-adressen tastean</translation>
 <translation id="3347086966102161372">Ofbylding adres k&amp;opiearje</translation>
 <translation id="3360297538363969800">Printsjen is mislearre. Kontrolearje jo printer en besykje nochris.</translation>
@@ -149,6 +147,7 @@
 <translation id="3505030558724226696">Apparaat tagong ynlûke</translation>
 <translation id="3523642406908660543">Freegje as in webstee in ynstekker brûker wolle om tagong te krijen ta jo kompjûter (rekommandearre)</translation>
 <translation id="354068948465830244">Dit kin webstee gegevens lêze en feroarje</translation>
+<translation id="3574917942258583917">Privee mode dochs ferlitte?</translation>
 <translation id="357886715122934472">&lt;strong&gt;<ph name="SENDER" />&lt;/strong&gt;wol in printer diele &lt;strong&gt;<ph name="PRINTER_NAME" />&lt;/strong&gt; mei in groep fan dy: &lt;strong&gt;<ph name="GROUP_NAME" />&lt;/strong&gt;. As jo dit akseptearje, kinne alle groepsleden nei de printer printsje.</translation>
 <translation id="3587482841069643663">Alles</translation>
 <translation id="3627588569887975815">Keppeling yn ynko&amp;gnito finster iepenje</translation>
@@ -241,11 +240,11 @@
 <translation id="52912272896845572">Privee kaai triem is ûnjildich.</translation>
 <translation id="5301954838959518834">Okee</translation>
 <translation id="5317780077021120954">Bewarje</translation>
-<translation id="5329858601952122676">&amp;Wiskje</translation>
 <translation id="5355926466126177564">De tafoeging "<ph name="EXTENSION_NAME" />" hat feroare hokker side te sjen is as jo sykje fanút it adresfjild.</translation>
 <translation id="5362741141255528695">Selektearje in privee kaai triem.</translation>
 <translation id="5370819323174483825">&amp;Ferfarskje</translation>
 <translation id="5398572795982417028">Side ferwizing falt bûten berik, limyt is<ph name="MAXIMUM_PAGE" /></translation>
+<translation id="5425042808445046667">Trochgean mei ynladen</translation>
 <translation id="5431318178759467895">Kleur</translation>
 <translation id="5483785310822538350">Triem en apparaat tagong ynlûke</translation>
 <translation id="5485102783864353244">App taheakje</translation>
@@ -266,6 +265,7 @@
 <translation id="5707185214361380026">Flater by it laden fan tafoeging fan:</translation>
 <translation id="5715711091495208045">Ynstekker broker: <ph name="PLUGIN_NAME" /></translation>
 <translation id="5746169159649715125">Bewarje as PDF</translation>
+<translation id="5747809636523347288">Pl&amp;akke en gean nei <ph name="URL" /></translation>
 <translation id="5759728514498647443">Dokuminten dy't jo stjoere nei <ph name="APP_NAME" /> om te printsjen, kinne lêzen  wurde troch <ph name="APP_NAME" />.</translation>
 <translation id="5764483294734785780">Lûd be&amp;warje as...</translation>
 <translation id="577624874850706961">Koekjes sykje</translation>
@@ -314,6 +314,7 @@
 <translation id="6498249116389603658">&amp;Al jo talen</translation>
 <translation id="6503077044568424649">Meast besocht</translation>
 <translation id="6508261954199872201">App: <ph name="APP_NAME" /></translation>
+<translation id="6516243500644829484">Nij &amp;privee finster</translation>
 <translation id="6518014396551869914">Ofb&amp;ylding kopiearje</translation>
 <translation id="6550675742724504774">Opsjes</translation>
 <translation id="6612358246767739896">Befeilige ynhâld</translation>
@@ -398,6 +399,8 @@ Bewarje jo kaai triem op in feilich plak. Jo ha it nedich om nije ferzjen fan jo
 <translation id="8137559199583651773">Tafoegings beheare</translation>
 <translation id="8180239481735238521">side</translation>
 <translation id="8188120771410500975">&amp;Stavering fan tekstfjilden hifkje</translation>
+<translation id="8212008074015601248">{NUM_DOWNLOAD, plural,
+        =1 {Ynlaad is dwaande} other {Ynladen binne dwaande}}</translation>
 <translation id="8230134520748321204">Wachtwurd bewarje foar <ph name="ORIGIN" />?</translation>
 <translation id="8261378640211443080">Dizze tafoeging stiet net op de list yn de <ph name="IDS_EXTENSION_WEB_STORE_TITLE" /> en is miskien wol taheakke sûnder dat wy it wisten.</translation>
 <translation id="8270242299912238708">PDF dokuminten</translation>

@@ -102,23 +102,7 @@ std::string vivContentSettingToString(ContentSetting setting) {
   return content_settings::ContentSettingToString(setting);
 }
 
-}
-
-VivaldiUtilitiesEventRouter::VivaldiUtilitiesEventRouter(Profile* profile)
-    : browser_context_(profile) {}
-
-VivaldiUtilitiesEventRouter::~VivaldiUtilitiesEventRouter() {}
-
-void VivaldiUtilitiesEventRouter::DispatchEvent(
-    const std::string& event_name,
-    std::unique_ptr<base::ListValue> event_args) {
-  EventRouter* event_router = EventRouter::Get(browser_context_);
-  if (event_router) {
-    event_router->BroadcastEvent(base::WrapUnique(
-        new extensions::Event(extensions::events::VIVALDI_EXTENSION_EVENT,
-                              event_name, std::move(event_args))));
-  }
-}
+}  // namespace
 
 VivaldiUtilitiesAPI::VivaldiUtilitiesAPI(content::BrowserContext* context)
     : browser_context_(context),
@@ -131,9 +115,6 @@ VivaldiUtilitiesAPI::VivaldiUtilitiesAPI(content::BrowserContext* context)
   event_router->RegisterObserver(
       this, vivaldi::utilities::OnDownloadManagerReady::kEventName);
 
-  event_router_.reset(new VivaldiUtilitiesEventRouter(
-    Profile::FromBrowserContext(browser_context_)));
-
   base::PowerMonitor* power_monitor = base::PowerMonitor::Get();
   if (power_monitor) {
     power_monitor->AddObserver(this);
@@ -144,13 +125,9 @@ VivaldiUtilitiesAPI::VivaldiUtilitiesAPI(content::BrowserContext* context)
           profile->GetOriginalProfile());
   manager->AddObserver(this);
 
-  if (VivaldiRuntimeFeatures::IsEnabled(Profile::FromBrowserContext(context),
-                                        "razer_chroma_support")) {
-    razer_chroma_handler_.reset(new RazerChromaHandler(
-        Profile::FromBrowserContext(context)->GetPrefs()));
-    if (razer_chroma_handler_->Initialize() == false) {
-      razer_chroma_handler_.reset();
-    }
+  if (VivaldiRuntimeFeatures::IsEnabled(context, "razer_chroma_support")) {
+    razer_chroma_handler_.reset(
+        new RazerChromaHandler(Profile::FromBrowserContext(context)));
   }
 }
 
@@ -185,12 +162,12 @@ VivaldiUtilitiesAPI::GetFactoryInstance() {
   return g_factory_utils.Pointer();
 }
 
-void VivaldiUtilitiesAPI::ScrollType(int scrollType) {
-  if (event_router_) {
-    event_router_->DispatchEvent(
-        vivaldi::utilities::OnScroll::kEventName,
-        vivaldi::utilities::OnScroll::Create(scrollType));
-  }
+// static
+void VivaldiUtilitiesAPI::ScrollType(content::BrowserContext* browser_context,
+                                     int scrollType) {
+  ::vivaldi::BroadcastEvent(vivaldi::utilities::OnScroll::kEventName,
+                            vivaldi::utilities::OnScroll::Create(scrollType),
+                            browser_context);
 }
 
 void VivaldiUtilitiesAPI::OnListenerAdded(const EventListenerInfo& details) {
@@ -201,10 +178,11 @@ void VivaldiUtilitiesAPI::OnListenerAdded(const EventListenerInfo& details) {
     content::DownloadManager* manager =
       content::BrowserContext::GetDownloadManager(
         profile->GetOriginalProfile());
-    if (manager->IsManagerInitialized() && event_router_) {
-      event_router_->DispatchEvent(
-        vivaldi::utilities::OnDownloadManagerReady::kEventName,
-        vivaldi::utilities::OnDownloadManagerReady::Create());
+    if (manager->IsManagerInitialized()) {
+      ::vivaldi::BroadcastEvent(
+          vivaldi::utilities::OnDownloadManagerReady::kEventName,
+          vivaldi::utilities::OnDownloadManagerReady::Create(),
+          browser_context_);
     }
   }
 }
@@ -305,6 +283,10 @@ bool VivaldiUtilitiesAPI::IsRazerChromaAvailable() {
   return (razer_chroma_handler_ && razer_chroma_handler_->IsAvailable());
 }
 
+bool VivaldiUtilitiesAPI::IsRazerChromaReady() {
+  return (razer_chroma_handler_ && razer_chroma_handler_->IsReady());
+}
+
 // Set RGB color of the configured Razer Chroma devices.
 bool VivaldiUtilitiesAPI::SetRazerChromaColors(RazerChromaColors& colors) {
   DCHECK(razer_chroma_handler_);
@@ -320,34 +302,30 @@ void VivaldiUtilitiesAPI::OnPowerStateChange(bool on_battery_power) {
 }
 
 void VivaldiUtilitiesAPI::OnSuspend() {
-  if (event_router_) {
-    event_router_->DispatchEvent(vivaldi::utilities::OnSuspend::kEventName,
-                                 vivaldi::utilities::OnSuspend::Create());
-  }
+  ::vivaldi::BroadcastEvent(vivaldi::utilities::OnSuspend::kEventName,
+                            vivaldi::utilities::OnSuspend::Create(),
+                            browser_context_);
 }
 
 void VivaldiUtilitiesAPI::OnResume() {
-  if (event_router_) {
-    event_router_->DispatchEvent(vivaldi::utilities::OnResume::kEventName,
-                                 vivaldi::utilities::OnResume::Create());
-  }
+  ::vivaldi::BroadcastEvent(vivaldi::utilities::OnResume::kEventName,
+                            vivaldi::utilities::OnResume::Create(),
+                            browser_context_);
 }
 
 // DownloadManager::Observer implementation
 void VivaldiUtilitiesAPI::OnManagerInitialized() {
-  if (event_router_) {
-    event_router_->DispatchEvent(
+  ::vivaldi::BroadcastEvent(
       vivaldi::utilities::OnDownloadManagerReady::kEventName,
-      vivaldi::utilities::OnDownloadManagerReady::Create());
-  }
+      vivaldi::utilities::OnDownloadManagerReady::Create(), browser_context_);
 }
 
-void VivaldiUtilitiesAPI::OnPasswordIconStatusChanged(bool state) {
-  if (event_router_) {
-    event_router_->DispatchEvent(
-        vivaldi::utilities::OnPasswordIconStatusChanged::kEventName,
-        vivaldi::utilities::OnPasswordIconStatusChanged::Create(state));
-  }
+void VivaldiUtilitiesAPI::OnPasswordIconStatusChanged(int window_id,
+                                                      bool state) {
+  ::vivaldi::BroadcastEvent(
+      vivaldi::utilities::OnPasswordIconStatusChanged::kEventName,
+      vivaldi::utilities::OnPasswordIconStatusChanged::Create(window_id, state),
+      browser_context_);
 }
 
 VivaldiUtilitiesAPI::DialogPosition::DialogPosition(
@@ -360,58 +338,53 @@ VivaldiUtilitiesAPI::DialogPosition::DialogPosition(
       rect_(rect),
       flow_direction_(flow_direction) {}
 
-bool UtilitiesShowPasswordDialogFunction::RunAsync() {
+ExtensionFunction::ResponseAction UtilitiesShowPasswordDialogFunction::Run() {
   Browser* browser = ::vivaldi::FindBrowserForEmbedderWebContents(
                       dispatcher()->GetAssociatedWebContents());
   chrome::ManagePasswordsForPage(browser);
 
-  SendResponse(true);
-  return true;
+  return RespondNow(NoArguments());
 }
 
-namespace ClearAllRecentlyClosedSessions =
-    vivaldi::utilities::ClearAllRecentlyClosedSessions;
+ExtensionFunction::ResponseAction UtilitiesPrintFunction::Run() {
+  using vivaldi::utilities::Print::Params;
 
-bool UtilitiesPrintFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::Print::Params> params(
-      vivaldi::utilities::Print::Params::Create(*args_));
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   int tab_id = params->tab_id;
 
   content::WebContents* tabstrip_contents =
-    ::vivaldi::ui_tools::GetWebContentsFromTabStrip(tab_id, GetProfile());
+    ::vivaldi::ui_tools::GetWebContentsFromTabStrip(tab_id, browser_context());
   if (tabstrip_contents) {
     Browser* browser = chrome::FindBrowserWithWebContents(tabstrip_contents);
     if (browser) {
       chrome::Print(browser);
     }
   }
-  SendResponse(true);
-  return true;
+  return RespondNow(NoArguments());
 }
 
-UtilitiesClearAllRecentlyClosedSessionsFunction::
-    ~UtilitiesClearAllRecentlyClosedSessionsFunction() {}
+ExtensionFunction::ResponseAction
+UtilitiesClearAllRecentlyClosedSessionsFunction::Run() {
+  namespace Results =
+      vivaldi::utilities::ClearAllRecentlyClosedSessions::Results;
 
-bool UtilitiesClearAllRecentlyClosedSessionsFunction::RunAsync() {
   sessions::TabRestoreService* tab_restore_service =
-      TabRestoreServiceFactory::GetForProfile(GetProfile());
+      TabRestoreServiceFactory::GetForProfile(
+          Profile::FromBrowserContext(browser_context()));
   bool result = false;
   if (tab_restore_service) {
     result = true;
     tab_restore_service->ClearEntries();
   }
-  results_ = ClearAllRecentlyClosedSessions::Results::Create(result);
-  SendResponse(result);
-  return result;
+  return RespondNow(ArgumentList(Results::Create(result)));
 }
 
-UtilitiesGetUniqueUserIdFunction::~UtilitiesGetUniqueUserIdFunction() {}
+ExtensionFunction::ResponseAction UtilitiesGetUniqueUserIdFunction::Run() {
+  using vivaldi::utilities::GetUniqueUserId::Params;
 
-bool UtilitiesGetUniqueUserIdFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::GetUniqueUserId::Params> params(
-      vivaldi::utilities::GetUniqueUserId::Params::Create(*args_));
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   std::string user_id = g_browser_process->local_state()->GetString(
@@ -422,14 +395,14 @@ bool UtilitiesGetUniqueUserIdFunction::RunAsync() {
     // platform registry.
     base::PostTaskWithTraits(
         FROM_HERE, { base::MayBlock() },
-        base::Bind(
+        base::BindOnce(
             &UtilitiesGetUniqueUserIdFunction::GetUniqueUserIdTask,
             this, params->legacy_user_id));
+    return RespondLater();
   } else {
     RespondOnUIThread(user_id, false);
+    return AlreadyResponded();
   }
-
-  return true;
 }
 
 void UtilitiesGetUniqueUserIdFunction::GetUniqueUserIdTask(
@@ -453,83 +426,77 @@ void UtilitiesGetUniqueUserIdFunction::GetUniqueUserIdTask(
 
   base::PostTaskWithTraits(
       FROM_HERE, {content::BrowserThread::UI},
-      base::Bind(&UtilitiesGetUniqueUserIdFunction::RespondOnUIThread, this,
-                 user_id, is_new_user));
+      base::BindOnce(&UtilitiesGetUniqueUserIdFunction::RespondOnUIThread, this,
+                     user_id, is_new_user));
 }
 
 void UtilitiesGetUniqueUserIdFunction::RespondOnUIThread(
     const std::string& user_id,
     bool is_new_user) {
+  namespace Results = vivaldi::utilities::GetUniqueUserId::Results;
+
   g_browser_process->local_state()->SetString(
       vivaldiprefs::kVivaldiUniqueUserId, user_id);
 
-  results_ = vivaldi::utilities::GetUniqueUserId::Results::Create(user_id,
-                                                                  is_new_user);
-  SendResponse(true);
+  Respond(ArgumentList(Results::Create(user_id, is_new_user)));
 }
 
-bool UtilitiesIsTabInLastSessionFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::IsTabInLastSession::Params> params(
-      vivaldi::utilities::IsTabInLastSession::Params::Create(*args_));
+ExtensionFunction::ResponseAction UtilitiesIsTabInLastSessionFunction::Run() {
+  using vivaldi::utilities::IsTabInLastSession::Params;
+  namespace Results = vivaldi::utilities::IsTabInLastSession::Results;
+
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   int tabId;
-  if (!base::StringToInt(params->tab_id, &tabId))
-    return false;
+  if (!base::StringToInt(params->tab_id, &tabId)) {
+    return RespondNow(Error("TabId is not an int - "+params->tab_id));
+  }
 
   bool is_in_session = false;
   content::WebContents* contents;
 
-  if (!ExtensionTabUtil::GetTabById(tabId, GetProfile(), true, nullptr, nullptr,
-                                    &contents, nullptr)) {
-    error_ = "TabId not found.";
-    return false;
+  if (!ExtensionTabUtil::GetTabById(tabId, browser_context(), true, nullptr,
+                                    nullptr, &contents, nullptr)) {
+    return RespondNow(Error("TabId is found - "+params->tab_id));
   }
   // Both the profile and navigation entries are marked if they are
   // loaded from a session, so check both.
-  if (GetProfile()->restored_last_session()) {
+  if (Profile::FromBrowserContext(browser_context())->restored_last_session()) {
     content::NavigationEntry* entry =
         contents->GetController().GetVisibleEntry();
     is_in_session = entry && entry->IsRestored();
   }
-  results_ =
-      vivaldi::utilities::IsTabInLastSession::Results::Create(is_in_session);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(is_in_session)));
 }
 
-UtilitiesIsTabInLastSessionFunction::UtilitiesIsTabInLastSessionFunction() {}
+UtilitiesIsUrlValidFunction::UtilitiesIsUrlValidFunction() {}
 
-UtilitiesIsTabInLastSessionFunction::~UtilitiesIsTabInLastSessionFunction() {}
+UtilitiesIsUrlValidFunction::~UtilitiesIsUrlValidFunction() {}
 
 // Based on OnDefaultProtocolClientWorkerFinished in
 // external_protocol_handler.cc
 void UtilitiesIsUrlValidFunction::OnDefaultProtocolClientWorkerFinished(
-    const GURL& url,
-    bool prompt_user,
-    ui::PageTransition page_transition,
-    ExternalProtocolHandler::BlockState block,
     shell_integration::DefaultWebClientState state) {
-  DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+  namespace Results = vivaldi::utilities::IsUrlValid::Results;
 
-  result_.external_handler = false;
+  DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
 
   // If we get here, either we are not the default or we cannot work out
   // what the default is, so we proceed.
-  if (prompt_user && state == shell_integration::NOT_DEFAULT) {
+  if (prompt_user_ && state == shell_integration::NOT_DEFAULT) {
     // Ask the user if they want to allow the protocol, but only
     // if the url is a valid formatted url.
     result_.external_handler = result_.url_valid;
   }
-  results_ = vivaldi::utilities::IsUrlValid::Results::Create(result_);
-  SendResponse(true);
-  Release();
+  Respond(ArgumentList(Results::Create(result_)));
 }
 
-bool UtilitiesIsUrlValidFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::IsUrlValid::Params> params(
-      vivaldi::utilities::IsUrlValid::Params::Create(*args_));
+ExtensionFunction::ResponseAction UtilitiesIsUrlValidFunction::Run() {
+  using vivaldi::utilities::IsUrlValid::Params;
+  namespace Results = vivaldi::utilities::IsUrlValid::Results;
+
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   GURL url(params->url);
@@ -542,53 +509,47 @@ bool UtilitiesIsUrlValidFunction::RunAsync() {
       url.SchemeIs(content::kViewSourceScheme);
   result_.scheme_parsed = url.scheme();
   result_.normalized_url = url.is_valid() ? url.spec() : "";
+  result_.external_handler = false;
 
   if (result_.url_valid && result_.scheme_valid) {
     // We have valid schemes and url, no need to check for external handler.
-    result_.external_handler = false;
-    results_ = vivaldi::utilities::IsUrlValid::Results::Create(result_);
-
-    SendResponse(true);
-  } else {
-    AddRef();
-    // We have an invalid scheme, let's see if it's an external handler.
-    // The worker creates tasks with references to itself and puts them into
-    // message loops.
-    ExternalProtocolHandler::BlockState block_state =
-        ExternalProtocolHandler::GetBlockState(url.scheme(), GetProfile());
-
-    default_protocol_worker_ =
-        new shell_integration::DefaultProtocolClientWorker(
-            base::Bind(&UtilitiesIsUrlValidFunction::
-                           OnDefaultProtocolClientWorkerFinished,
-                       weak_ptr_factory_.GetWeakPtr(), url,
-                       block_state == ExternalProtocolHandler::UNKNOWN,
-                       ui::PAGE_TRANSITION_FROM_ADDRESS_BAR, block_state),
-            url.scheme());
-    // Start the check process running. This will send tasks to a worker task
-    // runner and when the answer is known will send the result back to
-    // OnDefaultProtocolClientWorkerFinished().
-    default_protocol_worker_->StartCheckIsDefault();
+    return RespondNow(ArgumentList(Results::Create(result_)));
   }
-  return true;
+  // We have an invalid scheme, let's see if it's an external handler.
+  // The worker creates tasks with references to itself and puts them into
+  // message loops.
+  ExternalProtocolHandler::BlockState block_state =
+      ExternalProtocolHandler::GetBlockState(
+          url.scheme(), Profile::FromBrowserContext(browser_context()));
+  prompt_user_ = block_state == ExternalProtocolHandler::UNKNOWN;
+
+  auto default_protocol_worker = base::MakeRefCounted<
+      shell_integration::DefaultProtocolClientWorker>(
+      base::BindRepeating(
+          &UtilitiesIsUrlValidFunction::OnDefaultProtocolClientWorkerFinished,
+          this),
+      url.scheme());
+
+  // StartCheckIsDefault takes ownership and releases everything once all
+  // background activities finishes
+  default_protocol_worker->StartCheckIsDefault();
+  return RespondLater();
 }
 
-UtilitiesGetSelectedTextFunction::UtilitiesGetSelectedTextFunction() {}
+ExtensionFunction::ResponseAction UtilitiesGetSelectedTextFunction::Run() {
+  using vivaldi::utilities::GetSelectedText::Params;
+  namespace Results = vivaldi::utilities::GetSelectedText::Results;
 
-UtilitiesGetSelectedTextFunction::~UtilitiesGetSelectedTextFunction() {}
-
-bool UtilitiesGetSelectedTextFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::GetSelectedText::Params> params(
-      vivaldi::utilities::GetSelectedText::Params::Create(*args_));
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   int tabId;
   if (!base::StringToInt(params->tab_id, &tabId))
-    return false;
+    return RespondNow(Error("TabId is not a string - "+params->tab_id));
 
   std::string text;
   content::WebContents* web_contents =
-      ::vivaldi::ui_tools::GetWebContentsFromTabStrip(tabId, GetProfile());
+      ::vivaldi::ui_tools::GetWebContentsFromTabStrip(tabId, browser_context());
   if (web_contents) {
     content::RenderWidgetHostView* rwhv =
         web_contents->GetRenderWidgetHostView();
@@ -597,25 +558,18 @@ bool UtilitiesGetSelectedTextFunction::RunAsync() {
     }
   }
 
-  results_ = vivaldi::utilities::GetSelectedText::Results::Create(text);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(text)));
 }
 
-UtilitiesIsUrlValidFunction::UtilitiesIsUrlValidFunction()
-  : weak_ptr_factory_(this) {}
+ExtensionFunction::ResponseAction UtilitiesCreateUrlMappingFunction::Run() {
+  using vivaldi::utilities::CreateUrlMapping::Params;
+  namespace Results = vivaldi::utilities::CreateUrlMapping::Results;
 
-UtilitiesIsUrlValidFunction::~UtilitiesIsUrlValidFunction() {}
-
-bool UtilitiesCreateUrlMappingFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::CreateUrlMapping::Params>
-    params(vivaldi::utilities::CreateUrlMapping::Params::Create(
-      *args_));
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   VivaldiDataSourcesAPI* api =
-    VivaldiDataSourcesAPI::GetFactoryInstance()->Get(GetProfile());
+      VivaldiDataSourcesAPI::GetFactoryInstance()->Get(browser_context());
 
   // PathExists() triggers IO restriction.
   base::ThreadRestrictions::ScopedAllowIO allow_io;
@@ -623,27 +577,24 @@ bool UtilitiesCreateUrlMappingFunction::RunAsync() {
   std::string guid = base::GenerateGUID();
   base::FilePath path = base::FilePath::FromUTF8Unsafe(file);
   if (!base::PathExists(path)) {
-    error_ = "File does not exists: " + file;
-    return false;
+    return RespondNow(Error("File does not exists: " + file));
   }
   if (!api->AddMapping(guid, path)) {
-    error_ = "Mapping for file failed: " + file;
-    return false;
+    return RespondNow(Error("Mapping for file failed: " + file));
   }
   std::string retval = kBaseFileMappingUrl + guid;
-  results_ = vivaldi::utilities::CreateUrlMapping::Results::Create(retval);
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(retval)));
 }
 
-bool UtilitiesRemoveUrlMappingFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::RemoveUrlMapping::Params>
-    params(vivaldi::utilities::RemoveUrlMapping::Params::Create(
-      *args_));
+ExtensionFunction::ResponseAction UtilitiesRemoveUrlMappingFunction::Run() {
+  using vivaldi::utilities::RemoveUrlMapping::Params;
+  namespace Results = vivaldi::utilities::RemoveUrlMapping::Results;
+
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   VivaldiDataSourcesAPI* api =
-    VivaldiDataSourcesAPI::GetFactoryInstance()->Get(GetProfile());
+    VivaldiDataSourcesAPI::GetFactoryInstance()->Get(browser_context());
 
   // Extract the ID from the given url first.
   GURL url(params->url);
@@ -651,9 +602,7 @@ bool UtilitiesRemoveUrlMappingFunction::RunAsync() {
 
   bool success = api->RemoveMapping(id);
 
-  results_ = vivaldi::utilities::RemoveUrlMapping::Results::Create(success);
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(success)));
 }
 
 namespace {
@@ -677,15 +626,18 @@ ui::SelectFileDialog::FileTypeInfo ConvertExtensionsToFileTypeInfo(
 }
 }  // namespace
 
-UtilitiesSelectFileFunction::UtilitiesSelectFileFunction() {
-}
+UtilitiesSelectFileFunction::UtilitiesSelectFileFunction() {}
+
 UtilitiesSelectFileFunction::~UtilitiesSelectFileFunction() {
+  if (select_file_dialog_) {
+    select_file_dialog_->ListenerDestroyed();
+  }
 }
 
-bool UtilitiesSelectFileFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::SelectFile::Params>
-    params(vivaldi::utilities::SelectFile::Params::Create(
-      *args_));
+ExtensionFunction::ResponseAction UtilitiesSelectFileFunction::Run() {
+  using vivaldi::utilities::SelectFile::Params;
+
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   base::string16 title;
@@ -703,10 +655,9 @@ bool UtilitiesSelectFileFunction::RunAsync() {
 
   AddRef();
 
-  content::WebContents* web_contents = dispatcher()->GetAssociatedWebContents();
-
   select_file_dialog_ = ui::SelectFileDialog::Create(this, nullptr);
 
+  content::WebContents* web_contents = dispatcher()->GetAssociatedWebContents();
   gfx::NativeWindow window =
       web_contents ? platform_util::GetTopLevel(web_contents->GetNativeView())
                    : nullptr;
@@ -716,112 +667,102 @@ bool UtilitiesSelectFileFunction::RunAsync() {
       base::FilePath(), &file_type_info, 0, base::FilePath::StringType(),
       window, nullptr);
 
-  return true;
+  return RespondLater();
 }
 
 void UtilitiesSelectFileFunction::FileSelected(const base::FilePath& path,
                                                int index,
                                                void* params) {
-  results_ =
-      vivaldi::utilities::SelectFile::Results::Create(path.AsUTF8Unsafe());
-  SendResponse(true);
+  namespace Results = vivaldi::utilities::SelectFile::Results;
+
+  Respond(ArgumentList(Results::Create(path.AsUTF8Unsafe())));
   Release();
 }
 
 void UtilitiesSelectFileFunction::FileSelectionCanceled(void* params) {
-  error_ = "File selection aborted.";
-  SendResponse(false);
+  Respond(Error("File selection aborted."));
   Release();
 }
 
-bool UtilitiesGetVersionFunction::RunAsync() {
-  results_ = vivaldi::utilities::GetVersion::Results::Create(
-      ::vivaldi::GetVivaldiVersionString(), version_info::GetVersionNumber());
+ExtensionFunction::ResponseAction UtilitiesGetVersionFunction::Run() {
+  namespace Results = vivaldi::utilities::GetVersion::Results;
 
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(
+      ::vivaldi::GetVivaldiVersionString(), version_info::GetVersionNumber())));
 }
 
-bool UtilitiesSetSharedDataFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::SetSharedData::Params> params(
-      vivaldi::utilities::SetSharedData::Params::Create(*args_));
+ExtensionFunction::ResponseAction UtilitiesSetSharedDataFunction::Run() {
+  using vivaldi::utilities::SetSharedData::Params;
+  namespace Results = vivaldi::utilities::SetSharedData::Results;
+
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   VivaldiUtilitiesAPI* api =
-      VivaldiUtilitiesAPI::GetFactoryInstance()->Get(GetProfile());
+      VivaldiUtilitiesAPI::GetFactoryInstance()->Get(browser_context());
 
   bool found = api->SetSharedData(params->key_value_pair.key,
                                   params->key_value_pair.value.get());
-  results_ = vivaldi::utilities::SetSharedData::Results::Create(found);
+  // Respond before sending an event
+  Respond(ArgumentList(Results::Create(found)));
 
-  SendResponse(true);
-
-  EventRouter* event_router = EventRouter::Get(GetProfile());
-  if (event_router) {
-    std::unique_ptr<base::ListValue> event_args(
-        vivaldi::utilities::OnSharedDataUpdated::Create(
-            params->key_value_pair.key, *params->key_value_pair.value));
-
-    event_router->BroadcastEvent(base::WrapUnique(new extensions::Event(
-        extensions::events::VIVALDI_EXTENSION_EVENT,
-        vivaldi::utilities::OnSharedDataUpdated::kEventName,
-        std::move(event_args))));
-  }
-  return true;
+  ::vivaldi::BroadcastEvent(
+      vivaldi::utilities::OnSharedDataUpdated::kEventName,
+      vivaldi::utilities::OnSharedDataUpdated::Create(
+          params->key_value_pair.key, *params->key_value_pair.value),
+      browser_context());
+  return AlreadyResponded();
 }
 
-bool UtilitiesGetSharedDataFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::GetSharedData::Params> params(
-    vivaldi::utilities::GetSharedData::Params::Create(*args_));
+ExtensionFunction::ResponseAction UtilitiesGetSharedDataFunction::Run() {
+  using vivaldi::utilities::GetSharedData::Params;
+  namespace Results = vivaldi::utilities::GetSharedData::Results;
+
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   VivaldiUtilitiesAPI* api =
-      VivaldiUtilitiesAPI::GetFactoryInstance()->Get(GetProfile());
+      VivaldiUtilitiesAPI::GetFactoryInstance()->Get(browser_context());
 
   const base::Value* value = api->GetSharedData(params->key_value_pair.key);
-  results_ = vivaldi::utilities::GetSharedData::Results::Create(
-      value ? *value : *params->key_value_pair.value.get());
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(
+      Results::Create(value ? *value : *params->key_value_pair.value.get())));
 }
 
 ExtensionFunction::ResponseAction UtilitiesGetSystemDateFormatFunction::Run() {
-  vivaldi::utilities::DateFormats date_formats;
+  namespace Results = vivaldi::utilities::GetSystemDateFormat::Results;
 
+  vivaldi::utilities::DateFormats date_formats;
   if (!ReadDateFormats(&date_formats)) {
     return RespondNow(Error(
         "Error reading date formats or not implemented on mac/linux yet"));
   } else {
-    return RespondNow(
-        ArgumentList(vivaldi::utilities::GetSystemDateFormat::Results::Create(
-            date_formats)));
+    return RespondNow(ArgumentList(Results::Create(date_formats)));
   }
 }
 
-bool UtilitiesSetLanguageFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::SetLanguage::Params> params(
-      vivaldi::utilities::SetLanguage::Params::Create(*args_));
+ExtensionFunction::ResponseAction UtilitiesSetLanguageFunction::Run() {
+  using vivaldi::utilities::SetLanguage::Params;
+  namespace Results = vivaldi::utilities::SetLanguage::Results;
+
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   std::string& language_code = params->locale;
 
   DCHECK(!language_code.empty());
   if (language_code.empty()) {
-    error_ = "Empty language code.";
-    results_ = vivaldi::utilities::SetLanguage::Results::Create(false);
-    SendResponse(false);
-    return true;
+    return RespondNow(Error("Empty language code."));
   }
   PrefService* pref_service = g_browser_process->local_state();
   pref_service->SetString(language::prefs::kApplicationLocale, language_code);
 
-  results_ = vivaldi::utilities::SetLanguage::Results::Create(true);
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create()));
 }
 
-bool UtilitiesGetLanguageFunction::RunAsync() {
+ExtensionFunction::ResponseAction UtilitiesGetLanguageFunction::Run() {
+  namespace Results = vivaldi::utilities::GetLanguage::Results;
+
   PrefService* pref_service = g_browser_process->local_state();
   std::string language_code =
       pref_service->GetString(language::prefs::kApplicationLocale);
@@ -833,47 +774,31 @@ bool UtilitiesGetLanguageFunction::RunAsync() {
 
   DCHECK(!language_code.empty());
   if (language_code.empty()) {
-    error_ = "Empty language code.";
-    results_ = vivaldi::utilities::GetLanguage::Results::Create(language_code);
-    SendResponse(false);
-    return true;
+    return RespondNow(Error("Empty language code."));
   }
-  results_ = vivaldi::utilities::GetLanguage::Results::Create(language_code);
-  SendResponse(true);
-  return true;
-}
-
-UtilitiesSetVivaldiAsDefaultBrowserFunction::
-    UtilitiesSetVivaldiAsDefaultBrowserFunction()
-    : weak_ptr_factory_(this) {
-  default_browser_worker_ = new shell_integration::DefaultBrowserWorker(
-      base::Bind(&UtilitiesSetVivaldiAsDefaultBrowserFunction::
-                     OnDefaultBrowserWorkerFinished,
-                 weak_ptr_factory_.GetWeakPtr()));
+  return RespondNow(ArgumentList(Results::Create(language_code)));
 }
 
 UtilitiesSetVivaldiAsDefaultBrowserFunction::
     ~UtilitiesSetVivaldiAsDefaultBrowserFunction() {
-  Respond(ArgumentList(std::move(results_)));
+  if (!did_respond()) {
+    Respond(Error("no reply"));
+  }
 }
 
 void UtilitiesSetVivaldiAsDefaultBrowserFunction::
     OnDefaultBrowserWorkerFinished(
         shell_integration::DefaultWebClientState state) {
+  namespace Results = vivaldi::utilities::SetVivaldiAsDefaultBrowser::Results;
+
   if (state == shell_integration::IS_DEFAULT) {
-    results_ =
-        vivaldi::utilities::SetVivaldiAsDefaultBrowser::Results::Create(
-            "true");
-    Release();
+    Respond(ArgumentList(Results::Create(true)));
   } else if (state == shell_integration::NOT_DEFAULT) {
     if (shell_integration::CanSetAsDefaultBrowser() ==
         shell_integration::SET_DEFAULT_NOT_ALLOWED) {
     } else {
       // Not default browser
-      results_ =
-          vivaldi::utilities::SetVivaldiAsDefaultBrowser::Results::Create(
-              "false");
-      Release();
+      Respond(ArgumentList(Results::Create(false)));
     }
   } else if (state == shell_integration::UNKNOWN_DEFAULT) {
   } else {
@@ -881,47 +806,52 @@ void UtilitiesSetVivaldiAsDefaultBrowserFunction::
   }
 }
 
-bool UtilitiesSetVivaldiAsDefaultBrowserFunction::RunAsync() {
-  AddRef();  // balanced from SetDefaultWebClientUIState()
-  default_browser_worker_->StartSetAsDefault();
-  return true;
-}
-
-UtilitiesIsVivaldiDefaultBrowserFunction::
-    UtilitiesIsVivaldiDefaultBrowserFunction()
-    : weak_ptr_factory_(this) {
-  default_browser_worker_ = new shell_integration::DefaultBrowserWorker(
-      base::Bind(&UtilitiesIsVivaldiDefaultBrowserFunction::
-                     OnDefaultBrowserWorkerFinished,
-                 weak_ptr_factory_.GetWeakPtr()));
+ExtensionFunction::ResponseAction
+UtilitiesSetVivaldiAsDefaultBrowserFunction::Run() {
+  auto default_browser_worker =
+      base::MakeRefCounted<shell_integration::DefaultBrowserWorker>(
+          base::BindRepeating(&UtilitiesSetVivaldiAsDefaultBrowserFunction::
+                                  OnDefaultBrowserWorkerFinished,
+                              this));
+  // StartSetAsDefault takes ownership and releases everything once all
+  // background activities finishes.
+  default_browser_worker->StartSetAsDefault();
+  return RespondLater();
 }
 
 UtilitiesIsVivaldiDefaultBrowserFunction::
     ~UtilitiesIsVivaldiDefaultBrowserFunction() {
-  Respond(ArgumentList(std::move(results_)));
+  if (!did_respond()) {
+    Respond(Error("no reply"));
+  }
 }
 
-bool UtilitiesIsVivaldiDefaultBrowserFunction::RunAsync() {
-  AddRef();  // balanced from SetDefaultWebClientUIState()
-  default_browser_worker_->StartCheckIsDefault();
-  return true;
+ExtensionFunction::ResponseAction
+UtilitiesIsVivaldiDefaultBrowserFunction::Run() {
+  auto default_browser_worker =
+      base::MakeRefCounted<shell_integration::DefaultBrowserWorker>(
+          base::BindRepeating(&UtilitiesIsVivaldiDefaultBrowserFunction::
+                                  OnDefaultBrowserWorkerFinished,
+                              this));
+  // StartCheckIsDefault takes ownership and releases everything once all
+  // background activities finishes.
+  default_browser_worker->StartCheckIsDefault();
+  return RespondLater();
 }
 
 // shell_integration::DefaultWebClientObserver implementation.
 void UtilitiesIsVivaldiDefaultBrowserFunction::OnDefaultBrowserWorkerFinished(
     shell_integration::DefaultWebClientState state) {
+  namespace Results = vivaldi::utilities::IsVivaldiDefaultBrowser::Results;
+
   if (state == shell_integration::IS_DEFAULT) {
-    results_ =
-        vivaldi::utilities::IsVivaldiDefaultBrowser::Results::Create("true");
-    Release();
+    Respond(ArgumentList(Results::Create(true)));
   } else if (state == shell_integration::NOT_DEFAULT) {
     if (shell_integration::CanSetAsDefaultBrowser() ==
         shell_integration::SET_DEFAULT_NOT_ALLOWED) {
     } else {
       // Not default browser
-      results_ = vivaldi::utilities::IsVivaldiDefaultBrowser::Results::Create(
-          "false");
-      Release();
+      Respond(ArgumentList(Results::Create(false)));
     }
   } else if (state == shell_integration::UNKNOWN_DEFAULT) {
   } else {
@@ -929,55 +859,41 @@ void UtilitiesIsVivaldiDefaultBrowserFunction::OnDefaultBrowserWorkerFinished(
   }
 }
 
-UtilitiesLaunchNetworkSettingsFunction::
-    UtilitiesLaunchNetworkSettingsFunction() {}
+ExtensionFunction::ResponseAction
+UtilitiesLaunchNetworkSettingsFunction::Run() {
+  namespace Results = vivaldi::utilities::LaunchNetworkSettings::Results;
 
-UtilitiesLaunchNetworkSettingsFunction::
-    ~UtilitiesLaunchNetworkSettingsFunction() {}
-
-bool UtilitiesLaunchNetworkSettingsFunction::RunAsync() {
   settings_utils::ShowNetworkProxySettings(NULL);
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create("")));
 }
 
-UtilitiesSavePageFunction::UtilitiesSavePageFunction() {}
+ExtensionFunction::ResponseAction UtilitiesSavePageFunction::Run() {
+  namespace Results = vivaldi::utilities::SavePage::Results;
 
-UtilitiesSavePageFunction::~UtilitiesSavePageFunction() {}
-
-bool UtilitiesSavePageFunction::RunAsync() {
   Browser* browser = ::vivaldi::FindBrowserForEmbedderWebContents(
       dispatcher()->GetAssociatedWebContents());
 
   content::WebContents* current_tab =
       browser->tab_strip_model()->GetActiveWebContents();
   current_tab->OnSavePage();
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create()));
 }
 
-UtilitiesOpenPageFunction::UtilitiesOpenPageFunction() {}
+ExtensionFunction::ResponseAction UtilitiesOpenPageFunction::Run() {
+  namespace Results = vivaldi::utilities::OpenPage::Results;
 
-UtilitiesOpenPageFunction::~UtilitiesOpenPageFunction() {}
-
-bool UtilitiesOpenPageFunction::RunAsync() {
   Browser* browser = ::vivaldi::FindBrowserForEmbedderWebContents(
       dispatcher()->GetAssociatedWebContents());
   browser->OpenFile();
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create()));
 }
 
-UtilitiesSetDefaultContentSettingsFunction::
-    UtilitiesSetDefaultContentSettingsFunction() {}
+ExtensionFunction::ResponseAction
+UtilitiesSetDefaultContentSettingsFunction::Run() {
+  using vivaldi::utilities::SetDefaultContentSettings::Params;
+  namespace Results = vivaldi::utilities::SetDefaultContentSettings::Results;
 
-UtilitiesSetDefaultContentSettingsFunction::
-    ~UtilitiesSetDefaultContentSettingsFunction() {}
-
-bool UtilitiesSetDefaultContentSettingsFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::SetDefaultContentSettings::Params>
-      params(vivaldi::utilities::SetDefaultContentSettings::Params::Create(
-          *args_));
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   std::string& content_settings = params->content_setting;
@@ -988,110 +904,84 @@ bool UtilitiesSetDefaultContentSettingsFunction::RunAsync() {
   ContentSettingsType content_type =
       vivContentSettingsTypeFromGroupName(content_settings);
 
-  Profile* profile = GetProfile()->GetOriginalProfile();
+  Profile* profile =
+      Profile::FromBrowserContext(browser_context())->GetOriginalProfile();
 
   HostContentSettingsMap* map =
       HostContentSettingsMapFactory::GetForProfile(profile);
   map->SetDefaultContentSetting(content_type, default_setting);
 
-  results_ = vivaldi::utilities::SetDefaultContentSettings::Results::Create(
-      "success");
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create()));
 }
 
-UtilitiesGetDefaultContentSettingsFunction::
-    UtilitiesGetDefaultContentSettingsFunction() {}
+ExtensionFunction::ResponseAction
+UtilitiesGetDefaultContentSettingsFunction::Run() {
+  using vivaldi::utilities::GetDefaultContentSettings::Params;
+  namespace Results = vivaldi::utilities::GetDefaultContentSettings::Results;
 
-UtilitiesGetDefaultContentSettingsFunction::
-    ~UtilitiesGetDefaultContentSettingsFunction() {}
-
-bool UtilitiesGetDefaultContentSettingsFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::GetDefaultContentSettings::Params>
-      params(vivaldi::utilities::GetDefaultContentSettings::Params::Create(
-          *args_));
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
+
   std::string& content_settings = params->content_setting;
   std::string def_provider = "";
   ContentSettingsType content_type =
       vivContentSettingsTypeFromGroupName(content_settings);
   ContentSetting default_setting;
-  Profile* profile = GetProfile()->GetOriginalProfile();
+  Profile* profile =
+      Profile::FromBrowserContext(browser_context())->GetOriginalProfile();
 
   default_setting = HostContentSettingsMapFactory::GetForProfile(profile)
                         ->GetDefaultContentSetting(content_type, &def_provider);
 
   std::string setting = vivContentSettingToString(default_setting);
 
-  results_ =
-      vivaldi::utilities::GetDefaultContentSettings::Results::Create(setting);
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(setting)));
 }
 
-UtilitiesSetBlockThirdPartyCookiesFunction::
-    UtilitiesSetBlockThirdPartyCookiesFunction() {}
+ExtensionFunction::ResponseAction
+UtilitiesSetBlockThirdPartyCookiesFunction::Run() {
+  using vivaldi::utilities::SetBlockThirdPartyCookies::Params;
+  namespace Results = vivaldi::utilities::SetBlockThirdPartyCookies::Results;
 
-UtilitiesSetBlockThirdPartyCookiesFunction::
-    ~UtilitiesSetBlockThirdPartyCookiesFunction() {}
-
-bool UtilitiesSetBlockThirdPartyCookiesFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::SetBlockThirdPartyCookies::Params>
-      params(vivaldi::utilities::SetBlockThirdPartyCookies::Params::Create(
-          *args_));
-
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
+
   bool block3rdparty = params->block3rd_party;
 
-  PrefService* pref_service = GetProfile()->GetOriginalProfile()->GetPrefs();
-  pref_service->SetBoolean(prefs::kBlockThirdPartyCookies, block3rdparty);
+  Profile* profile = Profile::FromBrowserContext(browser_context());
+  PrefService* service = profile->GetOriginalProfile()->GetPrefs();
+  service->SetBoolean(prefs::kBlockThirdPartyCookies, block3rdparty);
 
-  PrefService* service = GetProfile()->GetOriginalProfile()->GetPrefs();
   bool blockThirdParty = service->GetBoolean(prefs::kBlockThirdPartyCookies);
 
-  results_ = vivaldi::utilities::SetBlockThirdPartyCookies::Results::Create(
-      blockThirdParty);
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(blockThirdParty)));
 }
 
-UtilitiesGetBlockThirdPartyCookiesFunction::
-    UtilitiesGetBlockThirdPartyCookiesFunction() {}
+ExtensionFunction::ResponseAction
+UtilitiesGetBlockThirdPartyCookiesFunction::Run() {
+  namespace Results = vivaldi::utilities::GetBlockThirdPartyCookies::Results;
 
-UtilitiesGetBlockThirdPartyCookiesFunction::
-    ~UtilitiesGetBlockThirdPartyCookiesFunction() {}
-
-bool UtilitiesGetBlockThirdPartyCookiesFunction::RunAsync() {
-  PrefService* service = GetProfile()->GetOriginalProfile()->GetPrefs();
+  Profile* profile = Profile::FromBrowserContext(browser_context());
+  PrefService* service = profile->GetOriginalProfile()->GetPrefs();
   bool blockThirdParty = service->GetBoolean(prefs::kBlockThirdPartyCookies);
 
-  results_ = vivaldi::utilities::GetBlockThirdPartyCookies::Results::Create(
-      blockThirdParty);
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(blockThirdParty)));
 }
 
-UtilitiesOpenTaskManagerFunction::~UtilitiesOpenTaskManagerFunction() {}
+ExtensionFunction::ResponseAction UtilitiesOpenTaskManagerFunction::Run() {
+  namespace Results = vivaldi::utilities::OpenTaskManager::Results;
 
-bool UtilitiesOpenTaskManagerFunction::RunAsync() {
   Browser* browser = ::vivaldi::FindBrowserForEmbedderWebContents(
       dispatcher()->GetAssociatedWebContents());
 
   chrome::OpenTaskManager(browser);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create()));
 }
 
-UtilitiesOpenTaskManagerFunction::UtilitiesOpenTaskManagerFunction() {}
+ExtensionFunction::ResponseAction UtilitiesGetStartupActionFunction::Run() {
+  namespace Results = vivaldi::utilities::GetStartupAction::Results;
 
-
-UtilitiesGetStartupActionFunction::UtilitiesGetStartupActionFunction() {}
-
-UtilitiesGetStartupActionFunction::~UtilitiesGetStartupActionFunction() {}
-
-bool UtilitiesGetStartupActionFunction::RunAsync() {
-  Profile* profile = GetProfile();
+  Profile* profile = Profile::FromBrowserContext(browser_context());
   const SessionStartupPref startup_pref =
       SessionStartupPref::GetStartupPref(profile->GetPrefs());
 
@@ -1111,21 +1001,16 @@ bool UtilitiesGetStartupActionFunction::RunAsync() {
       startupRes = "urls";
       break;
   }
-  results_ =
-      vivaldi::utilities::GetStartupAction::Results::Create(startupRes);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(startupRes)));
 }
 
-UtilitiesSetStartupActionFunction::UtilitiesSetStartupActionFunction() {}
+ExtensionFunction::ResponseAction UtilitiesSetStartupActionFunction::Run() {
+  using vivaldi::utilities::SetStartupAction::Params;
+  namespace Results = vivaldi::utilities::SetStartupAction::Results;
 
-UtilitiesSetStartupActionFunction::~UtilitiesSetStartupActionFunction() {}
-
-bool UtilitiesSetStartupActionFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::SetStartupAction::Params> params(
-      vivaldi::utilities::SetStartupAction::Params::Create(*args_));
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
+
   std::string& content_settings = params->startup;
   SessionStartupPref startup_pref(SessionStartupPref::LAST);
 
@@ -1145,19 +1030,17 @@ bool UtilitiesSetStartupActionFunction::RunAsync() {
     startup_pref.urls.push_back(GURL(params->urls[i]));
   }
 
-  Profile* profile = GetProfile();
+  Profile* profile = Profile::FromBrowserContext(browser_context());
   PrefService* prefs = profile->GetPrefs();
 
   SessionStartupPref::SetStartupPref(prefs, startup_pref);
 
-  results_ =
-      vivaldi::utilities::GetStartupAction::Results::Create(content_settings);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(content_settings)));
 }
 
-bool UtilitiesCanShowWelcomePageFunction::RunAsync() {
+ExtensionFunction::ResponseAction UtilitiesCanShowWelcomePageFunction::Run() {
+  namespace Results = vivaldi::utilities::CanShowWelcomePage::Results;
+
   const base::CommandLine* command_line =
       base::CommandLine::ForCurrentProcess();
 
@@ -1165,23 +1048,22 @@ bool UtilitiesCanShowWelcomePageFunction::RunAsync() {
   bool no_first_run = command_line->HasSwitch(switches::kNoFirstRun);
   bool can_show_welcome = (force_first_run || !no_first_run);
 
-  results_ =
-      vivaldi::utilities::CanShowWelcomePage::Results::Create(can_show_welcome);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(can_show_welcome)));
 }
 
-bool UtilitiesCanShowWhatsNewPageFunction::RunAsync() {
+ExtensionFunction::ResponseAction UtilitiesCanShowWhatsNewPageFunction::Run() {
+  namespace Results = vivaldi::utilities::CanShowWhatsNewPage::Results;
+
   bool can_show_whats_new = false;
 
   // Show new features tab only for official final builds.
 #if defined(OFFICIAL_BUILD) && \
    (BUILD_VERSION(VIVALDI_RELEASE) == VIVALDI_BUILD_PUBLIC_RELEASE)
+  Profile* profile = Profile::FromBrowserContext(browser_context());
   bool version_changed = false;
   std::string version = ::vivaldi::GetVivaldiVersionString();
   std::string last_seen_version =
-    GetProfile()->GetPrefs()->GetString(vivaldiprefs::kStartupLastSeenVersion);
+    profile->GetPrefs()->GetString(vivaldiprefs::kStartupLastSeenVersion);
 
   std::vector<std::string> version_array = base::SplitString(
       version, ".", base::KEEP_WHITESPACE, base::SPLIT_WANT_NONEMPTY);
@@ -1189,11 +1071,12 @@ bool UtilitiesCanShowWhatsNewPageFunction::RunAsync() {
       last_seen_version, ".", base::KEEP_WHITESPACE, base::SPLIT_WANT_NONEMPTY);
 
   if (version_array.size() != 4 || last_seen_array.size() != 4 ||
-      version_array[0] != last_seen_array[0] /* major */||
-      version_array[1] != last_seen_array[1] /* minor */) {
+      (version_array[0] > last_seen_array[0]) /* major */ ||
+      ((version_array[1] > last_seen_array[1]) /* minor */ &&
+       (version_array[0] >= last_seen_array[0]))) {
     version_changed = true;
-    GetProfile()->GetPrefs()->SetString(vivaldiprefs::kStartupLastSeenVersion,
-        version);
+    profile->GetPrefs()->SetString(vivaldiprefs::kStartupLastSeenVersion,
+                                   version);
   }
 
   const base::CommandLine* command_line =
@@ -1204,55 +1087,60 @@ bool UtilitiesCanShowWhatsNewPageFunction::RunAsync() {
       !no_first_run;
 #endif
 
-  results_ = vivaldi::utilities::CanShowWhatsNewPage::Results::Create(
-    can_show_whats_new);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(can_show_whats_new)));
 }
 
-bool UtilitiesSetDialogPositionFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::SetDialogPosition::Params> params(
-      vivaldi::utilities::SetDialogPosition::Params::Create(*args_));
+ExtensionFunction::ResponseAction UtilitiesSetDialogPositionFunction::Run() {
+  using vivaldi::utilities::SetDialogPosition::Params;
+  namespace Results = vivaldi::utilities::SetDialogPosition::Results;
+
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   gfx::Rect rect(params->position.left, params->position.top,
                  params->position.width, params->position.height);
 
   VivaldiUtilitiesAPI* api =
-    VivaldiUtilitiesAPI::GetFactoryInstance()->Get(GetProfile());
+    VivaldiUtilitiesAPI::GetFactoryInstance()->Get(browser_context());
 
   bool found = api->SetDialogPostion(
       params->window_id, vivaldi::utilities::ToString(params->dialog_name),
       rect, vivaldi::utilities::ToString(params->flow_direction));
 
-  results_ =
-    vivaldi::utilities::SetDialogPosition::Results::Create(found);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(found)));
 }
 
-bool UtilitiesIsRazerChromaAvailableFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+UtilitiesIsRazerChromaAvailableFunction::Run() {
+  namespace Results = vivaldi::utilities::IsRazerChromaAvailable::Results;
+
   VivaldiUtilitiesAPI* api =
-    VivaldiUtilitiesAPI::GetFactoryInstance()->Get(GetProfile());
+      VivaldiUtilitiesAPI::GetFactoryInstance()->Get(browser_context());
 
   bool available = api->IsRazerChromaAvailable();
-
-  results_ =
-      vivaldi::utilities::IsRazerChromaAvailable::Results::Create(available);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(available)));
 }
 
-bool UtilitiesSetRazerChromaColorFunction::RunAsync() {
-  std::unique_ptr<vivaldi::utilities::SetRazerChromaColor::Params> params(
-      vivaldi::utilities::SetRazerChromaColor::Params::Create(*args_));
+ExtensionFunction::ResponseAction
+UtilitiesIsRazerChromaReadyFunction::Run() {
+  namespace Results = vivaldi::utilities::IsRazerChromaReady::Results;
+
+  VivaldiUtilitiesAPI* api =
+    VivaldiUtilitiesAPI::GetFactoryInstance()->Get(browser_context());
+
+  bool available = api->IsRazerChromaReady();
+  return RespondNow(ArgumentList(Results::Create(available)));
+}
+
+ExtensionFunction::ResponseAction UtilitiesSetRazerChromaColorFunction::Run() {
+  using vivaldi::utilities::SetRazerChromaColor::Params;
+  namespace Results = vivaldi::utilities::SetRazerChromaColor::Results;
+
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   VivaldiUtilitiesAPI* api =
-    VivaldiUtilitiesAPI::GetFactoryInstance()->Get(GetProfile());
+    VivaldiUtilitiesAPI::GetFactoryInstance()->Get(browser_context());
 
   RazerChromaColors colors;
   for (size_t i = 0; i < params->colors.size(); i++) {
@@ -1261,22 +1149,19 @@ bool UtilitiesSetRazerChromaColorFunction::RunAsync() {
                                    params->colors[i].blue));
   }
   bool success = api->SetRazerChromaColors(colors);
-  results_ = vivaldi::utilities::SetRazerChromaColor::Results::Create(success);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(success)));
 }
 
-bool UtilitiesIsDownloadManagerReadyFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+UtilitiesIsDownloadManagerReadyFunction::Run() {
+  namespace Results = vivaldi::utilities::IsDownloadManagerReady::Results;
+
   content::DownloadManager* manager =
       content::BrowserContext::GetDownloadManager(
-          GetProfile()->GetOriginalProfile());
+          Profile::FromBrowserContext(browser_context())->GetOriginalProfile());
 
-  results_ = vivaldi::utilities::IsDownloadManagerReady::Results::Create(
-      manager->IsManagerInitialized());
-
-  SendResponse(true);
-  return true;
+  bool initialized = manager->IsManagerInitialized();
+  return RespondNow(ArgumentList(Results::Create(initialized)));
 }
 
 }  // namespace extensions

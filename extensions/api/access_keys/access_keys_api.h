@@ -14,7 +14,7 @@ class AccessKeysGetAccessKeysForPageFunction
     : public ChromeAsyncExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("accessKeys.getAccessKeysForPage",
-                             ACCESSKEYS_GETACCESSKEYSFORPAGE);
+                             ACCESSKEYS_GETACCESSKEYSFORPAGE)
 
   AccessKeysGetAccessKeysForPageFunction();
   void AccessKeysReceived(std::vector<VivaldiViewMsg_AccessKeyDefinition>);
@@ -32,7 +32,7 @@ class AccessKeysActionFunction
     : public ChromeAsyncExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("accessKeys.action",
-                             ACCESSKEYS_ACTION);
+                             ACCESSKEYS_ACTION)
 
   AccessKeysActionFunction();
 

@@ -45,20 +45,20 @@
         "description": "Object returned from the getUserProfiles function.",
         "properties": {
           "name": {
-            "description": "Name of this user profile.",
+            "description": "Name of this user profile. For a guest profile, this should be ignored and translated string used instead.",
             "type": "string"
-          },
-          "defaultAvatar":  {
-            "description": "true if the default avatar is being used, otherwise fase.",
-            "type": "boolean"
           },
           "active": {
             "description": "true if this is the active profile, otherwise false. ",
             "type": "boolean"
           },
           "image": {
-            "description": "base64 encoded data url with the image to use for this profile. ",
+            "description": "base64 encoded data url with the image to use for this profile. Empty for Guest profile.",
             "type": "string"
+          },
+          "guest": {
+            "description": "true if this is the guest profile, otherwise false. ",
+            "type": "boolean"
           }
         }
       }

@@ -8,10 +8,7 @@
 #include "ui/views/vivaldi_context_menu_views.h"
 
 #include "base/command_line.h"
-#include "base/message_loop/message_loop.h"
-#include "browser/menus/vivaldi_bookmark_context_menu.h"
 #include "browser/vivaldi_browser_finder.h"
-#include "chrome/browser/ui/views/bookmarks/bookmark_menu_controller_views.h"
 #include "chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.h"
 #include "chrome/common/chrome_switches.h"
 #include "components/renderer_context_menu/views/toolkit_delegate_views.h"
@@ -22,7 +19,7 @@
 #include "ui/aura/client/screen_position_client.h"
 #include "ui/aura/window.h"
 #include "ui/views/controls/menu/menu_controller.h"
-#include "ui/views/controls/menu/menu_item_view.h"
+#include "ui/views/vivaldi_bookmark_menu_views.h"
 #include "ui/views/widget/widget.h"
 
 namespace vivaldi {
@@ -35,15 +32,23 @@ VivaldiContextMenu* CreateVivaldiContextMenu(
 
 VivaldiBookmarkMenu* CreateVivaldiBookmarkMenu(
     content::WebContents* web_contents,
-    const bookmarks::BookmarkNode* node,
-    int offset,
-    vivaldi::BookmarkSorter::SortField sort_field,
-    vivaldi::BookmarkSorter::SortOrder sort_order,
-    bool folder_group,
+    const vivaldi::BookmarkMenuParams& params,
     const gfx::Rect& button_rect) {
-  return new VivaldiBookmarkMenuViews(web_contents, node, offset,
-                                      sort_field, sort_order, folder_group,
-                                      button_rect);
+
+  // Convert local origin (wrt view) to a screen coordinate
+  gfx::Point screen_point(button_rect.x(), button_rect.y());
+  aura::Window* target_window =
+    VivaldiBookmarkMenuViews::GetActiveNativeViewFromWebContents(
+        web_contents);
+  aura::Window* root_window = target_window->GetRootWindow();
+  aura::client::ScreenPositionClient* screen_position_client =
+      aura::client::GetScreenPositionClient(root_window);
+  if (screen_position_client) {
+    screen_position_client->ConvertPointToScreen(target_window, &screen_point);
+  }
+  gfx::Rect rect(screen_point, button_rect.size());
+
+  return new VivaldiBookmarkMenuViews(web_contents, params, rect);
 }
 }  // vivialdi
 
@@ -127,79 +132,4 @@ void VivaldiContextMenuViews::UpdateMenu(ui::SimpleMenuModel* menu_model,
   views::MenuItemView* view = menu_view_->GetMenuItemByID(id);
   if (view)
     toolkit_delegate_->VivaldiUpdateMenu(view, menu_model);
-}
-
-
-VivaldiBookmarkMenuViews::VivaldiBookmarkMenuViews(
-    content::WebContents* web_contents,
-    const bookmarks::BookmarkNode* node,
-    int offset,
-    vivaldi::BookmarkSorter::SortField sort_field,
-    vivaldi::BookmarkSorter::SortOrder sort_order,
-    bool folder_group,
-    const gfx::Rect& button_rect)
-    : web_contents_(web_contents),
-      button_rect_(button_rect),
-      controller_(nullptr),
-      observer_(nullptr) {
-  Browser* browser = GetBrowser();
-  if (browser) {
-    vivaldi::SetBookmarkSortProperties(sort_field, sort_order, folder_group);
-    controller_ = new BookmarkMenuController(browser, web_contents_,
-        GetTopLevelWidget(), node, offset, false);
-    controller_->set_observer(this);
-  }
-}
-
-VivaldiBookmarkMenuViews::~VivaldiBookmarkMenuViews() {
-  if (controller_) {
-    controller_->set_observer(nullptr);
-  }
-}
-
-void VivaldiBookmarkMenuViews::set_observer(
-    vivaldi::VivaldiBookmarkMenuObserver* observer) {
-  observer_ = observer;
-}
-
-bool VivaldiBookmarkMenuViews::CanShow() {
-  return controller_ != nullptr;
-}
-
-void VivaldiBookmarkMenuViews::Show() {
-  gfx::Point screen_point(button_rect_.x(), button_rect_.y());
-  aura::Window* target_window = GetActiveNativeView();
-  aura::Window* root_window = target_window->GetRootWindow();
-  aura::client::ScreenPositionClient* screen_position_client =
-      aura::client::GetScreenPositionClient(root_window);
-  if (screen_position_client) {
-    screen_position_client->ConvertPointToScreen(target_window, &screen_point);
-  }
-  gfx::Rect rect(screen_point, button_rect_.size());
-  controller_->RunMenuAt(GetTopLevelWidget()->GetContentsView(), rect);
-}
-
-void VivaldiBookmarkMenuViews::BookmarkMenuControllerDeleted(
-    BookmarkMenuController* controller) {
-  if (observer_) {
-    observer_->BookmarkMenuClosed(this);
-  }
-  controller_ = nullptr;
-}
-
-views::Widget* VivaldiBookmarkMenuViews::GetTopLevelWidget() {
-  return views::Widget::GetTopLevelWidgetForNativeView(GetActiveNativeView());
-}
-
-aura::Window* VivaldiBookmarkMenuViews::GetActiveNativeView() {
-  return web_contents_->GetFullscreenRenderWidgetHostView()
-             ? web_contents_->GetFullscreenRenderWidgetHostView()
-                   ->GetNativeView()
-             : web_contents_->GetNativeView();
-}
-
-Browser* VivaldiBookmarkMenuViews::GetBrowser() {
-  views::Widget* widget = GetTopLevelWidget();
-  return widget ? chrome::FindBrowserWithWindow(widget->GetNativeWindow())
-                : nullptr;
 }

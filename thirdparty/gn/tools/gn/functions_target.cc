@@ -819,7 +819,7 @@ Example (metadata collection)
       deps = [ ":b" ]
     }
 
-    group("c") {
+    group("b") {
       metadata = {
         my_files = [ "bar.cpp" ]
         my_barrier = [ ":c" ]
@@ -900,6 +900,7 @@ Example (metadata collection)
 
 Variables
 
+  contents
   data_keys
   rebase
   walk_keys

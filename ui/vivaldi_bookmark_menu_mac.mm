@@ -29,7 +29,7 @@ class SortFlags {
   SortFlags() {
     field_ = ::vivaldi::BookmarkSorter::FIELD_NONE;
     order_ = ::vivaldi::BookmarkSorter::ORDER_NONE;
-  };
+  }
   void InitFromPrefs();
 
   ::vivaldi::BookmarkSorter::SortField field_;
@@ -108,6 +108,7 @@ void GetBookmarkNodes(const BookmarkNode* node,
 }
 
 void AddAddTabToBookmarksMenuItem(const BookmarkNode* node, NSMenu* menu) {
+
   base::scoped_nsobject<NSMenuItem> item([[NSMenuItem alloc]
           initWithTitle:l10n_util::GetNSString(
               IDS_VIV_ADD_ACTIVE_TAB_TO_BOOKMARKS)
@@ -118,10 +119,7 @@ void AddAddTabToBookmarksMenuItem(const BookmarkNode* node, NSMenu* menu) {
   [item setTarget:app_controller];
   [app_controller setVivaldiMenuItemAction:item];
   [item setRepresentedObject:[NSString stringWithFormat:@"%lld", node->id()]];
-  // Always at index = 0. We may have content set up in PopulateMenu() that
-  // should follow it.
-  [menu insertItem:item atIndex:0];
-  [menu addItem:[NSMenuItem separatorItem]];
+  [menu addItem:item];
 }
 
 void OnClearBookmarkMenu(NSMenu* menu, NSMenuItem* item) {

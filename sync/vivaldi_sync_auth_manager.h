@@ -9,6 +9,7 @@
 #include <string>
 
 #include "components/browser_sync/sync_auth_manager.h"
+#include "components/signin/core/browser/account_info.h"
 #include "vivaldi_account/vivaldi_account_manager.h"
 
 namespace vivaldi {
@@ -21,7 +22,6 @@ class VivaldiSyncAuthManager : public browser_sync::SyncAuthManager,
   using NotifyTokenRequestedCallback = base::RepeatingClosure;
 
   VivaldiSyncAuthManager(
-      syncer::SyncPrefs* sync_prefs,
       identity::IdentityManager* identity_manager,
       const AccountStateChangedCallback& account_state_changed,
       const CredentialsChangedCallback& credentials_changed,
@@ -30,7 +30,6 @@ class VivaldiSyncAuthManager : public browser_sync::SyncAuthManager,
   ~VivaldiSyncAuthManager() override;
 
   void RegisterForAuthNotifications() override;
-  syncer::SyncAccountInfo GetActiveAccountInfo() const override;
   syncer::SyncTokenStatus GetSyncTokenStatus() const override;
   void ConnectionStatusChanged(syncer::ConnectionStatus status) override;
 
@@ -41,10 +40,8 @@ class VivaldiSyncAuthManager : public browser_sync::SyncAuthManager,
   void OnVivaldiAccountShutdown() override;
 
  private:
-  VivaldiAccountManager* account_manager_; // Not owning.
+  VivaldiAccountManager* account_manager_;  // Not owning.
   bool registered_for_account_notifications_ = false;
-
-  AccountInfo account_info_;
 
   DISALLOW_COPY_AND_ASSIGN(VivaldiSyncAuthManager);
 };

@@ -24,6 +24,8 @@
 #include "extensions/strings/grit/extensions_strings.h"
 #include "ui/base/l10n/l10n_util.h"
 
+#include "app/vivaldi_apptools.h"
+
 using base::ASCIIToUTF16;
 
 namespace extensions {
@@ -290,6 +292,7 @@ bool BackgroundManifestHandler::Parse(Extension* extension,
   }
   // Lazy background pages are incompatible with the webRequest API.
   if (info->has_lazy_background_page() &&
+      !vivaldi::IsVivaldiApp(extension->id()) &&
       PermissionsParser::HasAPIPermission(extension,
                                           APIPermission::kWebRequest)) {
     *error = ASCIIToUTF16(errors::kWebRequestConflictsWithLazyBackground);

@@ -21,9 +21,7 @@ void SetVivaldiScrollType(int scrollType) {
 #if BUILDFLAG(ENABLE_EXTENSIONS)
   Browser* browser = chrome::FindLastActive();
   if (browser) {
-    extensions::VivaldiUtilitiesAPI::GetFactoryInstance()
-        ->Get(browser->profile())
-        ->ScrollType(scrollType);
+    extensions::VivaldiUtilitiesAPI::ScrollType(browser->profile(), scrollType);
   }
 #endif
 }

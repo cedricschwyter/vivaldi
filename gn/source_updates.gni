@@ -75,3 +75,14 @@ if (!is_android) {
     ]
   }
 }
+
+if (is_win) {
+  update_template_instance("//content/browser:browser") {
+    if (!defined(jumbo_excluded_sources)) {
+      jumbo_excluded_sources = []
+    }
+    jumbo_excluded_sources += [
+      "accessibility/accessibility_tree_formatter_win.cc",
+    ]
+  }
+}

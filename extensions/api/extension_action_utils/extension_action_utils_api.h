@@ -16,7 +16,6 @@
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/browser_list_observer.h"
 #include "chrome/browser/ui/tabs/tab_strip_model_observer.h"
-#include "chrome/browser/ui/toolbar/component_action_delegate.h"
 #include "chrome/browser/ui/toolbar/toolbar_action_view_controller.h"
 #include "chrome/browser/ui/toolbar/toolbar_action_view_delegate.h"
 #include "components/keyed_service/content/browser_context_keyed_service_factory.h"
@@ -31,7 +30,8 @@ class ExtensionActionUtil;
 
 class ExtensionActionUtilFactory : public BrowserContextKeyedServiceFactory {
  public:
-  static ExtensionActionUtil* GetForProfile(Profile* profile);
+  static ExtensionActionUtil* GetForBrowserContext(
+      content::BrowserContext* browser_context);
 
   static ExtensionActionUtilFactory* GetInstance();
 
@@ -57,7 +57,6 @@ class ExtensionActionUtil
       public extensions::ExtensionActionAPI::Observer,
       public extensions::ExtensionRegistryObserver,
       public TabStripModelObserver,
-      public ComponentActionDelegate,
       public ToolbarActionViewDelegate {
   friend struct base::DefaultSingletonTraits<ExtensionActionUtil>;
   Profile* profile_;
@@ -68,10 +67,6 @@ class ExtensionActionUtil
 
   ScopedObserver<ExtensionActionAPI, ExtensionActionAPI::Observer>
       extension_action_api_observer_;
-
-  static std::string GetShortcutTextForExtensionAction(
-      ExtensionAction* action,
-      content::BrowserContext* browser_context);
 
   void OnImageLoaded(const std::string& extension_id, const gfx::Image& image);
 
@@ -121,11 +116,6 @@ class ExtensionActionUtil
   // ToolbarActionViewDelegate:
   content::WebContents* GetCurrentWebContents() const override;
 
-  // ComponentActionDelegate:
-  void AddComponentAction(const std::string& action_id) override;
-  void RemoveComponentAction(const std::string& action_id) override;
-  bool HasComponentAction(const std::string& action_id) const override;
-
   // Overridden from TabStripModelObserver:
   void OnTabStripModelChanged(
     TabStripModel* tab_strip_model,
@@ -137,26 +127,6 @@ class ExtensionActionUtil
 
   // Returns true if a context menu is running.
   bool IsMenuRunning() const override;
-
-  // Fills the relevant information about an extensionaction for a specific tab.
-  // return true if the action should be added.
-  static bool FillInfoForTabId(
-      vivaldi::extension_action_utils::ExtensionInfo* info,
-      ExtensionAction* action,
-      int tab_id,
-      Profile* profile);
-
-  bool FillInfoFromComponentExtension(
-      const std::string* action_id,
-      vivaldi::extension_action_utils::ExtensionInfo* info,
-      Profile* profile);
-
-  static void FillInfoFromManifest(
-      vivaldi::extension_action_utils::ExtensionInfo* info,
-      const Extension* extension);
-
-  static bool GetWindowIdFromExtData(const std::string& extdata,
-                                     std::string* windowId);
 
   // Encodes the passed bitmap as a PNG represented as a dataurl.
   static std::string* EncodeBitmapToPng(const SkBitmap* bitmap);

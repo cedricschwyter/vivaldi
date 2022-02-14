@@ -19,6 +19,7 @@
 <translation id="1274977772557788323">Настройки хранилища Adobe Flash Player</translation>
 <translation id="1297175357211070620">Принтер</translation>
 <translation id="1303101771013849280">HTML-файл закладок</translation>
+<translation id="1380436189840894976">Закрыть приватное окно?</translation>
 <translation id="1430915738399379752">Печать</translation>
 <translation id="1433811987160647649">Спрашивать разрешение на доступ</translation>
 <translation id="1451375123200651445">Веб-страница, один файл</translation>
@@ -93,7 +94,6 @@
 <translation id="2662876636500006917">Интернет-магазин Vivaldi</translation>
 <translation id="2678063897982469759">Включить снова</translation>
 <translation id="2721037002783622288">Найти картинку в сети (<ph name="SEARCH_ENGINE" />)</translation>
-<translation id="2766006623206032690">Вставить и перейти</translation>
 <translation id="2785873697295365461">Дескрипторы файлов</translation>
 <translation id="2809586584051668049">и ещё <ph name="NUMBER_ADDITIONAL_DISABLED" /></translation>
 <translation id="2812989263793994277">Не показывать картинки</translation>
@@ -127,14 +127,12 @@
 <translation id="3222066309010235055">Предварительная обработка: <ph name="PRERENDER_CONTENTS_NAME" /></translation>
 <translation id="3227137524299004712">Микрофон</translation>
 <translation id="3241680850019875542">Выберите корневой каталог упаковываемого расширения. Для обновления расширения также укажите закрытый ключ.</translation>
-<translation id="3269093882174072735">Загрузить картинку</translation>
 <translation id="3280237271814976245">Сохранить как...</translation>
 <translation id="3288047731229977326">Расширения, запущенные в режиме разработчика, могут причинить вред вашему компьютеру. Если вы не разработчик, их следует отключить, чтобы обеспечить безопасность данных.</translation>
 <translation id="329838636886466101">Восстановить</translation>
 <translation id="3303818374450886607">Копии</translation>
 <translation id="3305661444342691068">Просмотр PDF</translation>
 <translation id="3317459757438853210">Двусторонняя печать</translation>
-<translation id="3319048459796106952">Новое окно в режиме &amp;инкогнито</translation>
 <translation id="3341703758641437857">Разрешить для локальных файлов</translation>
 <translation id="3347086966102161372">Копировать адрес картинки</translation>
 <translation id="3360297538363969800">Печать не удалась. Проверьте принтер и повторите попытку.</translation>
@@ -149,6 +147,7 @@
 <translation id="3505030558724226696">Запретить доступ к устройствам</translation>
 <translation id="3523642406908660543">Предупреждать о попытках доступа к компьютеру с помощью плагинов (рекомендуется)</translation>
 <translation id="354068948465830244">Может читать и изменять данные сайта</translation>
+<translation id="3574917942258583917">Закрыть приватное окно?</translation>
 <translation id="357886715122934472">&lt;strong&gt;<ph name="SENDER" />&lt;/strong&gt; хочет открыть доступ к принтеру &lt;strong&gt;<ph name="PRINTER_NAME" />&lt;/strong&gt; для вашей группы &lt;strong&gt;<ph name="GROUP_NAME" />&lt;/strong&gt;. Если вы примете приглашение, то все участники группы смогут пользоваться этим принтером.</translation>
 <translation id="3587482841069643663">Все</translation>
 <translation id="3627588569887975815">Открыть ссылку в приватном окне</translation>
@@ -241,11 +240,11 @@
 <translation id="52912272896845572">Неверный файл закрытого ключа.</translation>
 <translation id="5301954838959518834">ОК, готово</translation>
 <translation id="5317780077021120954">Сохранить</translation>
-<translation id="5329858601952122676">Удалить</translation>
 <translation id="5355926466126177564">Расширение "<ph name="EXTENSION_NAME" />" изменило поисковую систему по умолчанию в поле поиска.</translation>
 <translation id="5362741141255528695">Выберите файл закрытого ключа.</translation>
 <translation id="5370819323174483825">Перезагрузить</translation>
 <translation id="5398572795982417028">Размер страницы больше максимально допустимого (лимит ‒ <ph name="MAXIMUM_PAGE" />)</translation>
+<translation id="5425042808445046667">Продолжить скачивание</translation>
 <translation id="5431318178759467895">Цвет</translation>
 <translation id="5483785310822538350">Запретить доступ к файлам и устройствам</translation>
 <translation id="5485102783864353244">Установить</translation>
@@ -266,6 +265,7 @@
 <translation id="5707185214361380026">Не удалась загрузка расширения с:</translation>
 <translation id="5715711091495208045">Посредник: <ph name="PLUGIN_NAME" /></translation>
 <translation id="5746169159649715125">Сохранить как PDF</translation>
+<translation id="5747809636523347288">Вс&amp;тавить и перейти на страницу <ph name="URL" /></translation>
 <translation id="5759728514498647443"><ph name="APP_NAME" />" может читать документы, отправленные на печать через приложение "<ph name="APP_NAME" />.</translation>
 <translation id="5764483294734785780">Сохранить аудио как...</translation>
 <translation id="577624874850706961">Поиск файлов cookie</translation>
@@ -314,6 +314,7 @@
 <translation id="6498249116389603658">Все языки</translation>
 <translation id="6503077044568424649">Сайты</translation>
 <translation id="6508261954199872201">Приложение: <ph name="APP_NAME" /></translation>
+<translation id="6516243500644829484">Новое &amp;приватное окно</translation>
 <translation id="6518014396551869914">Копировать картинку</translation>
 <translation id="6550675742724504774">Параметры</translation>
 <translation id="6612358246767739896">Защищённый контент</translation>
@@ -398,6 +399,7 @@
 <translation id="8137559199583651773">Управление расширениями</translation>
 <translation id="8180239481735238521">страница</translation>
 <translation id="8188120771410500975">Проверка правописания в текстовых полях</translation>
+<translation id="8212008074015601248">{NUM_DOWNLOAD,plural, =1{Выполняется скачивание}one{Выполняется скачивание}few{Выполняется скачивание}many{Выполняется скачивание}other{Выполняется скачивание}}</translation>
 <translation id="8230134520748321204">Сохранить пароль для <ph name="ORIGIN" />?</translation>
 <translation id="8261378640211443080">В <ph name="IDS_EXTENSION_WEB_STORE_TITLE" /> нет сведений об этом расширении, оно могло быть установлено без вашего ведома.</translation>
 <translation id="8270242299912238708">PDF-файлы</translation>

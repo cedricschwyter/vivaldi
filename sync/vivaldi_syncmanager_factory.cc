@@ -21,6 +21,7 @@
 #include "chrome/browser/sync/profile_sync_service_factory.h"
 #include "chrome/browser/ui/global_error/global_error_service_factory.h"
 #include "chrome/common/channel_info.h"
+#include "components/browser_sync/browser_sync_switches.h"
 #include "components/keyed_service/content/browser_context_dependency_manager.h"
 #include "components/network_time/network_time_tracker.h"
 #include "components/signin/core/browser/signin_manager.h"
@@ -71,6 +72,10 @@ ProfileSyncService* VivaldiSyncManagerFactory::GetForProfile(Profile* profile) {
 // static
 VivaldiSyncManager* VivaldiSyncManagerFactory::GetForProfileVivaldi(
     Profile* profile) {
+  if (!switches::IsSyncAllowedByFlag()) {
+    return nullptr;
+  }
+
   return static_cast<VivaldiSyncManager*>(
       GetInstance()->GetServiceForBrowserContext(profile, true));
 }
@@ -118,7 +123,6 @@ KeyedService* VivaldiSyncManagerFactory::BuildServiceInstanceFor(
   init_params.start_behavior = ProfileSyncService::MANUAL_START;
 
   VivaldiSyncClient* sync_client = new VivaldiSyncClient(profile);
-  sync_client->Initialize();
   init_params.sync_client = base::WrapUnique(sync_client);
 
   init_params.network_time_update_callback = base::Bind(&UpdateNetworkTime);

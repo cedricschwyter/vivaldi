@@ -7,7 +7,6 @@
 #include <string>
 
 #include "base/memory/singleton.h"
-#include "chrome/browser/extensions/chrome_extension_function.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/profiles/profile_attributes_storage.h"
 #include "components/keyed_service/content/browser_context_keyed_service_factory.h"
@@ -42,7 +41,8 @@ typedef std::map<std::string, FeatureEntryPtr> FeatureEntryMap;
 class VivaldiRuntimeFeaturesFactory : public ProfileAttributesStorage::Observer,
                                       public BrowserContextKeyedServiceFactory {
  public:
-  static VivaldiRuntimeFeatures* GetForProfile(Profile* profile);
+  static VivaldiRuntimeFeatures* GetForBrowserContext(
+      content::BrowserContext* browser_context);
 
   static VivaldiRuntimeFeaturesFactory* GetInstance();
 
@@ -86,7 +86,8 @@ class VivaldiRuntimeFeatures : public KeyedService {
   ~VivaldiRuntimeFeatures() override;
 
   // Call to check if a named feature is enabled.
-  static bool IsEnabled(Profile* profile, const std::string& feature_name);
+  static bool IsEnabled(content::BrowserContext* browser_context,
+                        const std::string& feature_name);
 
   FeatureEntry* FindNamedFeature(const std::string& feature_name);
   const FeatureEntryMap& GetAllFeatures();
@@ -118,7 +119,7 @@ class RuntimePrivateExitFunction : public UIThreadExtensionFunction {
 };
 
 class RuntimePrivateGetAllFeatureFlagsFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("runtimePrivate.getAllFeatureFlags",
                              RUNTIME_SETFEATUREENABLED)
@@ -128,13 +129,13 @@ class RuntimePrivateGetAllFeatureFlagsFunction
  private:
   ~RuntimePrivateGetAllFeatureFlagsFunction() override = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(RuntimePrivateGetAllFeatureFlagsFunction);
 };
 
 class RuntimePrivateSetFeatureEnabledFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("runtimePrivate.setFeatureEnabled",
                              RUNTIME_GETALLFEATUREFLAGS)
@@ -144,13 +145,13 @@ class RuntimePrivateSetFeatureEnabledFunction
  private:
   ~RuntimePrivateSetFeatureEnabledFunction() override = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(RuntimePrivateSetFeatureEnabledFunction);
 };
 
 class RuntimePrivateIsGuestSessionFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("runtimePrivate.isGuestSession",
                              RUNTIME_ISGUESTSESSION)
@@ -160,13 +161,13 @@ class RuntimePrivateIsGuestSessionFunction
  private:
   ~RuntimePrivateIsGuestSessionFunction() override = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(RuntimePrivateIsGuestSessionFunction);
 };
 
 class RuntimePrivateHasGuestSessionFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("runtimePrivate.hasGuestSession",
                              RUNTIME_HASGUESTSESSION)
@@ -176,13 +177,13 @@ class RuntimePrivateHasGuestSessionFunction
  private:
   ~RuntimePrivateHasGuestSessionFunction() override = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(RuntimePrivateHasGuestSessionFunction);
 };
 
 class RuntimePrivateSwitchToGuestSessionFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("runtimePrivate.switchToGuestSession",
                              RUNTIME_SWITCHTOGUESTSESSION)
@@ -192,13 +193,13 @@ class RuntimePrivateSwitchToGuestSessionFunction
  private:
   ~RuntimePrivateSwitchToGuestSessionFunction() override = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(RuntimePrivateSwitchToGuestSessionFunction);
 };
 
 class RuntimePrivateCloseGuestSessionFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("runtimePrivate.closeGuestSession",
                              RUNTIME_CLOSEGUESTSESSION)
@@ -208,13 +209,13 @@ class RuntimePrivateCloseGuestSessionFunction
  private:
   ~RuntimePrivateCloseGuestSessionFunction() override = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(RuntimePrivateCloseGuestSessionFunction);
 };
 
 class RuntimePrivateOpenProfileSelectionWindowFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("runtimePrivate.openProfileSelectionWindow",
                              RUNTIME_OPENPROFILESELECTIONWINDOW)
@@ -224,13 +225,13 @@ class RuntimePrivateOpenProfileSelectionWindowFunction
  private:
   ~RuntimePrivateOpenProfileSelectionWindowFunction() override = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(RuntimePrivateOpenProfileSelectionWindowFunction);
 };
 
 class RuntimePrivateGetUserProfilesFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("runtimePrivate.getUserProfiles",
                              RUNTIME_GETUSERPROFILES)
@@ -240,13 +241,13 @@ class RuntimePrivateGetUserProfilesFunction
  private:
   ~RuntimePrivateGetUserProfilesFunction() override = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(RuntimePrivateGetUserProfilesFunction);
 };
 
 class RuntimePrivateOpenNamedProfileFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("runtimePrivate.openNamedProfile",
                              RUNTIME_OPENNAMEDPROFILE)
@@ -256,13 +257,13 @@ class RuntimePrivateOpenNamedProfileFunction
  private:
   ~RuntimePrivateOpenNamedProfileFunction() override = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(RuntimePrivateOpenNamedProfileFunction);
 };
 
 class RuntimePrivateCloseActiveProfileFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("runtimePrivate.closeActiveProfile",
                              RUNTIME_CLOSEACTIVEPROFILE)
@@ -272,7 +273,7 @@ class RuntimePrivateCloseActiveProfileFunction
  private:
   ~RuntimePrivateCloseActiveProfileFunction() override = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(RuntimePrivateCloseActiveProfileFunction);
 };

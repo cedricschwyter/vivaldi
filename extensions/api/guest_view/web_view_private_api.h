@@ -34,7 +34,7 @@ class WebViewPrivateSetVisibleFunction
     : public VivaldiWebViewChromeAsyncExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("webViewPrivate.setVisible",
-                             WEBVIEWINTERNAL_SETVISIBLE);
+                             WEBVIEWINTERNAL_SETVISIBLE)
 
   WebViewPrivateSetVisibleFunction();
 
@@ -77,7 +77,7 @@ class WebViewPrivateGetThumbnailFunction
     : public WebViewInternalThumbnailFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("webViewPrivate.getThumbnail",
-                             WEBVIEWINTERNAL_GETTHUMBNAIL);
+                             WEBVIEWINTERNAL_GETTHUMBNAIL)
 
   WebViewPrivateGetThumbnailFunction();
 
@@ -95,7 +95,7 @@ class WebViewPrivateGetThumbnailFromServiceFunction
     : public WebViewInternalThumbnailFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("webViewPrivate.getThumbnailFromService",
-                             WEBVIEWINTERNAL_GETTHUMBNAILFROMSERVICE);
+                             WEBVIEWINTERNAL_GETTHUMBNAILFROMSERVICE)
 
   WebViewPrivateGetThumbnailFromServiceFunction();
 
@@ -117,7 +117,7 @@ class WebViewPrivateAddToThumbnailServiceFunction
     : public WebViewInternalThumbnailFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("webViewPrivate.addToThumbnailService",
-                             WEBVIEWINTERNAL_ADDTOTHUMBNAILSERVICE);
+                             WEBVIEWINTERNAL_ADDTOTHUMBNAILSERVICE)
 
   WebViewPrivateAddToThumbnailServiceFunction();
 
@@ -139,7 +139,7 @@ class WebViewPrivateShowPageInfoFunction
     : public VivaldiWebViewChromeAsyncExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("webViewPrivate.showPageInfo",
-                             WEBVIEWINTERNAL_SHOWPAGEINFO);
+                             WEBVIEWINTERNAL_SHOWPAGEINFO)
 
   WebViewPrivateShowPageInfoFunction();
 
@@ -156,7 +156,7 @@ class WebViewPrivateSetIsFullscreenFunction
     : public VivaldiWebViewChromeAsyncExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("webViewPrivate.setIsFullscreen",
-                             WEBVIEWINTERNAL_SETISFULLSCREEN);
+                             WEBVIEWINTERNAL_SETISFULLSCREEN)
 
   WebViewPrivateSetIsFullscreenFunction();
 
@@ -173,7 +173,7 @@ class WebViewPrivateGetPageHistoryFunction
     : public VivaldiWebViewChromeAsyncExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("webViewPrivate.getPageHistory",
-                             WEBVIEWINTERNAL_GETPAGEHISTORY);
+                             WEBVIEWINTERNAL_GETPAGEHISTORY)
 
   WebViewPrivateGetPageHistoryFunction();
 
@@ -190,7 +190,7 @@ class WebViewPrivateSetExtensionHostFunction
     : public VivaldiWebViewChromeAsyncExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("webViewPrivate.setExtensionHost",
-                             WEBVIEWINTERNAL_SETEXTENSIONHOST);
+                             WEBVIEWINTERNAL_SETEXTENSIONHOST)
 
   WebViewPrivateSetExtensionHostFunction();
 

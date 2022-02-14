@@ -4,6 +4,7 @@
 
 #include "chrome/browser/ui/views/media_router/cast_dialog_view.h"
 
+#include "base/bind.h"
 #include "base/location.h"
 #include "base/optional.h"
 #include "base/strings/utf_string_conversions.h"
@@ -16,7 +17,6 @@
 #include "chrome/browser/ui/media_router/cast_dialog_model.h"
 #include "chrome/browser/ui/media_router/media_cast_mode.h"
 #include "chrome/browser/ui/media_router/ui_media_sink.h"
-#include "chrome/browser/ui/toolbar/component_toolbar_actions_factory.h"
 #include "chrome/browser/ui/views/chrome_layout_provider.h"
 #include "chrome/browser/ui/views/frame/browser_view.h"
 #include "chrome/browser/ui/views/frame/top_container_view.h"
@@ -41,6 +41,9 @@
 #include "ui/views/layout/fill_layout.h"
 #include "ui/views/view.h"
 #include "ui/views/window/dialog_client_view.h"
+
+#include "app/vivaldi_apptools.h"
+#include "extensions/api/vivaldi_utilities/vivaldi_utilities_api.h"
 
 namespace media_router {
 
@@ -67,7 +70,11 @@ void CastDialogView::ShowDialogWithToolbarAction(
 void CastDialogView::ShowDialogTopCentered(CastDialogController* controller,
                                            Browser* browser,
                                            const base::Time& start_time) {
-  ShowDialog(BrowserView::GetBrowserViewForBrowser(browser)->top_container(),
+  views::View* anchor_view =
+      BrowserView::GetBrowserViewForBrowser(browser)
+          ? BrowserView::GetBrowserViewForBrowser(browser)->top_container()
+          : nullptr;
+  ShowDialog(anchor_view,
              views::BubbleBorder::TOP_CENTER, controller, browser, start_time);
 }
 
@@ -256,6 +263,17 @@ CastDialogView::CastDialogView(views::View* anchor_view,
       browser_(browser),
       metrics_(start_time),
       weak_factory_(this) {
+
+  if (vivaldi::IsVivaldiRunning()) {
+    extensions::VivaldiUtilitiesAPI* api =
+      extensions::VivaldiUtilitiesAPI::GetFactoryInstance()->Get(
+        browser->profile());
+    std::string flow_direction;
+    gfx::Rect rect(api->GetDialogPosition(browser->session_id().id(),
+      "chromecast", &flow_direction));
+    SetAnchorRect(rect);
+  }
+
   ShowNoSinksView();
 }
 
@@ -440,7 +458,11 @@ base::Optional<MediaCastMode> CastDialogView::GetCastModeToUse(
 }
 
 void CastDialogView::DisableUnsupportedSinks() {
+  // Go through the AVAILABLE sinks and enable or disable them depending on
+  // whether they support the selected cast mode.
   for (CastDialogSinkButton* sink_button : sink_buttons_) {
+    if (sink_button->sink().state != UIMediaSinkState::AVAILABLE)
+      continue;
     const bool enable = GetCastModeToUse(sink_button->sink()).has_value();
     sink_button->SetEnabled(enable);
   }

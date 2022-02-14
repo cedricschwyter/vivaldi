@@ -242,11 +242,6 @@ class GuestViewBase : public content::BrowserPluginGuestDelegate,
   // of webcontents is working for webcontents owned by multiple guests.
   bool web_contents_is_owned_by_this_ = true;
 
-  // NOTE(andre@vivaldi.com) : We need to manage the BrowserPluginGuest when we
-  // move WebContents ownership between guests. Used to reset guest_host_ in
-  // between hand-overs.
-  content::BrowserPluginGuest* delegate_to_browser_plugin_ = nullptr;
-
  protected:
   explicit GuestViewBase(content::WebContents* owner_web_contents);
 
@@ -365,7 +360,7 @@ class GuestViewBase : public content::BrowserPluginGuestDelegate,
 
   void VivaldiStopTrackingEmbedderZoomLevel() {
     StopTrackingEmbedderZoomLevel();
-  };
+  }
 
   // NOTE(david@vivaldi.com): |connector_item_| is a proxy delegate which is
   // required by Vivaldi.
@@ -414,7 +409,7 @@ class GuestViewBase : public content::BrowserPluginGuestDelegate,
   void DidStopLoading() final;
   void RenderViewReady() final;
   void WebContentsDestroyed() final;
-  void WebContentsDidDetach(const content::WebContents* outermost) final;
+  void WebContentsDidDetach() final;
 
   // ui_zoom::ZoomObserver implementation.
   void OnZoomChanged(

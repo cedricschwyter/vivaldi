@@ -104,14 +104,12 @@
 <translation id="3222066309010235055">پیش رندر: <ph name="PRERENDER_CONTENTS_NAME" /></translation>
 <translation id="3227137524299004712">میکروفن</translation>
 <translation id="3241680850019875542">دایرکتوری ریشه برنامهٔ افزودنی را برای فشرده کردن انتخاب کنید. همچنین برای به‌روزرسانی برنامهٔ افزودنی، فایل کلید خصوصی را برای استفاده مجدد انتخاب کنید.</translation>
-<translation id="3269093882174072735">بارگیری تصویر</translation>
 <translation id="3280237271814976245">ذخیره &amp;بعنوان...</translation>
 <translation id="3288047731229977326">افزونه‌هایی که در حالت برنامه‌نوبس اجرا می‌شوند می‌توانند به رایانه شما آسیب برسانند. اگر برنامه‌نویس نیستید، باید این برنامه‌های افزودنی را که در حالت برنامه‌نویس اجرا می‌شوند غیرفعال کنید تا ایمن بمانید.</translation>
 <translation id="329838636886466101">تعمیر</translation>
 <translation id="3303818374450886607">کپی‌ها</translation>
 <translation id="3305661444342691068">گشودن PDF در پیش‌نمایش</translation>
 <translation id="3317459757438853210">دو طرفه</translation>
-<translation id="3319048459796106952">&amp;پنجره جدید حالت ناشناس</translation>
 <translation id="3341703758641437857">اجازه‌ی دسترسی به آدرس فایل‌ها</translation>
 <translation id="3347086966102161372">کپی آدرس تصویر</translation>
 <translation id="3360297538363969800">چاپ ناموفق بود. لطفاً چاپگرتان را بررسی کنید و دوباره امتحان کنید.</translation>
@@ -200,7 +198,6 @@
 <translation id="52912272896845572">فایل کلید خصوصی نامعتبر است.</translation>
 <translation id="5301954838959518834">بله، متوجه شدم</translation>
 <translation id="5317780077021120954">ذخیره</translation>
-<translation id="5329858601952122676">&amp;حذف</translation>
 <translation id="5355926466126177564">‏افزونه «<ph name="EXTENSION_NAME" />»، صفحه‌ای را تغییر داده است که هنگام جستجو از Omnibox نشان داده می‌شود.</translation>
 <translation id="5362741141255528695">فایل کلید خصوصی را انتخاب کنید.</translation>
 <translation id="5370819323174483825">&amp;تازه‌سازی</translation>

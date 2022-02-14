@@ -393,7 +393,6 @@ chrome.developerPrivate.GetExtensionsInfoOptions;
  *   incognitoAccess: (boolean|undefined),
  *   errorCollection: (boolean|undefined),
  *   hostAccess: (!chrome.developerPrivate.HostAccess|undefined)
- *   showActionButton: (boolean|undefined)
  * }}
  */
 chrome.developerPrivate.ExtensionConfigurationUpdate;

@@ -16,6 +16,7 @@
 #include "base/strings/utf_string_conversions.h"
 #include "base/task/post_task.h"
 #include "chrome/browser/profiles/profile.h"
+#include "components/browser_sync/browser_sync_switches.h"
 #include "components/invalidation/public/invalidator_state.h"
 #include "components/invalidation/public/object_id_invalidation_map.h"
 #include "components/sync/base/get_session_name.h"
@@ -183,10 +184,22 @@ vivaldi::sync::ClientAction ToVivaldiSyncClientAction(
 }
 
 vivaldi::sync::CycleData GetLastCycleData(syncer::SyncService* sync_service) {
+  vivaldi::sync::CycleData cycle_data;
+  cycle_data.is_ready = true;
+
+  if (!sync_service) {
+    cycle_data.has_synced = false;
+    cycle_data.last_sync_time = 0;
+    cycle_data.last_commit_result =
+        vivaldi::sync::SyncerError::SYNCER_ERROR_UNSET;
+    cycle_data.last_download_updates_result =
+        vivaldi::sync::SyncerError::SYNCER_ERROR_UNSET;
+    return cycle_data;
+  }
+
   syncer::SyncCycleSnapshot cycle_snapshot =
       sync_service->GetLastCycleSnapshot();
 
-  vivaldi::sync::CycleData cycle_data;
   cycle_data.last_sync_time = cycle_snapshot.sync_start_time().ToJsTime();
   cycle_data.last_commit_result =
       ToVivaldiSyncerError(cycle_snapshot.model_neutral_state().commit_result);
@@ -200,7 +213,6 @@ vivaldi::sync::CycleData GetLastCycleData(syncer::SyncService* sync_service) {
   sync_service->QueryDetailedSyncStatus(&status);
 
   cycle_data.next_retry_time = status.retry_time.ToJsTime();
-  cycle_data.is_ready = true;
 
   return cycle_data;
 }
@@ -208,23 +220,39 @@ vivaldi::sync::CycleData GetLastCycleData(syncer::SyncService* sync_service) {
 vivaldi::sync::EngineData GetEngineData(Profile* profile) {
   VivaldiSyncManager* sync_manager =
       VivaldiSyncManagerFactory::GetForProfileVivaldi(profile);
+
   vivaldi::sync::EngineData engine_data;
+  engine_data.is_ready = true;
 
-  if (!sync_manager->GetUserSettings()->IsSyncRequested() ||
-      sync_manager->GetTransportState() ==
-          syncer::SyncService::TransportState::WAITING_FOR_START_REQUEST) {
-    engine_data.engine_state = vivaldi::sync::EngineState::ENGINE_STATE_STOPPED;
+  if (!sync_manager) {
+    engine_data.engine_state = vivaldi::sync::EngineState::ENGINE_STATE_FAILED;
+    if (!switches::IsSyncAllowedByFlag())
+      engine_data.disable_reasons = {
+          vivaldi::sync::DisableReason::DISABLE_REASON_FLAG};
+    engine_data.protocol_error_type =
+        vivaldi::sync::ProtocolErrorType::PROTOCOL_ERROR_TYPE_UNKNOWN;
+    engine_data.protocol_error_client_action =
+        vivaldi::sync::ClientAction::CLIENT_ACTION_UNKNOWN;
 
-  } else if (sync_manager->is_clearing_sync_data()) {
+    return engine_data;
+  }
+
+  if (sync_manager->is_clearing_sync_data()) {
     engine_data.engine_state =
         vivaldi::sync::EngineState::ENGINE_STATE_CLEARING_DATA;
+  } else if (!sync_manager->GetUserSettings()->IsSyncRequested() ||
+             sync_manager->GetTransportState() ==
+                 syncer::SyncService::TransportState::START_DEFERRED) {
+    engine_data.engine_state = vivaldi::sync::EngineState::ENGINE_STATE_STOPPED;
 
   } else if (!sync_manager->CanSyncFeatureStart()) {
     engine_data.engine_state = vivaldi::sync::EngineState::ENGINE_STATE_FAILED;
 
   } else if (sync_manager->IsEngineInitialized()) {
     if (sync_manager->GetTransportState() ==
-        syncer::SyncService::TransportState::PENDING_DESIRED_CONFIGURATION) {
+            syncer::SyncService::TransportState::
+                PENDING_DESIRED_CONFIGURATION ||
+        !sync_manager->GetUserSettings()->IsFirstSetupComplete()) {
       engine_data.engine_state =
           vivaldi::sync::EngineState::ENGINE_STATE_CONFIGURATION_PENDING;
     } else {
@@ -255,9 +283,9 @@ vivaldi::sync::EngineData GetEngineData(Profile* profile) {
           ? sync_manager->GetUserSettings()->IsEncryptEverythingEnabled()
           : false;
   engine_data.uses_encryption_password =
-      sync_manager->IsUsingSecondaryPassphrase();
+      sync_manager->GetUserSettings()->IsUsingSecondaryPassphrase();
   engine_data.needs_decryption_password =
-      sync_manager->IsPassphraseRequiredForDecryption();
+      sync_manager->GetUserSettings()->IsPassphraseRequiredForDecryption();
   engine_data.is_setup_in_progress = sync_manager->IsSetupInProgress();
   engine_data.is_first_setup_complete =
       sync_manager->GetUserSettings()->IsFirstSetupComplete();
@@ -283,15 +311,16 @@ vivaldi::sync::EngineData GetEngineData(Profile* profile) {
     engine_data.data_types.push_back(std::move(data_type));
   }
 
-  engine_data.is_ready = true;
-
   return engine_data;
 }
 
 }  // anonymous namespace
 
 SyncEventRouter::SyncEventRouter(Profile* profile) : profile_(profile) {
-  VivaldiSyncManagerFactory::GetForProfileVivaldi(profile)->AddObserver(this);
+  VivaldiSyncManager* sync_manager =
+      VivaldiSyncManagerFactory::GetForProfileVivaldi(profile);
+  if (sync_manager)
+    sync_manager->AddObserver(this);
 }
 
 SyncEventRouter::~SyncEventRouter() {}
@@ -357,17 +386,11 @@ ExtensionFunction::ResponseAction SyncStartFunction::Run() {
   VivaldiSyncManager* sync_manager =
       VivaldiSyncManagerFactory::GetForProfileVivaldi(
           Profile::FromBrowserContext(context_));
-  DCHECK(sync_manager);
 
-  if (!sync_manager->GetUserSettings()->IsFirstSetupComplete()) {
-    SyncAPI::GetFactoryInstance()
-        ->Get(Profile::FromBrowserContext(context_))
-        ->StartSyncSetup(sync_manager);
-  }
+  if (!sync_manager)
+    return RespondNow(NoArguments());
 
-  if (!sync_manager->IsEngineInitialized()) {
-    sync_manager->GetUserSettings()->SetSyncRequested(true);
-  }
+  sync_manager->GetUserSettings()->SetSyncRequested(true);
 
   return RespondNow(NoArguments());
 }
@@ -376,8 +399,9 @@ ExtensionFunction::ResponseAction SyncStopFunction::Run() {
   VivaldiSyncManager* sync_manager =
       VivaldiSyncManagerFactory::GetForProfileVivaldi(
           Profile::FromBrowserContext(context_));
+
   if (!sync_manager)
-    return RespondNow(Error("Sync manager is unavailable"));
+    return RespondNow(NoArguments());
 
   sync_manager->StopAndClear();
   return RespondNow(NoArguments());
@@ -403,7 +427,7 @@ ExtensionFunction::ResponseAction SyncSetEncryptionPasswordFunction::Run() {
   if (sync_manager->IsPassphraseRequired()) {
     success = sync_manager->GetUserSettings()->SetDecryptionPassphrase(
         params->password);
-  } else if (!sync_manager->IsUsingSecondaryPassphrase()) {
+  } else if (!sync_manager->GetUserSettings()->IsUsingSecondaryPassphrase()) {
     sync_manager->GetUserSettings()->SetEncryptionPassphrase(params->password);
     success = true;
   }
@@ -466,12 +490,6 @@ ExtensionFunction::ResponseAction SyncSetTypesFunction::Run() {
 }
 
 ExtensionFunction::ResponseAction SyncGetEngineStateFunction::Run() {
-  VivaldiSyncManager* sync_manager =
-      VivaldiSyncManagerFactory::GetForProfileVivaldi(
-          Profile::FromBrowserContext(context_));
-  if (!sync_manager)
-    return RespondNow(Error("Sync manager is unavailable"));
-
   return RespondNow(ArgumentList(vivaldi::sync::GetEngineState::Results::Create(
       GetEngineData(Profile::FromBrowserContext(context_)))));
 }
@@ -480,8 +498,6 @@ ExtensionFunction::ResponseAction SyncGetLastCycleStateFunction::Run() {
   VivaldiSyncManager* sync_manager =
       VivaldiSyncManagerFactory::GetForProfileVivaldi(
           Profile::FromBrowserContext(context_));
-  if (!sync_manager)
-    return RespondNow(Error("Sync manager is unavailable"));
 
   return RespondNow(
       ArgumentList(vivaldi::sync::GetLastCycleState::Results::Create(

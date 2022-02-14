@@ -6,6 +6,7 @@
 
 #include <utility>
 
+#include "base/bind.h"
 #include "base/command_line.h"
 #include "base/containers/flat_set.h"
 #include "base/location.h"
@@ -66,7 +67,7 @@
 #include "app/vivaldi_apptools.h"
 #include "ui/views/widget/widget_delegate.h"
 
-DEFINE_UI_CLASS_PROPERTY_TYPE(views::DesktopWindowTreeHostX11*);
+DEFINE_UI_CLASS_PROPERTY_TYPE(views::DesktopWindowTreeHostX11*)
 
 namespace views {
 
@@ -74,11 +75,11 @@ DesktopWindowTreeHostX11* DesktopWindowTreeHostX11::g_current_capture =
     NULL;
 std::list<XID>* DesktopWindowTreeHostX11::open_windows_ = NULL;
 
-DEFINE_UI_CLASS_PROPERTY_KEY(
-    aura::Window*, kViewsWindowForRootWindow, NULL);
+DEFINE_UI_CLASS_PROPERTY_KEY(aura::Window*, kViewsWindowForRootWindow, NULL)
 
-DEFINE_UI_CLASS_PROPERTY_KEY(
-    DesktopWindowTreeHostX11*, kHostForRootWindow, NULL);
+DEFINE_UI_CLASS_PROPERTY_KEY(DesktopWindowTreeHostX11*,
+                             kHostForRootWindow,
+                             NULL)
 
 namespace {
 
@@ -463,8 +464,8 @@ void DesktopWindowTreeHostX11::Close() {
     // may delete ourselves on destroy and the ATL callback would still
     // dereference us when the callback returns).
     base::ThreadTaskRunnerHandle::Get()->PostTask(
-        FROM_HERE, base::Bind(&DesktopWindowTreeHostX11::CloseNow,
-                              close_widget_factory_.GetWeakPtr()));
+        FROM_HERE, base::BindOnce(&DesktopWindowTreeHostX11::CloseNow,
+                                  close_widget_factory_.GetWeakPtr()));
   }
 }
 
@@ -1000,9 +1001,9 @@ void DesktopWindowTreeHostX11::FrameTypeChanged() {
   // NonClientView::UpdateFrame() to update the frame-view when theme changes,
   // like all other views).
   base::ThreadTaskRunnerHandle::Get()->PostTask(
-      FROM_HERE, base::Bind(&DesktopWindowTreeHostX11::DelayedChangeFrameType,
-                            weak_factory_.GetWeakPtr(),
-                            new_type));
+      FROM_HERE,
+      base::BindOnce(&DesktopWindowTreeHostX11::DelayedChangeFrameType,
+                     weak_factory_.GetWeakPtr(), new_type));
 }
 
 void DesktopWindowTreeHostX11::SetFullscreen(bool fullscreen) {

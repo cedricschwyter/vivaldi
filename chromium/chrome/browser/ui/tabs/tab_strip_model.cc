@@ -22,6 +22,7 @@
 #include "chrome/browser/extensions/tab_helper.h"
 #include "chrome/browser/lifetime/browser_shutdown.h"
 #include "chrome/browser/profiles/profile.h"
+#include "chrome/browser/send_tab_to_self/send_tab_to_self_util.h"
 #include "chrome/browser/ui/browser.h"
 #include "chrome/browser/ui/browser_finder.h"
 #include "chrome/browser/ui/tabs/tab_group_data.h"
@@ -219,9 +220,7 @@ void TabStripModel::WebContentsData::WebContentsDestroyed() {
   // WebContents observer - this is just a temporary sanity check to make sure
   // that unit tests are not destroyed a WebContents out from under a
   // TabStripModel.
-  if (!vivaldi::IsVivaldiRunning()) {
   NOTREACHED();
-  }
 }
 
 // Holds state for a WebContents that has been detached from the tab strip.
@@ -555,13 +554,36 @@ void TabStripModel::SendDetachWebContentsNotifications(
   }
 }
 
-void TabStripModel::ActivateTabAt(int index, bool user_gesture) {
+void TabStripModel::ActivateTabAt(int index, UserGestureDetails user_gesture) {
   DCHECK(ContainsIndex(index));
+  TRACE_EVENT0("ui", "TabStripModel::ActivateTabAt");
+
+  TabSwitchEventLatencyRecorder::EventType event_type;
+  switch (user_gesture.type) {
+    case GestureType::kMouse:
+      event_type = TabSwitchEventLatencyRecorder::EventType::kMouse;
+      break;
+    case GestureType::kKeyboard:
+      event_type = TabSwitchEventLatencyRecorder::EventType::kKeyboard;
+      break;
+    case GestureType::kTouch:
+      event_type = TabSwitchEventLatencyRecorder::EventType::kTouch;
+      break;
+    case GestureType::kWheel:
+      event_type = TabSwitchEventLatencyRecorder::EventType::kWheel;
+      break;
+    default:
+      event_type = TabSwitchEventLatencyRecorder::EventType::kOther;
+      break;
+  }
+  tab_switch_event_latency_recorder_.BeginLatencyTiming(user_gesture.time_stamp,
+                                                        event_type);
   ui::ListSelectionModel new_model = selection_model_;
   new_model.SetSelectedIndex(index);
   SetSelection(std::move(new_model),
-               user_gesture ? TabStripModelObserver::CHANGE_REASON_USER_GESTURE
-                            : TabStripModelObserver::CHANGE_REASON_NONE,
+               user_gesture.type != GestureType::kNone
+                   ? TabStripModelObserver::CHANGE_REASON_USER_GESTURE
+                   : TabStripModelObserver::CHANGE_REASON_NONE,
                /*triggered_by_other_operation=*/false);
 }
 
@@ -930,16 +952,16 @@ void TabStripModel::CloseSelectedTabs() {
       CLOSE_CREATE_HISTORICAL_TAB | CLOSE_USER_GESTURE);
 }
 
-void TabStripModel::SelectNextTab() {
-  SelectRelativeTab(true);
+void TabStripModel::SelectNextTab(UserGestureDetails detail) {
+  SelectRelativeTab(true, detail);
 }
 
-void TabStripModel::SelectPreviousTab() {
-  SelectRelativeTab(false);
+void TabStripModel::SelectPreviousTab(UserGestureDetails detail) {
+  SelectRelativeTab(false, detail);
 }
 
-void TabStripModel::SelectLastTab() {
-  ActivateTabAt(count() - 1, true);
+void TabStripModel::SelectLastTab(UserGestureDetails detail) {
+  ActivateTabAt(count() - 1, detail);
 }
 
 void TabStripModel::MoveTabNext() {
@@ -1130,7 +1152,6 @@ bool TabStripModel::IsContextMenuCommandEnabled(
       return delegate()->GetRestoreTabType() !=
              TabStripModelDelegate::RESTORE_NONE;
 
-    case CommandToggleTabAudioMuted:
     case CommandToggleSiteMuted: {
       std::vector<int> indices = GetIndicesForCommand(context_index);
       for (size_t i = 0; i < indices.size(); ++i) {
@@ -1145,6 +1166,9 @@ bool TabStripModel::IsContextMenuCommandEnabled(
              delegate()->CanBookmarkAllTabs();
 
     case CommandTogglePinned:
+      return true;
+
+    case CommandFocusMode:
       return true;
 
     case CommandSendToMyDevices:
@@ -1246,8 +1270,7 @@ void TabStripModel::ExecuteContextMenuCommand(int context_index,
     }
 
     case CommandSendToMyDevices: {
-      // TODO(tinazwang): add implementation
-      NOTIMPLEMENTED();
+      send_tab_to_self::CreateNewEntry(GetActiveWebContents(), profile_);
       break;
     }
 
@@ -1267,17 +1290,8 @@ void TabStripModel::ExecuteContextMenuCommand(int context_index,
       break;
     }
 
-    case CommandToggleTabAudioMuted: {
-      std::vector<int> indices = GetIndicesForCommand(context_index);
-      const bool mute = WillContextMenuMute(context_index);
-      if (mute)
-        base::RecordAction(UserMetricsAction("TabContextMenu_MuteTabs"));
-      else
-        base::RecordAction(UserMetricsAction("TabContextMenu_UnmuteTabs"));
-      for (auto i = indices.begin(); i != indices.end(); ++i) {
-        chrome::SetTabAudioMuted(GetWebContentsAt(*i), mute,
-                                 TabMutedReason::CONTEXT_MENU, std::string());
-      }
+    case CommandFocusMode: {
+      // TODO(yiningwang) (936096): Add Implementation.
       break;
     }
 
@@ -1334,11 +1348,6 @@ void TabStripModel::ExecuteAddToExistingGroupCommand(
   AddToExistingGroup(GetIndicesForCommand(context_index), group);
 }
 
-bool TabStripModel::WillContextMenuMute(int index) {
-  std::vector<int> indices = GetIndicesForCommand(index);
-  return !chrome::AreAllTabsMuted(*this, indices);
-}
-
 bool TabStripModel::WillContextMenuMuteSites(int index) {
   return !chrome::AreAllSitesMuted(*this, GetIndicesForCommand(index));
 }
@@ -1373,6 +1382,9 @@ bool TabStripModel::ContextMenuCommandToBrowserCommand(int cmd_id,
       break;
     case CommandRestoreTab:
       *browser_cmd = IDC_RESTORE_TAB;
+      break;
+    case CommandFocusMode:
+      *browser_cmd = IDC_FOCUS_THIS_TAB;
       break;
     case CommandBookmarkAllTabs:
       *browser_cmd = IDC_BOOKMARK_ALL_TABS;
@@ -1620,6 +1632,10 @@ TabStripSelectionChange TabStripModel::SetSelection(
 
   if (!triggered_by_other_operation &&
       (selection.active_tab_changed() || selection.selection_changed())) {
+    if (selection.active_tab_changed()) {
+      tab_switch_event_latency_recorder_.OnWillChangeActiveTab(
+          base::TimeTicks::Now());
+    }
     TabStripModelChange change;
     auto visibility_tracker = InstallRenderWigetVisibilityTracker(selection);
     for (auto& observer : observers_)
@@ -1629,7 +1645,7 @@ TabStripSelectionChange TabStripModel::SetSelection(
   return selection;
 }
 
-void TabStripModel::SelectRelativeTab(bool next) {
+void TabStripModel::SelectRelativeTab(bool next, UserGestureDetails detail) {
   // This may happen during automated testing or if a user somehow buffers
   // many key accelerators.
   if (contents_data_.empty())
@@ -1638,7 +1654,7 @@ void TabStripModel::SelectRelativeTab(bool next) {
   int index = active_index();
   int delta = next ? 1 : -1;
   index = (index + count() + delta) % count();
-  ActivateTabAt(index, true);
+  ActivateTabAt(index, detail);
 }
 
 void TabStripModel::MoveWebContentsAtImpl(int index,

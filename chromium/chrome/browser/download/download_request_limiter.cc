@@ -466,8 +466,7 @@ void DownloadRequestLimiter::CanDownload(
     const content::ResourceRequestInfo::WebContentsGetter& web_contents_getter,
     const GURL& url,
     const std::string& request_method,
-    const Callback& callback,
-    const content::DownloadInformation& info) {
+    const Callback& callback) {
   DCHECK_CURRENTLY_ON(BrowserThread::UI);
 
   content::WebContents* originating_contents = web_contents_getter.Run();
@@ -489,7 +488,6 @@ void DownloadRequestLimiter::CanDownload(
       &DownloadRequestLimiter::OnCanDownloadDecided, factory_.GetWeakPtr(),
       web_contents_getter, request_method, callback);
 
-  originating_contents->GetDelegate()->SetDownloadInformation(info);
   originating_contents->GetDelegate()->CanDownload(url, request_method,
                                                    can_download_callback);
 }

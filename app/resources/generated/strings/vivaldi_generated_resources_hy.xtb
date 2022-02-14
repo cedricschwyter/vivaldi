@@ -117,14 +117,12 @@
 <translation id="3222066309010235055">Նախնական ռենդեր. <ph name="PRERENDER_CONTENTS_NAME" /></translation>
 <translation id="3227137524299004712">Խոսափող</translation>
 <translation id="3241680850019875542">Ընտրեք արմատային պանակը՝ ընդլայնումը փաթեթավորելու համար։ Ընդլայնումը թարմացնելու համար ընտրեք նաև մասնավոր բանալիի ֆայլը՝ վերօգտագործելու համար։</translation>
-<translation id="3269093882174072735">Բեռնել պատկերը</translation>
 <translation id="3280237271814976245">Պահպանել &amp;որպես…</translation>
 <translation id="3288047731229977326">Մշակողի ռեժիմում աշխատող ընդլայնումները կարող են վնասել Ձեր համակարգչին։ Եթե Դուք մշակող չեք, ապա անջատեք այդ ընդլայնումներն ապահովության համար։</translation>
 <translation id="329838636886466101">Նորոգել</translation>
 <translation id="3303818374450886607">Պատճեններ</translation>
 <translation id="3305661444342691068">Բացել PDF-ը նախադիտման տեղում</translation>
 <translation id="3317459757438853210">Երկկողմանի</translation>
-<translation id="3319048459796106952">Նոր &amp;գաղտնի պատուհան</translation>
 <translation id="3341703758641437857">Թույլատրել մուտք դեպի ֆայլերի URL-ներ</translation>
 <translation id="3347086966102161372">Պատճենե&amp;լ պատկերի հասցեն</translation>
 <translation id="3360297538363969800">Տպումը ձախողվեց։ Խնդրում ենք ստուգեք Ձեր տպիչն ու փորձեք նորից։</translation>
@@ -218,7 +216,6 @@
 <translation id="52912272896845572">Մասնավոր բանալիի ֆայլն անվավեր է։</translation>
 <translation id="5301954838959518834">Լավ, հասկանալի է</translation>
 <translation id="5317780077021120954">Պահպանել</translation>
-<translation id="5329858601952122676">&amp;Ջնջել</translation>
 <translation id="5355926466126177564">«<ph name="EXTENSION_NAME" />» ընդլայնումը փոխել է ստանդարտ որոնիչը, որով Դուք որոնում եք հասցեի տողի միջոցով։</translation>
 <translation id="5362741141255528695">Ընտրեք մասնավոր բանալիի ֆայլը։</translation>
 <translation id="5370819323174483825">&amp;Թարմացնել</translation>
@@ -281,6 +278,7 @@
 <translation id="6295158916970320988">Բոլոր կայքերը</translation>
 <translation id="6295855836753816081">Պահպանվում է…</translation>
 <translation id="6308937455967653460">Պահպանել հ&amp;ղումը որպես…</translation>
+<translation id="6385543213911723544">Կայքերը կարող են պահպանել ու կարդալ քուքի տվյալներ</translation>
 <translation id="6398765197997659313">Լիաէկրան ռեժիմից դուրս գալ</translation>
 <translation id="6406303162637086258">Ձևացնել բրաուզերի վերագործարկում</translation>
 <translation id="6445450263907939268">Եթե Դուք չեք ցանկացել այս փոփոխությունները, կարող եք վերականգնել նախկին կարգավորումները։</translation>
@@ -330,6 +328,7 @@
 <translation id="7564847347806291057">Ավարտել պրոցեսը</translation>
 <translation id="7576690715254076113">Խմբավորել</translation>
 <translation id="7629827748548208700">Ներդիր. <ph name="TAB_NAME" /></translation>
+<translation id="7661259717474717992">Թույլ տալ կայքերին պահպանել և կարդալ քուքի տվյալներ</translation>
 <translation id="7663719505383602579">Ստացող. <ph name="ARC_PROCESS_NAME" /></translation>
 <translation id="7685049629764448582">JavaScript-ի հիշողություն</translation>
 <translation id="7701040980221191251">Չկա</translation>

@@ -39,7 +39,7 @@ inline void
 CommandLineAppendSwitchNoDup(base::CommandLine& cmd_line,
                              const std::string& switch_string) {
   CommandLineAppendSwitchNoDup(&cmd_line, switch_string);
-};
+}
 
 GURL GetVivaldiNewTabURL();
 

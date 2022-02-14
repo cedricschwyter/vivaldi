@@ -7,6 +7,7 @@
 #include <memory>
 #include <utility>
 
+#include "base/bind.h"
 #include "base/lazy_instance.h"
 #include "base/macros.h"
 #include "base/strings/utf_string_conversions.h"
@@ -632,13 +633,13 @@ void GuestViewBase::WillAttach(WebContents* embedder_web_contents,
     static_cast<content::WebContentsImpl*>(web_contents())->DetachFromOuter();
     // this is usually |GuestViewBase::DidAttach|
     attach_completion_callback_ = std::move(completion_callback);
-    WebContentsDidDetach(embedder_web_contents);
+    WebContentsDidDetach();
   }
   else {
 
 
   if (content::GuestMode::IsCrossProcessFrameGuest(web_contents())) {
-    web_contents()->AttachToOuterWebContentsFrame(
+    owner_web_contents_->AttachInnerWebContents(
         base::WrapUnique<WebContents>(web_contents()), outer_contents_frame);
     // TODO(ekaramad): MimeHandlerViewGuest might not need this ACK
     // (https://crbug.com/659750).
@@ -702,7 +703,7 @@ void GuestViewBase::WebContentsDestroyed() {
   delete this;
 }
 
-void GuestViewBase::WebContentsDidDetach(const content::WebContents* outermost) {
+void GuestViewBase::WebContentsDidDetach() {
   // We can now safely do any pending attaching.
   if (perform_attach_callback_)
     std::move(perform_attach_callback_).Run();

@@ -267,7 +267,7 @@ WMFMediaPipeline::~WMFMediaPipeline() {
   media_pipeline_task_runner_->DeleteSoon(FROM_HERE, threaded_impl_.release());
   if (byte_stream_)
     byte_stream_->Stop();
-};
+}
 
 void WMFMediaPipeline::Initialize(const std::string& mime_type,
                                   const InitializeCB& initialize_cb) {

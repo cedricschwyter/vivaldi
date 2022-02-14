@@ -39,6 +39,7 @@
 #include "components/prefs/pref_filter.h"
 #include "components/prefs/scoped_user_pref_update.h"
 #include "extensions/api/vivaldi_utilities/vivaldi_utilities_api.h"
+#include "extensions/api/window/window_private_api.h"
 #include "extensions/browser/extensions_browser_client.h"
 #include "extensions/schema/runtime_private.h"
 #include "extensions/tools/vivaldi_tools.h"
@@ -69,14 +70,19 @@ VivaldiRuntimeFeatures::VivaldiRuntimeFeatures()
 VivaldiRuntimeFeatures::~VivaldiRuntimeFeatures() {}
 
 /* static */
-bool VivaldiRuntimeFeatures::IsEnabled(Profile* profile,
+bool VivaldiRuntimeFeatures::IsEnabled(content::BrowserContext* context,
                                        const std::string& feature_name) {
   extensions::VivaldiRuntimeFeatures* features =
-      extensions::VivaldiRuntimeFeaturesFactory::GetForProfile(profile);
+      extensions::VivaldiRuntimeFeaturesFactory::GetForBrowserContext(context);
   DCHECK(features);
   FeatureEntry* feature = features->FindNamedFeature(feature_name);
   DCHECK(feature);
+  // Check different flags for official builds and sopranos/internal builds.
+#if defined(OFFICIAL_BUILD)
   return (feature && feature->enabled);
+#else
+  return (feature && feature->internal_enabled);
+#endif  // defined(OFFICIAL_BUILD)
 }
 
 void VivaldiRuntimeFeatures::LoadRuntimeFeatures() {
@@ -201,10 +207,10 @@ const FeatureEntryMap& VivaldiRuntimeFeatures::GetAllFeatures() {
   return flags_;
 }
 
-VivaldiRuntimeFeatures* VivaldiRuntimeFeaturesFactory::GetForProfile(
-    Profile* profile) {
+VivaldiRuntimeFeatures* VivaldiRuntimeFeaturesFactory::GetForBrowserContext(
+    content::BrowserContext* browser_context) {
   return static_cast<VivaldiRuntimeFeatures*>(
-      GetInstance()->GetServiceForBrowserContext(profile, true));
+      GetInstance()->GetServiceForBrowserContext(browser_context, true));
 }
 
 VivaldiRuntimeFeaturesFactory* VivaldiRuntimeFeaturesFactory::GetInstance() {
@@ -318,7 +324,7 @@ ExtensionFunction::ResponseAction RuntimePrivateExitFunction::Run() {
   // Free any open devtools if the user selects Exit from the menu.
   extensions::DevtoolsConnectorAPI* api =
       extensions::DevtoolsConnectorAPI::GetFactoryInstance()->Get(
-          Profile::FromBrowserContext(browser_context()));
+          browser_context());
   DCHECK(api);
   api->CloseAllDevtools();
 
@@ -333,9 +339,13 @@ ExtensionFunction::ResponseAction RuntimePrivateExitFunction::Run() {
   return RespondNow(NoArguments());
 }
 
-bool RuntimePrivateGetAllFeatureFlagsFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+RuntimePrivateGetAllFeatureFlagsFunction::Run() {
+  namespace Results = vivaldi::runtime_private::GetAllFeatureFlags::Results;
+
   extensions::VivaldiRuntimeFeatures* features =
-      extensions::VivaldiRuntimeFeaturesFactory::GetForProfile(GetProfile());
+      extensions::VivaldiRuntimeFeaturesFactory::GetForBrowserContext(
+          browser_context());
 
   const FeatureEntryMap& flags = features->GetAllFeatures();
   std::vector<FeatureFlagInfo> results;
@@ -351,20 +361,20 @@ bool RuntimePrivateGetAllFeatureFlagsFunction::RunAsync() {
 
     results.push_back(std::move(*flag));
   }
-  results_ =
-      vivaldi::runtime_private::GetAllFeatureFlags::Results::Create(results);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(results)));
 }
 
-bool RuntimePrivateSetFeatureEnabledFunction::RunAsync() {
-  std::unique_ptr<vivaldi::runtime_private::SetFeatureEnabled::Params> params(
-      vivaldi::runtime_private::SetFeatureEnabled::Params::Create(*args_));
+ExtensionFunction::ResponseAction
+RuntimePrivateSetFeatureEnabledFunction::Run() {
+  using vivaldi::runtime_private::SetFeatureEnabled::Params;
+  namespace Results = vivaldi::runtime_private::SetFeatureEnabled::Results;
+
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   extensions::VivaldiRuntimeFeatures* features =
-      extensions::VivaldiRuntimeFeaturesFactory::GetForProfile(GetProfile());
+      extensions::VivaldiRuntimeFeaturesFactory::GetForBrowserContext(
+          browser_context());
 
   bool found = false;
   FeatureEntry* entry = features->FindNamedFeature(params->feature_name);
@@ -374,8 +384,9 @@ bool RuntimePrivateSetFeatureEnabledFunction::RunAsync() {
     // Update the entry in-memory only so the list is always up-to-date.
     entry->internal_enabled = entry->enabled = enable_entry;
     found = true;
-    ListPrefUpdate update(GetProfile()->GetPrefs(),
-                          vivaldiprefs::kVivaldiExperiments);
+    ListPrefUpdate update(
+        Profile::FromBrowserContext(browser_context())->GetPrefs(),
+        vivaldiprefs::kVivaldiExperiments);
     base::ListValue* experiments_list = update.Get();
 
     experiments_list->Clear();
@@ -388,29 +399,26 @@ bool RuntimePrivateSetFeatureEnabledFunction::RunAsync() {
       }
     }
   }
-  results_ =
-      vivaldi::runtime_private::SetFeatureEnabled::Results::Create(found);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(found)));
 }
 
-bool RuntimePrivateIsGuestSessionFunction::RunAsync() {
+ExtensionFunction::ResponseAction RuntimePrivateIsGuestSessionFunction::Run() {
+  namespace Results = vivaldi::runtime_private::IsGuestSession::Results;
+
+  Profile *profile = Profile::FromBrowserContext(browser_context());
   bool is_guest = false;
   PrefService* service = g_browser_process->local_state();
   DCHECK(service);
   if (service->GetBoolean(prefs::kBrowserGuestModeEnabled) &&
-      !GetProfile()->IsSupervised()) {
-    is_guest = GetProfile()->IsGuestSession();
+      !profile->IsSupervised()) {
+    is_guest = profile->IsGuestSession();
   }
-  results_ =
-      vivaldi::runtime_private::IsGuestSession::Results::Create(is_guest);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(is_guest)));
 }
 
-bool RuntimePrivateHasGuestSessionFunction::RunAsync() {
+ExtensionFunction::ResponseAction RuntimePrivateHasGuestSessionFunction::Run() {
+  namespace Results = vivaldi::runtime_private::HasGuestSession::Results;
+
   bool has_guest = false;
   for (auto* browser : *BrowserList::GetInstance()) {
     if (browser->profile()->IsGuestSession()) {
@@ -418,14 +426,13 @@ bool RuntimePrivateHasGuestSessionFunction::RunAsync() {
       break;
     }
   }
-  results_ =
-    vivaldi::runtime_private::HasGuestSession::Results::Create(has_guest);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(has_guest)));
 }
 
-bool RuntimePrivateSwitchToGuestSessionFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+RuntimePrivateSwitchToGuestSessionFunction::Run() {
+  namespace Results = vivaldi::runtime_private::SwitchToGuestSession::Results;
+
   PrefService* service = g_browser_process->local_state();
   DCHECK(service);
   DCHECK(service->GetBoolean(prefs::kBrowserGuestModeEnabled));
@@ -436,49 +443,48 @@ bool RuntimePrivateSwitchToGuestSessionFunction::RunAsync() {
     profiles::SwitchToGuestProfile(ProfileManager::CreateCallback());
   }
 
-  results_ =
-      vivaldi::runtime_private::SwitchToGuestSession::Results::Create(success);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(success)));
 }
 
-bool RuntimePrivateCloseGuestSessionFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+RuntimePrivateCloseGuestSessionFunction::Run() {
+  namespace Results = vivaldi::runtime_private::CloseGuestSession::Results;
+
   profiles::CloseGuestProfileWindows();
 
-  results_ = vivaldi::runtime_private::CloseGuestSession::Results::Create(true);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(true)));
 }
 
-bool RuntimePrivateOpenProfileSelectionWindowFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+RuntimePrivateOpenProfileSelectionWindowFunction::Run() {
+  namespace Results =
+      vivaldi::runtime_private::OpenProfileSelectionWindow::Results;
+
   // If this is a guest session, close all the guest browser windows.
-  if (GetProfile()->IsGuestSession()) {
+  Profile *profile = Profile::FromBrowserContext(browser_context());
+  if (profile->IsGuestSession()) {
     profiles::CloseGuestProfileWindows();
   } else {
     UserManager::Show(base::FilePath(),
                       profiles::USER_MANAGER_SELECT_PROFILE_NO_ACTION);
   }
-  results_ =
-      vivaldi::runtime_private::OpenProfileSelectionWindow::Results::Create(
-          true);
-
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(true)));
 }
 
-bool RuntimePrivateGetUserProfilesFunction::RunAsync() {
-  std::unique_ptr<vivaldi::runtime_private::GetUserProfiles::Params> params(
-      vivaldi::runtime_private::GetUserProfiles::Params::Create(*args_));
+ExtensionFunction::ResponseAction RuntimePrivateGetUserProfilesFunction::Run() {
+  using vivaldi::runtime_private::GetUserProfiles::Params;
+  namespace Results = vivaldi::runtime_private::GetUserProfiles::Results;
+
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   ProfileManager* manager = g_browser_process->profile_manager();
   ProfileAttributesStorage& storage = manager->GetProfileAttributesStorage();
 
   // Find the active entry.
+  Profile *profile = Profile::FromBrowserContext(browser_context());
   ProfileAttributesEntry* active_entry = nullptr;
-  storage.GetProfileAttributesWithPath(GetProfile()->GetPath(), &active_entry);
+  storage.GetProfileAttributesWithPath(profile->GetPath(), &active_entry);
 
   std::vector<vivaldi::runtime_private::UserProfile> profiles;
 
@@ -490,7 +496,7 @@ bool RuntimePrivateGetUserProfilesFunction::RunAsync() {
       continue;
     }
     profile.active = (active_entry == entry);
-    profile.default_avatar = entry->IsUsingDefaultAvatar();
+    profile.guest = false;
     profile.name = base::UTF16ToUTF8(entry->GetUserName());
     if (profile.name.empty()) {
       profile.name = base::UTF16ToUTF8(entry->GetName());
@@ -526,16 +532,29 @@ bool RuntimePrivateGetUserProfilesFunction::RunAsync() {
     }
     profiles.push_back(std::move(profile));
   }
-  results_ =
-    vivaldi::runtime_private::GetUserProfiles::Results::Create(profiles);
+  if (!active_entry) {
+    // We might be a guest profile.
+    if (profile->IsGuestSession()) {
+      vivaldi::runtime_private::UserProfile profile;
 
-  SendResponse(true);
-  return true;
+      // We'll add a "fake" profile here.
+      profile.active = true;
+      profile.guest = true;
+      profile.name = "Guest"; // Translated on the js side.
+
+      profiles.push_back(std::move(profile));
+    }
+  }
+
+  return RespondNow(ArgumentList(Results::Create(profiles)));
 }
 
-bool RuntimePrivateOpenNamedProfileFunction::RunAsync() {
-  std::unique_ptr<vivaldi::runtime_private::OpenNamedProfile::Params> params(
-    vivaldi::runtime_private::OpenNamedProfile::Params::Create(*args_));
+ExtensionFunction::ResponseAction
+RuntimePrivateOpenNamedProfileFunction::Run() {
+  using vivaldi::runtime_private::OpenNamedProfile::Params;
+  namespace Results = vivaldi::runtime_private::OpenNamedProfile::Results;
+
+  std::unique_ptr<Params> params = Params::Create(*args_);
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   bool success = false;
@@ -555,19 +574,20 @@ bool RuntimePrivateOpenNamedProfileFunction::RunAsync() {
       break;
     }
   }
-  results_ =
-    vivaldi::runtime_private::OpenNamedProfile::Results::Create(success);
-  SendResponse(true);
-  return true;
+  return RespondNow(ArgumentList(Results::Create(success)));
 }
 
-bool RuntimePrivateCloseActiveProfileFunction::RunAsync() {
-  profiles::CloseProfileWindows(GetProfile());
+ExtensionFunction::ResponseAction
+RuntimePrivateCloseActiveProfileFunction::Run() {
+  namespace Results = vivaldi::runtime_private::OpenNamedProfile::Results;
+  Profile* profile = Profile::FromBrowserContext(browser_context());
+  VivaldiWindowsAPI* api =
+      extensions::VivaldiWindowsAPI::GetFactoryInstance()->Get(profile);
+  api->WindowsForProfileClosing(profile);
 
-  results_ =
-    vivaldi::runtime_private::OpenNamedProfile::Results::Create(true);
-  SendResponse(true);
-  return true;
+  profiles::CloseProfileWindows(profile);
+
+  return RespondNow(ArgumentList(Results::Create(true)));
 }
 
 }  // namespace extensions

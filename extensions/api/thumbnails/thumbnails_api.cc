@@ -24,6 +24,7 @@
 #include "base/task/post_task.h"
 #include "base/time/time.h"
 #include "base/values.h"
+#include "browser/thumbnails/vivaldi_capture_contents.h"
 #include "chrome/browser/platform_util.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/browser_list.h"
@@ -199,8 +200,10 @@ base::FilePath ConstructCaptureFilename(
 
     // Trim the maximum filename length.
     if (new_string.length() > kMaximumFilenameLength) {
-      new_string.erase(kMaximumFilenameLength,
-                       new_string.length() - kMaximumFilenameLength);
+      std::string truncated;
+      base::TruncateUTF8ToByteSize(new_string, kMaximumFilenameLength,
+                                   &truncated);
+      new_string = truncated;
     }
 
 #if defined(OS_POSIX)
@@ -655,6 +658,61 @@ void ThumbnailsCaptureTabFunction::ScaleAndConvertImageDoneOnUIThread(
   if (show_file_in_path_ && !image_data.empty() && !copy_to_clipboard_) {
     platform_util::ShowItemInFolder(GetProfile(), file_path_);
   }
+}
+
+ThumbnailsCaptureUrlFunction::ThumbnailsCaptureUrlFunction()
+    : capture_page_(base::MakeRefCounted<::vivaldi::ThumbnailCaptureContents>(
+          browser_context())) {
+}
+
+ThumbnailsCaptureUrlFunction::~ThumbnailsCaptureUrlFunction() {
+
+}
+
+ExtensionFunction::ResponseAction ThumbnailsCaptureUrlFunction::Run() {
+  using vivaldi::thumbnails::CaptureUrl::Params;
+
+  std::unique_ptr<Params> params(Params::Create(*args_));
+  EXTENSION_FUNCTION_VALIDATE(params.get());
+
+  capture_page_->set_browser_context(browser_context());
+
+  bookmark_id_ = params->params.bookmark_id;
+  gfx::Size initial_size(params->params.width, params->params.height);
+  gfx::Size scaled_size(params->params.scaled_width,
+                        params->params.scaled_height);
+
+  capture_page_->Start(
+      GURL(params->params.url), initial_size, scaled_size,
+      base::Bind(&ThumbnailsCaptureUrlFunction::OnCapturedAndScaled, this));
+
+  return RespondLater();
+}
+
+void ThumbnailsCaptureUrlFunction::OnCapturedAndScaled(const SkBitmap& bitmap,
+                                                       bool success) {
+  using vivaldi::thumbnails::CaptureUrl::Results::Create;
+  if (!success) {
+    // Unsuccessful capture, might be an error page.
+    Respond(ArgumentList(Create(bookmark_id_, false, std::string())));
+    return;
+  }
+  VivaldiDataSourcesAPI* api =
+      VivaldiDataSourcesAPI::GetFactoryInstance()->Get(browser_context());
+  std::unique_ptr<SkBitmap> bitmap_ptr(new SkBitmap(bitmap));
+
+  api->AddImageDataForBookmark(
+      bookmark_id_, std::move(bitmap_ptr),
+      base::Bind(&ThumbnailsCaptureUrlFunction::OnBookmarkThumbnailStored,
+                 this));
+}
+
+void ThumbnailsCaptureUrlFunction::OnBookmarkThumbnailStored(
+    int bookmark_id,
+    std::string& image_url) {
+  using vivaldi::thumbnails::CaptureUrl::Results::Create;
+
+  Respond(ArgumentList(Create(bookmark_id, !image_url.empty(), image_url)));
 }
 
 }  // namespace extensions

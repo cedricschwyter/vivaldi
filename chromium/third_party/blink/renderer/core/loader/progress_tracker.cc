@@ -117,7 +117,7 @@ void ProgressTracker::ProgressStarted() {
   if (!frame_->IsLoading()) {
     GetLocalFrameClient()->DidStartLoading();
     frame_->SetIsLoading(true);
-    probe::frameStartedLoading(frame_);
+    probe::FrameStartedLoading(frame_);
   }
 }
 
@@ -127,7 +127,7 @@ void ProgressTracker::ProgressCompleted() {
   SendFinalProgress();
   Reset();
   GetLocalFrameClient()->DidStopLoading();
-  probe::frameStoppedLoading(frame_);
+  probe::FrameStoppedLoading(frame_);
 }
 
 void ProgressTracker::FinishedParsing() {

@@ -64,7 +64,13 @@
         "id": "Action",
         "type": "string",
         "description": "Defines non-navigation action to preform",
-        "enum": [ "edit", "addactivetab", "addfolder", "addbookmark", "cut", "copy", "paste", "delete"]
+        "enum": [ "edit", "addactivetab", "addfolder", "addbookmark", "cut", "copy", "paste"]
+      },
+      {
+        "id": "Icons",
+        "type": "array",
+        "description": "Icons encoded as base64",
+        "items": { "type": "string" }
       }
     ],
     "functions": [
@@ -83,6 +89,7 @@
               "height": {"type": "integer", "description": "Height of item that opens menu."},
               "sortField": {"$ref": "SortField", "optional": true},
               "sortOrder": {"$ref": "SortOrder", "optional": true},
+              "icons": {"$ref": "Icons", "description": "Default and folder icons"},
               "folderGroup": {"type": "boolean", "description": "When true, sorted content will have folders first or last in list"},
               "id": {"type": "string", "description": "Bookmark folder id"},
               "offset": {"type": "integer", "description": "Offset into folder"}
@@ -155,7 +162,7 @@
         "parameters": []
       },
       {
-        "name": "onUrlHighlighted",
+        "name": "onHover",
         "type": "function",
         "description": "Fired when a menu item with a url is highlighted",
         "parameters": [

@@ -47,6 +47,7 @@ bool CalendarTable::CreateCalendarTable() {
       "hidden INTEGER DEFAULT 0,"
       "active INTEGER DEFAULT 0,"
       "iconindex INTEGER DEFAULT 0,"
+      "username LONGVARCHAR,"
       "created INTEGER,"
       "last_modified INTEGER"
       ")");
@@ -84,8 +85,8 @@ CalendarID CalendarTable::CreateCalendar(CalendarRow row) {
       "INSERT INTO calendar "
       "(name, description, url, ctag, "
       "orderindex, color, hidden, active, iconindex, "
-      "created, last_modified) "
-      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+      "username, created, last_modified) "
+      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
   statement.BindString16(0, row.name());
   statement.BindString16(1, row.description());
@@ -96,9 +97,10 @@ CalendarID CalendarTable::CreateCalendar(CalendarRow row) {
   statement.BindInt(6, row.hidden() ? 1 : 0);
   statement.BindInt(7, row.active() ? 1 : 0);
   statement.BindInt(8, row.iconindex());
+  statement.BindString16(9, row.username());
 
-  statement.BindInt64(9, base::Time().Now().ToInternalValue());
   statement.BindInt64(10, base::Time().Now().ToInternalValue());
+  statement.BindInt64(11, base::Time().Now().ToInternalValue());
 
   if (!statement.Run()) {
     return 0;
@@ -112,7 +114,7 @@ bool CalendarTable::GetAllCalendars(CalendarRows* calendars) {
       SQL_FROM_HERE,
       "SELECT id, name, description, "
       "url, ctag, orderindex, color, hidden, active, iconindex, "
-      "created, last_modified FROM calendar"));
+      "username, created, last_modified FROM calendar"));
   while (s.Step()) {
     CalendarRow calendar;
     FillCalendarRow(s, &calendar);
@@ -126,7 +128,7 @@ bool CalendarTable::UpdateCalendarRow(const CalendarRow& calendar) {
   sql::Statement statement(GetDB().GetCachedStatement(SQL_FROM_HERE,
                                                       "UPDATE calendar SET \
         name=?, description=?, url=?, ctag=?, orderindex=?, color=?, hidden=?, \
-        active=?, iconindex=? WHERE id=?"));
+        active=?, iconindex=?, username=? WHERE id=?"));
   statement.BindString16(0, calendar.name());
   statement.BindString16(1, calendar.description());
   statement.BindString(2, GURLToDatabaseURL(calendar.url()));
@@ -136,8 +138,9 @@ bool CalendarTable::UpdateCalendarRow(const CalendarRow& calendar) {
   statement.BindInt(6, calendar.hidden() ? 1 : 0);
   statement.BindInt(7, calendar.active() ? 1 : 0);
   statement.BindInt(8, calendar.iconindex());
+  statement.BindString16(9, calendar.username());
 
-  statement.BindInt64(9, calendar.id());
+  statement.BindInt64(10, calendar.id());
 
   return statement.Run();
 }
@@ -176,6 +179,7 @@ void CalendarTable::FillCalendarRow(sql::Statement& statement,
   bool hidden = statement.ColumnInt(7) != 0;
   bool active = statement.ColumnInt(8) != 0;
   int iconindex = statement.ColumnInt(9);
+  base::string16 username = statement.ColumnString16(10);
 
   calendar->set_id(id);
   calendar->set_name(name);
@@ -187,6 +191,7 @@ void CalendarTable::FillCalendarRow(sql::Statement& statement,
   calendar->set_hidden(hidden);
   calendar->set_active(active);
   calendar->set_iconindex(iconindex);
+  calendar->set_username(username);
 }
 
 bool CalendarTable::DoesCalendarIdExist(CalendarID calendar_id) {

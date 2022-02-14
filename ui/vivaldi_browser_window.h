@@ -9,7 +9,6 @@
 
 #include "base/compiler_specific.h"
 #include "base/timer/timer.h"
-#include "chrome/browser/badging/badge_service_delegate.h"
 #include "chrome/browser/ui/browser.h"
 #include "chrome/browser/ui/browser_window.h"
 #include "chrome/browser/ui/exclusive_access/exclusive_access_context.h"
@@ -173,7 +172,6 @@ class VivaldiAppWindowContentsImpl : public AppWindowContents,
 // An implementation of BrowserWindow used for Vivaldi.
 class VivaldiBrowserWindow
     : public BrowserWindow,
-      public content::WebContentsObserver,
       public web_modal::WebContentsModalDialogManagerDelegate,
       public ExclusiveAccessContext,
       public ui::AcceleratorProvider,
@@ -273,15 +271,15 @@ class VivaldiBrowserWindow
   void Restore() override;
   bool ShouldHideUIForFullscreen() const override;
   bool IsFullscreen() const override;
-  void ResetToolbarTabState(content::WebContents* contents) override{};
+  void ResetToolbarTabState(content::WebContents* contents) override {}
   bool IsFullscreenBubbleVisible() const override;
   LocationBar* GetLocationBar() const override;
-  void SetFocusToLocationBar() override {}
+  void SetFocusToLocationBar(bool select_all) override {}
   void UpdateReloadStopState(bool is_loading, bool force) override {}
   void UpdateToolbar(content::WebContents* contents) override;
   void FocusToolbar() override {}
   ToolbarActionsBar* GetToolbarActionsBar() override;
-  void ToolbarSizeChanged(bool is_animating) override{};
+  void ToolbarSizeChanged(bool is_animating) override {}
   void FocusAppMenu() override {}
   void FocusBookmarksToolbar() override {}
   void RotatePaneFocus(bool forwards) override {}
@@ -291,7 +289,6 @@ class VivaldiBrowserWindow
   bool HandleKeyboardEvent(
       const content::NativeWebKeyboardEvent& event) override;
   gfx::Size GetContentsSize() const override;
-  BadgeServiceDelegate* GetBadgeServiceDelegate() const override;
   void ShowEmojiPanel() override;
 
   bool IsBookmarkBarVisible() const override;
@@ -303,6 +300,8 @@ class VivaldiBrowserWindow
   ShowTranslateBubbleResult ShowTranslateBubble(
       content::WebContents* contents,
       translate::TranslateStep step,
+      const std::string& source_language,
+      const std::string& target_language,
       translate::TranslateErrors::Type error_type,
       bool is_user_gesture) override;
   bool IsDownloadShelfVisible() const override;
@@ -344,7 +343,8 @@ class VivaldiBrowserWindow
       bool is_user_gesture) override;
   void ShowOneClickSigninConfirmation(
       const base::string16& email,
-      base::OnceCallback<void(bool)> start_sync_callback) override {};
+      base::OnceCallback<void(bool)> start_sync_callback) override {}
+  void OnTabRestored(int command_id) override {}
 
   // web_modal::WebContentsModalDialogManagerDelegate implementation.
   void SetWebContentsBlocked(content::WebContents* web_contents,
@@ -406,7 +406,7 @@ class VivaldiBrowserWindow
   void OnActivationChanged(bool activated) override;
   void OnDocumentLoaded() override;
   void OnPositionChanged() override;
-  void FocusInactivePopupForAccessibility() override {};
+  void FocusInactivePopupForAccessibility() override {}
 
   // Enable or disable fullscreen mode.
   void SetFullscreen(bool enable);
@@ -443,11 +443,11 @@ class VivaldiBrowserWindow
 
   void TabDraggingStatusChanged(bool is_dragging) override {}
 
-  void UpdateToolbarVisibility(bool visible, bool animate) override {};
+  void UpdateToolbarVisibility(bool visible, bool animate) override {}
 
 #if BUILDFLAG(ENABLE_DESKTOP_IN_PRODUCT_HELP)
   // Shows in-product help for the given feature.
-  void ShowInProductHelpPromo(InProductHelpFeature iph_feature) override {};
+  void ShowInProductHelpPromo(InProductHelpFeature iph_feature) override {}
 #endif
 
  protected:
@@ -545,10 +545,10 @@ class VivaldiBrowserWindow
 
   std::unique_ptr<VivaldiPageActionIconContainer> page_action_icon_container_;
 
+#if !defined(OS_MACOSX)
   // Last key code received in HandleKeyboardEvent(). For auto repeat detection.
   int last_key_code_ = -1;
-
-  std::unique_ptr<BadgeServiceDelegate> badge_service_delegate_;
+#endif  // !defined(OS_MACOSX)
 
   DISALLOW_COPY_AND_ASSIGN(VivaldiBrowserWindow);
 };

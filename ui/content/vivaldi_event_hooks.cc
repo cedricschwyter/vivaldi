@@ -3,7 +3,6 @@
 #include "ui/content/vivaldi_event_hooks.h"
 
 #include "app/vivaldi_apptools.h"
-#include "content/browser/renderer_host/render_view_host_impl.h"
 #include "content/browser/renderer_host/render_widget_host_view_base.h"
 #include "content/browser/web_contents/web_contents_impl.h"
 
@@ -30,18 +29,25 @@ VivaldiEventHooks* VivaldiEventHooks::FromRootView(
   if (!root_view)
     return nullptr;
   DCHECK(root_view == root_view->GetRootView());
+
+  // For a root view WebContents is the outermost. So to skip a rather expensive
+  // call to WebContens::GetOutermostWebContents() inline FromRenderWidgetHost.
   content::RenderWidgetHostImpl* widget_host = root_view->host();
   if (!widget_host)
     return nullptr;
-  content::RenderViewHostImpl* view_host =
-      content::RenderViewHostImpl::From(widget_host);
-  if (!view_host)
-    return nullptr;
   content::WebContents* web_contents =
-      content::WebContents::FromRenderViewHost(view_host);
+      widget_host->delegate()->GetAsWebContents();
   if (!web_contents)
     return nullptr;
   return FromOutermostContents(web_contents);
+}
+
+// static
+VivaldiEventHooks* VivaldiEventHooks::FromRenderWidgetHost(
+    content::RenderWidgetHostImpl* widget_host) {
+  if (!widget_host)
+    return nullptr;
+  return FromWebContents(widget_host->delegate()->GetAsWebContents());
 }
 
 // static

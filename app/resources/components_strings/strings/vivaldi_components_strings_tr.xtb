@@ -11,7 +11,6 @@
 <translation id="1375198122581997741">Sürüm Hakkında</translation>
 <translation id="139305205187523129"><ph name="HOST_NAME" /> hiç veri göndermedi.</translation>
 <translation id="14171126816530869"><ph name="LOCALITY" /> konumundaki <ph name="ORGANIZATION" /> kuruluşunun kimliği <ph name="ISSUER" /> tarafından doğrulandı.</translation>
-<translation id="1506687042165942984">Bu sayfanın kaydedilmiş (eski olduğu bilinen) bir kopyasını gösterin.</translation>
 <translation id="1559528461873125649">Belirtilen dosya veya dizin yok</translation>
 <translation id="1620510694547887537">Kamera</translation>
 <translation id="1640244768702815859"><ph name="BEGIN_LINK" />Sitenin ana sayfasını ziyaret etmeyi deneyin<ph name="END_LINK" />.</translation>
@@ -38,6 +37,7 @@
 <translation id="2337852623177822836">Ayar, yöneticiniz tarafından denetleniyor</translation>
 <translation id="2355395290879513365">Saldırganlar bu sitede baktığınız resimleri görebilir ve bu resimler üzerinde değişiklik yaparak sizi kandırabilirler.</translation>
 <translation id="2356070529366658676">Sor</translation>
+<translation id="2359808026110333948">Devam et</translation>
 <translation id="2467694685043708798"><ph name="BEGIN_LINK" />Ağ Tanılayıcıları Çalıştırılıyor<ph name="END_LINK" /></translation>
 <translation id="2482878487686419369">Bildirimler</translation>
 <translation id="2539524384386349900">Algıla</translation>
@@ -108,7 +108,6 @@
 <translation id="4744603770635761495">Çalıştırılabilir Yol</translation>
 <translation id="4750917950439032686">Bilgileriniz (örneğin, şifreler veya kredi kartı numaraları) bu siteye gönderilirken gizli olur.</translation>
 <translation id="4764776831041365478"><ph name="URL" /> adresindeki web sayfası, geçici olarak kullanılamıyor veya kalıcı olarak yeni bir web adresine taşınmış olabilir.</translation>
-<translation id="4916962322362512664"><ph name="DEVICE_NAME" /></translation>
 <translation id="4974590756084640048">Uyarıları yeniden etkinleştir</translation>
 <translation id="5023310440958281426">Yöneticinizin politikalarını inceleyin</translation>
 <translation id="5039804452771397117">İzin ver</translation>
@@ -137,7 +136,6 @@
 <translation id="5810442152076338065"><ph name="DOMAIN" /> ile olan bağlantınız eski bir şifre seti kullanılarak şifrelendi.</translation>
 <translation id="5838278095973806738">Bu sitede hiçbir hassas bilginizi (örneğin şifrelerinizi veya kredi kartı bilgilerinizi) girmemelisiniz; çünkü bu bilgiler saldırganlar tarafından çalınabilir.</translation>
 <translation id="5869405914158311789">Bu siteye ulaşılamıyor</translation>
-<translation id="5920262536204764679">{NUM_COOKIES,plural, =1{1 çerez kullanımda}other{# çerez kullanımda}}</translation>
 <translation id="5932224571077948991">Site, rahatsız edici veya yanıltıcı reklamlar gösteriyor</translation>
 <translation id="5990559369517809815">Sunucuya gönderilen istekler bir eklenti tarafından engellendi.</translation>
 <translation id="6051221802930200923"><ph name="SITE" /> sitesi sertifika sabitleme yöntemi kullandığından siteyi şu anda ziyaret edemezsiniz. Ağ hataları ve saldırılar genellikle geçici olduğundan bu sayfa muhtemelen daha sonra çalışacaktır.</translation>
@@ -157,6 +155,7 @@
 <translation id="6417515091412812850">Sertifikanın iptal edilip edilmediği kontrol edilemiyor.</translation>
 <translation id="6433595998831338502"><ph name="HOST_NAME" /> bağlanmayı reddetti.</translation>
 <translation id="6447842834002726250">Çerezler</translation>
+<translation id="6451458296329894277">Yeniden Form Gönderme İşlemini Onayla</translation>
 <translation id="6569060085658103619">Bir eklenti sayfasını görüntülüyorsunuz</translation>
 <translation id="6657585470893396449">Parola</translation>
 <translation id="6685834062052613830">Çıkış yapın ve kurulumu tamamlayın</translation>
@@ -201,6 +200,7 @@
 <translation id="8184538546369750125">Genel varsayılanı kullan (İzin ver)</translation>
 <translation id="8211406090763984747">Bağlantı güvenli</translation>
 <translation id="8225771182978767009">Bu bilgisayarı kuran kişi bu siteyi engellemeyi seçmiş.</translation>
+<translation id="8241707690549784388">Aradığınız sayfa girdiğiniz bilgileri kullandı. O sayfaya dönmeniz gerçekleştirdiğiniz işlemlerin tekrarlanmasına neden olabilir. Devam etmek istiyor musunuz?</translation>
 <translation id="8241712895048303527">Bu sitede engelle</translation>
 <translation id="8288807391153049143">Sertifikayı göster</translation>
 <translation id="8289355894181816810">Bunun ne anlama geldiğini bilmiyorsanız ağ yöneticinizle bağlantı kurun.</translation>

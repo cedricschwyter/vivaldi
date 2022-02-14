@@ -73,7 +73,6 @@
 #include "services/service_manager/public/cpp/binder_registry.h"
 #include "services/service_manager/public/cpp/connector.h"
 #include "services/service_manager/public/cpp/interface_provider.h"
-#include "services/service_manager/runner/common/client_util.h"
 #include "services/service_manager/sandbox/sandbox_type.h"
 #include "services/service_manager/sandbox/switches.h"
 #include "services/ws/public/mojom/constants.mojom.h"
@@ -249,7 +248,7 @@ static const char* const kSwitchNames[] = {
 #endif
 #if defined(USE_OZONE)
     switches::kOzonePlatform,
-    switches::kEnableExplicitDmaFences,
+    switches::kDisableExplicitDmaFences,
     switches::kOzoneDumpFile,
 #endif
 #if defined(USE_X11)
@@ -260,6 +259,7 @@ static const char* const kSwitchNames[] = {
     switches::kUseCmdDecoder,
     switches::kForceVideoOverlays,
 #if defined(OS_ANDROID)
+    switches::kEnableReachedCodeProfiler,
     switches::kOrderfileMemoryOptimization,
 #endif
     switches::kWebglAntialiasingMode,
@@ -283,9 +283,9 @@ GpuProcessHost* g_gpu_process_hosts[GpuProcessHost::GPU_PROCESS_KIND_COUNT];
 
 void RunCallbackOnIO(GpuProcessHost::GpuProcessKind kind,
                      bool force_create,
-                     const base::Callback<void(GpuProcessHost*)>& callback) {
+                     base::OnceCallback<void(GpuProcessHost*)> callback) {
   GpuProcessHost* host = GpuProcessHost::Get(kind, force_create);
-  callback.Run(host);
+  std::move(callback).Run(host);
 }
 
 void OnGpuProcessHostDestroyedOnUI(int host_id, const std::string& message) {
@@ -492,11 +492,12 @@ class GpuProcessHost::ConnectionFilterImpl : public ConnectionFilter {
   explicit ConnectionFilterImpl(int gpu_process_id) {
     auto task_runner =
         base::CreateSingleThreadTaskRunnerWithTraits({BrowserThread::UI});
-    registry_.AddInterface(base::Bind(&FieldTrialRecorder::Create),
+    registry_.AddInterface(base::BindRepeating(&FieldTrialRecorder::Create),
                            task_runner);
 #if defined(OS_ANDROID)
     registry_.AddInterface(
-        base::Bind(&BindJavaInterface<media::mojom::AndroidOverlayProvider>),
+        base::BindRepeating(
+            &BindJavaInterface<media::mojom::AndroidOverlayProvider>),
         task_runner);
 #endif
   }
@@ -615,13 +616,13 @@ void GpuProcessHost::GetHasGpuProcess(base::OnceCallback<void(bool)> callback) {
 void GpuProcessHost::CallOnIO(
     GpuProcessKind kind,
     bool force_create,
-    const base::Callback<void(GpuProcessHost*)>& callback) {
+    base::OnceCallback<void(GpuProcessHost*)> callback) {
 #if !defined(OS_WIN)
   DCHECK_NE(kind, GpuProcessHost::GPU_PROCESS_KIND_UNSANDBOXED_NO_GL);
 #endif
-  base::PostTaskWithTraits(
-      FROM_HERE, {BrowserThread::IO},
-      base::BindOnce(&RunCallbackOnIO, kind, force_create, callback));
+  base::PostTaskWithTraits(FROM_HERE, {BrowserThread::IO},
+                           base::BindOnce(&RunCallbackOnIO, kind, force_create,
+                                          std::move(callback)));
 }
 
 void GpuProcessHost::BindInterface(
@@ -854,7 +855,7 @@ bool GpuProcessHost::Init() {
     // WGL needs to create its own window and pump messages on it.
     options.message_loop_type = base::MessageLoop::TYPE_UI;
 #endif
-#if defined(OS_ANDROID) || defined(OS_CHROMEOS)
+#if defined(OS_ANDROID) || defined(OS_CHROMEOS) || defined(USE_OZONE)
     options.priority = base::ThreadPriority::DISPLAY;
 #endif
     in_process_gpu_thread_->StartWithOptions(options);

@@ -272,11 +272,12 @@ bool DevtoolsConnectorItem::HasOwnerShipOfContents() {
 }
 
 bool DevtoolsConnectorItem::HandleContextMenu(
+    content::RenderFrameHost* render_frame_host,
     const content::ContextMenuParams& params) {
   if (guest_delegate_) {
-    return guest_delegate_->HandleContextMenu(params);
+    return guest_delegate_->HandleContextMenu(render_frame_host, params);
   } else if (devtools_delegate_) {
-    return devtools_delegate_->HandleContextMenu(params);
+    return devtools_delegate_->HandleContextMenu(render_frame_host, params);
   }
   return false;
 }

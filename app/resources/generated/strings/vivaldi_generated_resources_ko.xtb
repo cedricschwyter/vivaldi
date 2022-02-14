@@ -98,14 +98,12 @@
 <translation id="3154429428035006212">1달 이상 오프라인 상태</translation>
 <translation id="3222066309010235055">사전 렌더링: <ph name="PRERENDER_CONTENTS_NAME" /></translation>
 <translation id="3241680850019875542">압축할 확장 프로그램의 루트 디렉토리를 선택합니다. 확장 프로그램을 업데이트하려면 다시 사용할 비공개 키 파일도 선택합니다.</translation>
-<translation id="3269093882174072735">이미지 불러오기</translation>
 <translation id="3280237271814976245">다른 이름으로 저장(&amp;A)...</translation>
 <translation id="3288047731229977326">개발자 모드로 실행 중인 확장 프로그램은 컴퓨터에 해를 줄 수 있습니다. 개발자가 아닌 경우 컴퓨터를 안전하게 사용하려면 개발자 모드로 실행 중인 확장 프로그램을 사용 중지해야 합니다.</translation>
 <translation id="329838636886466101">복구</translation>
 <translation id="3303818374450886607">매수</translation>
 <translation id="3305661444342691068">기본 응용 프로그램에서 PDF 보기</translation>
 <translation id="3317459757438853210">양면</translation>
-<translation id="3319048459796106952">새 시크릿 창(&amp;I)</translation>
 <translation id="3341703758641437857">파일 URL에 접근 허용</translation>
 <translation id="3347086966102161372">이미지 주소 복사(&amp;O)</translation>
 <translation id="3360297538363969800">인쇄에 실패했습니다. 프린터를 확인한 후 다시 시도해 주세요.</translation>
@@ -187,7 +185,6 @@
 <translation id="52912272896845572">비공개 키 파일이 잘못되었습니다.</translation>
 <translation id="5301954838959518834">확인</translation>
 <translation id="5317780077021120954">저장</translation>
-<translation id="5329858601952122676">삭제(&amp;D)</translation>
 <translation id="5355926466126177564">검색주소창에서 검색하면 표시되는 페이지가 '<ph name="EXTENSION_NAME" />' 확장 프로그램으로 인해 변경되었습니다.</translation>
 <translation id="5362741141255528695">비공개 키 파일을 선택합니다.</translation>
 <translation id="5370819323174483825">새로고침(&amp;R)</translation>

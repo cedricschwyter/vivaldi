@@ -11,6 +11,7 @@
 #include <set>
 #include <utility>
 
+#include "base/bind.h"
 #include "base/command_line.h"
 #include "base/debug/alias.h"
 #include "base/debug/dump_without_crashing.h"
@@ -46,7 +47,7 @@
 #include "chrome/browser/extensions/extension_util.h"
 #include "chrome/browser/extensions/external_install_manager.h"
 #include "chrome/browser/extensions/external_provider_impl.h"
-#include "chrome/browser/extensions/forced_extensions/installation_failures.h"
+#include "chrome/browser/extensions/forced_extensions/installation_reporter.h"
 #include "chrome/browser/extensions/install_verifier.h"
 #include "chrome/browser/extensions/installed_loader.h"
 #include "chrome/browser/extensions/pending_extension_manager.h"
@@ -223,9 +224,9 @@ bool ExtensionService::OnExternalExtensionUpdateUrlFound(
             info.extension_id) &&
         current == Manifest::GetHigherPriorityLocation(
                        current, info.download_location)) {
-      InstallationFailures::ReportFailure(
+      InstallationReporter::ReportFailure(
           profile_, info.extension_id,
-          InstallationFailures::Reason::ALREADY_INSTALLED);
+          InstallationReporter::FailureReason::ALREADY_INSTALLED);
       return false;
     }
     // Otherwise, overwrite the current installation.
@@ -235,10 +236,15 @@ bool ExtensionService::OnExternalExtensionUpdateUrlFound(
   // be added, then there is already a pending record from a higher-priority
   // install source.  In this case, signal that this extension will not be
   // installed by returning false.
+  InstallationReporter::ReportInstallationStage(
+      profile_, info.extension_id, InstallationReporter::Stage::PENDING);
   if (!pending_extension_manager()->AddFromExternalUpdateUrl(
           info.extension_id, info.install_parameter, info.update_url,
           info.download_location, info.creation_flags,
           info.mark_acknowledged)) {
+    InstallationReporter::ReportFailure(
+        profile_, info.extension_id,
+        InstallationReporter::FailureReason::PENDING_ADD_FAILED);
     return false;
   }
 
@@ -912,7 +918,9 @@ void ExtensionService::PostActivateExtension(
 
   // Same for chrome://vivaldi-data/ resources.
   // When adding protocols, don't forget to update
-  // OffTheRecordProfileImpl::Init() too.
+  // OffTheRecordProfileImpl::Init() and check that WebUILoaders can access it.
+  // See ChromeExtensionWebContentsObserver::RenderFrameCreated and
+  // ChromeContentBrowserClient::RegisterNonNetworkSubresourceURLLoaderFactories.
   if (permissions_data->HasHostPermission(GURL(vivaldi::kVivaldiThumbURL))) {
     content::URLDataSource::Add(profile_,
                                 std::make_unique<VivaldiThumbDataSource>(profile_));
@@ -1747,10 +1755,17 @@ bool ExtensionService::OnExternalExtensionFileFound(
   installer->set_install_cause(extension_misc::INSTALL_CAUSE_EXTERNAL_FILE);
   installer->set_install_immediately(info.install_immediately);
   installer->set_creation_flags(info.creation_flags);
+
+  CRXFileInfo file_info(
+      info.path,
+      info.crx_location == Manifest::EXTERNAL_POLICY
+          ? GetPolicyVerifierFormat(ExtensionPrefs::Get(profile_)
+                                        ->InsecureExtensionUpdatesEnabled())
+          : GetExternalVerifierFormat());
 #if defined(OS_CHROMEOS)
-  InstallLimiter::Get(profile_)->Add(installer, info.path);
+  InstallLimiter::Get(profile_)->Add(installer, file_info);
 #else
-  installer->InstallCrx(info.path);
+  installer->InstallCrxFile(file_info);
 #endif
 
   // Depending on the source, a new external extension might not need a user

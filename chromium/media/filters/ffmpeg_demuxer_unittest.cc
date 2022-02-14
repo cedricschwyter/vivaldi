@@ -103,8 +103,7 @@ static void EosOnReadDone(bool* got_eos_buffer,
   EXPECT_TRUE(buffer->data());
   EXPECT_GT(buffer->data_size(), 0u);
   *got_eos_buffer = false;
-};
-
+}
 
 // Fixture class to facilitate writing tests.  Takes care of setting up the
 // FFmpeg, pipeline and filter host mocks.
@@ -1217,11 +1216,12 @@ TEST_P(Mp3SeekFFmpegDemuxerTest, TestFastSeek) {
 // MP3s should seek quickly without sequentially reading up to the seek point.
 // VBR vs CBR and the presence/absence of TOC influence the seeking algorithm.
 // See http://crbug.com/530043 and FFmpeg flag AVFMT_FLAG_FAST_SEEK.
-INSTANTIATE_TEST_CASE_P(, Mp3SeekFFmpegDemuxerTest,
-                        ::testing::Values("bear-audio-10s-CBR-has-TOC.mp3",
-                                          "bear-audio-10s-CBR-no-TOC.mp3",
-                                          "bear-audio-10s-VBR-has-TOC.mp3",
-                                          "bear-audio-10s-VBR-no-TOC.mp3"));
+INSTANTIATE_TEST_SUITE_P(,
+                         Mp3SeekFFmpegDemuxerTest,
+                         ::testing::Values("bear-audio-10s-CBR-has-TOC.mp3",
+                                           "bear-audio-10s-CBR-no-TOC.mp3",
+                                           "bear-audio-10s-VBR-has-TOC.mp3",
+                                           "bear-audio-10s-VBR-no-TOC.mp3"));
 
 #if BUILDFLAG(USE_PROPRIETARY_CODECS)
 static void ValidateAnnexB(DemuxerStream* stream,
@@ -1253,7 +1253,7 @@ static void ValidateAnnexB(DemuxerStream* stream,
   }
 
   stream->Read(base::Bind(&ValidateAnnexB, stream));
-};
+}
 
 TEST_F(FFmpegDemuxerTest, IsValidAnnexB) {
   const char* files[] = {

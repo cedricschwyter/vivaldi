@@ -33,6 +33,7 @@ CalendarRow::CalendarRow(CalendarID id,
                          bool hidden,
                          bool active,
                          int iconindex,
+                         base::string16 username,
                          base::Time created,
                          base::Time lastmodified)
     : name_(name),
@@ -44,6 +45,7 @@ CalendarRow::CalendarRow(CalendarID id,
       hidden_(hidden),
       active_(active),
       iconindex_(iconindex),
+      username_(username),
       created_(created),
       lastmodified_(lastmodified) {}
 
@@ -57,6 +59,7 @@ void CalendarRow::Swap(CalendarRow* other) {
   std::swap(hidden_, other->hidden_);
   std::swap(active_, other->active_);
   std::swap(iconindex_, other->iconindex_);
+  std::swap(username_, other->username_);
 }
 
 CalendarRow::CalendarRow(const CalendarRow& other)
@@ -70,6 +73,7 @@ CalendarRow::CalendarRow(const CalendarRow& other)
       hidden_(other.hidden_),
       active_(other.active_),
       iconindex_(other.iconindex_),
+      username_(other.username_),
       created_(other.created_),
       lastmodified_(other.lastmodified_) {}
 
@@ -89,6 +93,7 @@ Calendar::Calendar(const Calendar& calendar)
       hidden(calendar.hidden),
       active(calendar.active),
       iconindex(calendar.iconindex),
+      username(calendar.username),
       updateFields(calendar.updateFields) {}
 
 Calendar::~Calendar() {}

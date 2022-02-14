@@ -277,8 +277,8 @@ void BookmarkMenuBridge::AddNodeAsSubmenu(NSMenu* menu,
 // TODO(jrg): limit the number of bookmarks in the menubar?
 void BookmarkMenuBridge::AddNodeToMenu(const BookmarkNode* node, NSMenu* menu) {
   if (vivaldi::IsVivaldiRunning()) {
-    vivaldi::AddAddTabToBookmarksMenuItem(node, menu);
-
+    // Call AddAddTabToBookmarksMenuItem here for having it in front
+    [menu addItem:[NSMenuItem separatorItem]];
     std::vector<bookmarks::BookmarkNode*> nodes;
     vivaldi::GetBookmarkNodes(node, nodes);
     for (size_t i = 0; i < nodes.size(); ++i) {
@@ -297,6 +297,8 @@ void BookmarkMenuBridge::AddNodeToMenu(const BookmarkNode* node, NSMenu* menu) {
         [menu addItem:item];
       }
     }
+    [menu addItem:[NSMenuItem separatorItem]];
+    vivaldi::AddAddTabToBookmarksMenuItem(node, menu);
     return;
   } // vivaldi specific section
 

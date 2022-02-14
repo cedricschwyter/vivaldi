@@ -46,6 +46,9 @@
 [submodule "third_party/dawn"]
 	path = third_party/dawn
 	url = ../../dawn/dawn.git
+[submodule "tools/page_cycler/acid3"]
+	path = tools/page_cycler/acid3
+	url = ../deps/acid3.git
 [submodule "third_party/nasm"]
 	path = third_party/nasm
 	url = ../deps/nasm.git
@@ -103,15 +106,18 @@
 [submodule "third_party/libevdev/src"]
 	path = third_party/libevdev/src
 	url = ../../chromiumos/platform/libevdev.git
-[submodule "tools/page_cycler/acid3"]
-	path = tools/page_cycler/acid3
-	url = ../deps/acid3.git
-[submodule "chrome/installer/mac/third_party/xz/xz"]
-	path = chrome/installer/mac/third_party/xz/xz
-	url = ../deps/xz.git
+[submodule "third_party/libyuv"]
+	path = third_party/libyuv
+	url = ../../libyuv/libyuv.git
+[submodule "third_party/yasm/source/patched-yasm"]
+	path = third_party/yasm/source/patched-yasm
+	url = ../deps/yasm/patched-yasm.git
 [submodule "media/cdm/api"]
 	path = media/cdm/api
 	url = ../cdm.git
+[submodule "net/third_party/quiche/src"]
+	path = net/third_party/quiche/src
+	url = ../../quiche/quiche.git
 [submodule "third_party/libsync/src"]
 	path = third_party/libsync/src
 	url = ../../aosp/platform/system/core/libsync.git
@@ -130,9 +136,12 @@
 [submodule "third_party/leveldatabase/src"]
 	path = third_party/leveldatabase/src
 	url = ../../external/leveldb.git
-[submodule "third_party/yasm/source/patched-yasm"]
-	path = third_party/yasm/source/patched-yasm
-	url = ../deps/yasm/patched-yasm.git
+[submodule "chrome/installer/mac/third_party/xz/xz"]
+	path = chrome/installer/mac/third_party/xz/xz
+	url = ../deps/xz.git
+[submodule "third_party/dav1d/libdav1d"]
+	path = third_party/dav1d/libdav1d
+	url = ../../external/github.com/videolan/dav1d.git
 [submodule "third_party/SPIRV-Tools/src"]
 	path = third_party/SPIRV-Tools/src
 	url = ../../external/github.com/KhronosGroup/SPIRV-Tools.git
@@ -142,6 +151,9 @@
 [submodule "third_party/breakpad/breakpad"]
 	path = third_party/breakpad/breakpad
 	url = ../../breakpad/breakpad.git
+[submodule "buildtools/third_party/libc++abi/trunk"]
+	path = buildtools/third_party/libc++abi/trunk
+	url = ../llvm-project/libcxxabi.git
 [submodule "third_party/hunspell_dictionaries"]
 	path = third_party/hunspell_dictionaries
 	url = ../deps/hunspell_dictionaries.git
@@ -169,15 +181,15 @@
 [submodule "tools/swarming_client"]
 	path = tools/swarming_client
 	url = ../../infra/luci/client-py.git
-[submodule "third_party/libyuv"]
-	path = third_party/libyuv
-	url = ../../libyuv/libyuv.git
 [submodule "third_party/depot_tools"]
 	path = third_party/depot_tools
 	url = ../tools/depot_tools.git
 [submodule "third_party/googletest/src"]
 	path = third_party/googletest/src
 	url = ../../external/github.com/google/googletest.git
+[submodule "third_party/openscreen/src"]
+	path = third_party/openscreen/src
+	url = ../../openscreen.git
 [submodule "third_party/libsrtp"]
 	path = third_party/libsrtp
 	url = ../deps/libsrtp.git
@@ -193,9 +205,6 @@
 [submodule "third_party/xdg-utils"]
 	path = third_party/xdg-utils
 	url = ../deps/xdg-utils.git
-[submodule "third_party/bidichecker"]
-	path = third_party/bidichecker
-	url = ../../external/bidichecker/lib.git
 [submodule "chrome/test/data/xr/webvr_info"]
 	path = chrome/test/data/xr/webvr_info
 	url = ../../external/github.com/toji/webvr.info.git
@@ -208,9 +217,15 @@
 [submodule "third_party/usrsctp/usrsctplib"]
 	path = third_party/usrsctp/usrsctplib
 	url = ../../external/github.com/sctplab/usrsctp.git
+[submodule "buildtools/third_party/libunwind/trunk"]
+	path = buildtools/third_party/libunwind/trunk
+	url = ../../external/llvm.org/libunwind.git
 [submodule "third_party/libprotobuf-mutator/src"]
 	path = third_party/libprotobuf-mutator/src
 	url = ../../external/github.com/google/libprotobuf-mutator.git
+[submodule "third_party/grpc/src"]
+	path = third_party/grpc/src
+	url = ../../external/github.com/grpc/grpc.git
 [submodule "third_party/gestures/gestures"]
 	path = third_party/gestures/gestures
 	url = ../../chromiumos/platform/gestures.git
@@ -226,6 +241,9 @@
 [submodule "third_party/libjpeg_turbo"]
 	path = third_party/libjpeg_turbo
 	url = ../deps/libjpeg_turbo.git
+[submodule "third_party/emoji-segmenter/src"]
+	path = third_party/emoji-segmenter/src
+	url = ../../external/github.com/googlei18n/emoji-segmenter.git
 [submodule "third_party/minizip/src"]
 	path = third_party/minizip/src
 	url = ../../external/github.com/nmoinvaz/minizip.git
@@ -235,9 +253,9 @@
 [submodule "third_party/jsoncpp/source"]
 	path = third_party/jsoncpp/source
 	url = ../../external/github.com/open-source-parsers/jsoncpp.git
-[submodule "net/third_party/quiche/src"]
-	path = net/third_party/quiche/src
-	url = ../../quiche/quiche.git
+[submodule "buildtools/third_party/libc++/trunk"]
+	path = buildtools/third_party/libc++/trunk
+	url = ../llvm-project/libcxx.git
 [submodule "v8"]
 	path = v8
 	url = ../../v8/v8.git
@@ -253,15 +271,15 @@
 [submodule "third_party/webgl/src"]
 	path = third_party/webgl/src
 	url = ../../external/khronosgroup/webgl.git
+[submodule "buildtools/clang_format/script"]
+	path = buildtools/clang_format/script
+	url = ../llvm-project/cfe/tools/clang-format.git
 [submodule "third_party/wds/src"]
 	path = third_party/wds/src
 	url = ../../external/github.com/01org/wds.git
 [submodule "third_party/snappy/src"]
 	path = third_party/snappy/src
 	url = ../../external/github.com/google/snappy.git
-[submodule "buildtools"]
-	path = buildtools
-	url = ../buildtools.git
 [submodule "third_party/angle"]
 	path = third_party/angle
 	url = ../../angle/angle.git

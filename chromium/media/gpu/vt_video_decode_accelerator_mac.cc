@@ -319,7 +319,7 @@ gfx::ColorSpace GetImageBufferColorSpace(CVImageBufferRef image_buffer) {
 
   // The named transfer function.
   gfx::ColorSpace::TransferID transfer_id = gfx::ColorSpace::TransferID::BT709;
-  SkColorSpaceTransferFn custom_tr_fn = {2.2f, 1, 0, 1, 0, 0, 0};
+  skcms_TransferFunction custom_tr_fn = {2.2f, 1, 0, 1, 0, 0, 0};
   struct {
     const CFStringRef cfstr;
     gfx::ColorSpace::TransferID id;
@@ -354,7 +354,7 @@ gfx::ColorSpace GetImageBufferColorSpace(CVImageBufferRef image_buffer) {
       CGFloat gamma_float = 0;
       if (CFNumberGetValue(gamma_number, kCFNumberCGFloatType, &gamma_float)) {
         transfer_id = gfx::ColorSpace::TransferID::CUSTOM;
-        custom_tr_fn.fG = gamma_float;
+        custom_tr_fn.g = gamma_float;
       } else {
         DLOG(ERROR) << "Filed to get CVImageBufferRef gamma level as float.";
       }
@@ -437,11 +437,13 @@ bool VTVideoDecodeAccelerator::FrameOrder::operator()(
 
 VTVideoDecodeAccelerator::VTVideoDecodeAccelerator(
     const BindGLImageCallback& bind_image_cb,
-    MediaLog* media_log)
+    MediaLog* media_log,
+    bool force_software_vivaldi)
     : bind_image_cb_(bind_image_cb),
       media_log_(media_log),
       gpu_task_runner_(base::ThreadTaskRunnerHandle::Get()),
       decoder_thread_("VTDecoderThread"),
+      force_software_vivaldi_(force_software_vivaldi),
       weak_this_factory_(this) {
   DCHECK(bind_image_cb_);
 
@@ -635,10 +637,17 @@ bool VTVideoDecodeAccelerator::ConfigureDecoder() {
     return false;
   }
 
-  CFDictionarySetValue(
-      decoder_config,
-      // kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder
-      CFSTR("EnableHardwareAcceleratedVideoDecoder"), kCFBooleanTrue);
+  if (force_software_vivaldi_) {
+    CFDictionarySetValue(
+        decoder_config,
+        // kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder
+        CFSTR("EnableHardwareAcceleratedVideoDecoder"), kCFBooleanFalse);
+  } else {
+    CFDictionarySetValue(
+        decoder_config,
+        // kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder
+        CFSTR("EnableHardwareAcceleratedVideoDecoder"), kCFBooleanTrue);
+  }
 
   // VideoToolbox scales the visible rect to the output size, so we set the
   // output size for a 1:1 ratio. (Note though that VideoToolbox does not handle
@@ -854,8 +863,8 @@ void VTVideoDecodeAccelerator::DecodeTask(scoped_refptr<DecoderBuffer> buffer,
   // no image.
   if (!frame->has_slice) {
     gpu_task_runner_->PostTask(
-        FROM_HERE,
-        base::Bind(&VTVideoDecodeAccelerator::DecodeDone, weak_this_, frame));
+        FROM_HERE, base::BindOnce(&VTVideoDecodeAccelerator::DecodeDone,
+                                  weak_this_, frame));
     return;
   }
 
@@ -1010,7 +1019,7 @@ void VTVideoDecodeAccelerator::Output(void* source_frame_refcon,
   frame->image.reset(image_buffer, base::scoped_policy::RETAIN);
   gpu_task_runner_->PostTask(
       FROM_HERE,
-      base::Bind(&VTVideoDecodeAccelerator::DecodeDone, weak_this_, frame));
+      base::BindOnce(&VTVideoDecodeAccelerator::DecodeDone, weak_this_, frame));
 }
 
 void VTVideoDecodeAccelerator::DecodeDone(Frame* frame) {
@@ -1057,7 +1066,7 @@ void VTVideoDecodeAccelerator::FlushTask(TaskType type) {
   // Queue a task even if flushing fails, so that destruction always completes.
   gpu_task_runner_->PostTask(
       FROM_HERE,
-      base::Bind(&VTVideoDecodeAccelerator::FlushDone, weak_this_, type));
+      base::BindOnce(&VTVideoDecodeAccelerator::FlushDone, weak_this_, type));
 }
 
 void VTVideoDecodeAccelerator::FlushDone(TaskType type) {
@@ -1121,7 +1130,7 @@ void VTVideoDecodeAccelerator::AssignPictureBuffers(
   // future work after that happens.
   gpu_task_runner_->PostTask(
       FROM_HERE,
-      base::Bind(&VTVideoDecodeAccelerator::ProcessWorkQueues, weak_this_));
+      base::BindOnce(&VTVideoDecodeAccelerator::ProcessWorkQueues, weak_this_));
 }
 
 void VTVideoDecodeAccelerator::ReusePictureBuffer(int32_t picture_id) {
@@ -1369,8 +1378,8 @@ void VTVideoDecodeAccelerator::NotifyError(
   if (!gpu_task_runner_->BelongsToCurrentThread()) {
     gpu_task_runner_->PostTask(
         FROM_HERE,
-        base::Bind(&VTVideoDecodeAccelerator::NotifyError, weak_this_,
-                   vda_error_type, session_failure_type));
+        base::BindOnce(&VTVideoDecodeAccelerator::NotifyError, weak_this_,
+                       vda_error_type, session_failure_type));
   } else if (state_ == STATE_DECODING) {
     state_ = STATE_ERROR;
     UMA_HISTOGRAM_ENUMERATION("Media.VTVDA.SessionFailureReason",

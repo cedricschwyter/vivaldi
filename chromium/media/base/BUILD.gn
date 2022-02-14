@@ -55,6 +55,8 @@ jumbo_source_set("base") {
     "audio_fifo.h",
     "audio_hash.cc",
     "audio_hash.h",
+    "audio_processing.cc",
+    "audio_processing.h",
     "audio_pull_fifo.cc",
     "audio_pull_fifo.h",
     "audio_push_fifo.cc",
@@ -234,6 +236,8 @@ jumbo_source_set("base") {
     "serial_runner.h",
     "silent_sink_suspender.cc",
     "silent_sink_suspender.h",
+    "simple_sync_token_client.cc",
+    "simple_sync_token_client.h",
     "sinc_resampler.cc",
     "sinc_resampler.h",
     "stream_parser.cc",
@@ -302,7 +306,6 @@ jumbo_source_set("base") {
     ":video_facing",
     "//media:media_buildflags",
     "//media:shared_memory_support",
-    "//third_party/libaom:av1_buildflags",
     "//ui/gfx:color_space",
   ]
   deps = [

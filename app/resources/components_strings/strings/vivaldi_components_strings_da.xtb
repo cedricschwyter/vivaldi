@@ -11,7 +11,6 @@
 <translation id="1375198122581997741">Om version</translation>
 <translation id="139305205187523129"><ph name="HOST_NAME" /> har ikke sendt nogen data.</translation>
 <translation id="14171126816530869">Identiteten for <ph name="ORGANIZATION" /> på <ph name="LOCALITY" /> er bekræftet af <ph name="ISSUER" />.</translation>
-<translation id="1506687042165942984">Vis en gemt (dvs. forældet) kopi af denne side.</translation>
 <translation id="1559528461873125649">Filen eller mappen findes ikke</translation>
 <translation id="1620510694547887537">Kamera</translation>
 <translation id="1640244768702815859">Prøv at <ph name="BEGIN_LINK" />gå til websitets startside<ph name="END_LINK" />.</translation>
@@ -38,6 +37,7 @@
 <translation id="2337852623177822836">Indstillingen styres af din administrator</translation>
 <translation id="2355395290879513365">Hackere kan muligvis se de billeder, du kigger på på dette website, og narre dig ved at ændre dem.</translation>
 <translation id="2356070529366658676">Spørg</translation>
+<translation id="2359808026110333948">Fortsæt</translation>
 <translation id="2467694685043708798"><ph name="BEGIN_LINK" />Kører netværksdiagnosticering<ph name="END_LINK" /></translation>
 <translation id="2482878487686419369">Underretninger</translation>
 <translation id="2539524384386349900">Registrer</translation>
@@ -108,7 +108,6 @@
 <translation id="4744603770635761495">Eksekverbar sti</translation>
 <translation id="4750917950439032686">Dine oplysninger (f.eks. adgangskoder eller kreditkortnumre) er private, når de sendes til dette website.</translation>
 <translation id="4764776831041365478">Websiden på <ph name="URL" /> kan være midlertidigt nede, eller også er den permanent flyttet til en ny webadresse.</translation>
-<translation id="4916962322362512664"><ph name="DEVICE_NAME" /></translation>
 <translation id="4974590756084640048">Genaktiver advarsler</translation>
 <translation id="5023310440958281426">Læs din administrators politikker</translation>
 <translation id="5039804452771397117">Tillad</translation>
@@ -137,7 +136,6 @@
 <translation id="5810442152076338065">Din forbindelse til <ph name="DOMAIN" /> er krypteret ved hjælp af en forældet krypteringspakke.</translation>
 <translation id="5838278095973806738">Du bør ikke indtaste følsomme oplysninger på dette website (f.eks. adgangskoder eller kreditkortoplysninger), da de kan blive stjålet af hackere.</translation>
 <translation id="5869405914158311789">Der kan ikke oprettes forbindelse til dette website</translation>
-<translation id="5920262536204764679">{NUM_COOKIES,plural, =1{1 i brug}other{# i brug}}</translation>
 <translation id="5932224571077948991">Websitet viser påtrængende eller vildledende annoncer</translation>
 <translation id="5990559369517809815">Anmodninger til serveren er blokeret af en udvidelse.</translation>
 <translation id="6051221802930200923">Du kan ikke besøge <ph name="SITE" /> lige nu, da websitet bruger certifikatlåsning. Netværksfejl og angreb er normalt midlertidige, så siden vil sandsynligvis fungere igen senere.</translation>
@@ -157,6 +155,7 @@
 <translation id="6417515091412812850">Kan ikke kontrollere, om certifikatet er tilbagekaldt.</translation>
 <translation id="6433595998831338502"><ph name="HOST_NAME" /> nægtede at oprette forbindelse.</translation>
 <translation id="6447842834002726250">Cookies</translation>
+<translation id="6451458296329894277">Bekræft genindsendelse af formular</translation>
 <translation id="6569060085658103619">Du ser en udvidelsesside</translation>
 <translation id="6657585470893396449">Adgangskode</translation>
 <translation id="6685834062052613830">Log ud, og fuldfør konfigurationen</translation>
@@ -201,6 +200,7 @@
 <translation id="8184538546369750125">Brug global standard (tillad)</translation>
 <translation id="8211406090763984747">Forbindelsen er sikker</translation>
 <translation id="8225771182978767009">Den person, der har konfigureret denne computer, har valgt at blokere dette website.</translation>
+<translation id="8241707690549784388">Siden, du søger, benyttede oplysninger, du har indtastet. Vender du tilbage til denne side kan det betyde, at enhver handling, du har foretaget, skal gentages. Vil du fortsætte?</translation>
 <translation id="8241712895048303527">Bloker på dette website</translation>
 <translation id="8288807391153049143">Vis certifikat</translation>
 <translation id="8289355894181816810">Kontakt din netværksadministrator, hvis du ikke er sikker på, hvad det betyder.</translation>

@@ -10,6 +10,7 @@
 #include "base/files/file_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "browser/menus/vivaldi_menu_enums.h"
+#include "browser/vivaldi_webcontents_util.h"
 #include "chrome/app/chrome_command_ids.h"
 #include "chrome/browser/app_mode/app_mode_utils.h"
 #include "chrome/browser/renderer_context_menu/render_view_context_menu.h"
@@ -85,18 +86,6 @@ void SendSimpleAction(WebContents* web_contents,
   base::string16 modifiers = GetModifierStringFromEventFlags(event_flags);
   args->Append(std::make_unique<base::Value>(modifiers));
   guestView->SimpleAction(*args);
-}
-
-bool IsVivaldiMail(WebContents* web_contents) {
-  extensions::WebViewGuest* web_view_guest =
-      extensions::WebViewGuest::FromWebContents(web_contents);
-  return web_view_guest && web_view_guest->IsVivaldiMail();
-}
-
-bool IsVivaldiWebPanel(WebContents* web_contents) {
-  extensions::WebViewGuest* web_view_guest =
-      extensions::WebViewGuest::FromWebContents(web_contents);
-  return web_view_guest && web_view_guest->IsVivaldiWebPanel();
 }
 
 bool IsVivaldiCommandId(int id) {

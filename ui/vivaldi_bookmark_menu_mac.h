@@ -10,7 +10,7 @@
 
 namespace bookmarks {
 class BookmarkNode;
-};
+}  // namespace bookmarks
 
 namespace vivaldi {
 

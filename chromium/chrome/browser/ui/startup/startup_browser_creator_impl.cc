@@ -535,17 +535,17 @@ Browser* StartupBrowserCreatorImpl::OpenTabsInBrowser(Browser* browser,
     } // is_vivaldi
     first_tab = false;
   }
+
   // NOTE(andre@vivaldi.com) : We need to do the tab-activation after we know
   // that everything is set up.
   if (!browser->is_vivaldi()) {
-    if (!browser->tab_strip_model()->GetActiveWebContents()) {
-      // TODO(sky): this is a work around for 110909. Figure out why it's
-      // needed.
-      if (!browser->tab_strip_model()->count())
-        chrome::AddTabAt(browser, GURL(), -1, true);
-      else
-        browser->tab_strip_model()->ActivateTabAt(0, false);
-    }
+  if (!browser->tab_strip_model()->GetActiveWebContents()) {
+    // TODO(sky): this is a work around for 110909. Figure out why it's needed.
+    if (!browser->tab_strip_model()->count())
+      chrome::AddTabAt(browser, GURL(), -1, true);
+    else
+      browser->tab_strip_model()->ActivateTabAt(0);
+  }
   }
   // The default behavior is to show the window, as expressed by the default
   // value of StartupBrowserCreated::show_main_browser_window_. If this was set

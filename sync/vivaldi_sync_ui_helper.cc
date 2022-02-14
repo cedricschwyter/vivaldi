@@ -26,7 +26,7 @@ void VivaldiSyncUIHelper::OnStateChanged(syncer::SyncService* sync) {
     return;
   }
 
-  if (!sync->IsPassphraseRequiredForDecryption() || tried_decrypt_)
+  if (!sync->GetUserSettings()->IsPassphraseRequiredForDecryption() || tried_decrypt_)
     return;
 
   tried_decrypt_ = true;
@@ -46,7 +46,7 @@ void VivaldiSyncUIHelper::OnStateChanged(syncer::SyncService* sync) {
 void VivaldiSyncUIHelper::OnGetPasswordStoreResults(
     std::vector<std::unique_ptr<autofill::PasswordForm>> results) {
   if (!sync_manager_->IsEngineInitialized() ||
-      !sync_manager_->IsPassphraseRequiredForDecryption())
+      !sync_manager_->GetUserSettings()->IsPassphraseRequiredForDecryption())
     return;
 
   for (const auto& result : results) {
@@ -70,7 +70,7 @@ void VivaldiSyncUIHelper::OnGetPasswordStoreResults(
 
 void VivaldiSyncUIHelper::OnSyncShutdown(syncer::SyncService* sync) {
   sync->RemoveObserver(this);
-};
+}
 
 VivaldiSyncUIHelper::~VivaldiSyncUIHelper() {}
 

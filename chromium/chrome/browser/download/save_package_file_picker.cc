@@ -37,6 +37,8 @@
 #include "chrome/browser/chromeos/drive/file_system_util.h"
 #endif
 
+#include "app/vivaldi_apptools.h"
+
 using content::RenderProcessHost;
 using content::SavePageType;
 using content::WebContents;
@@ -217,7 +219,8 @@ SavePackageFilePicker::SavePackageFilePicker(
 
     content::SavePageType preferred_save_type =
         static_cast<content::SavePageType>(download_prefs_->save_file_type());
-    if (ShouldSaveAsMHTML())
+    // NOTE(arnar@vivaldi.com): VB-48113. Removed hardcoded preferred saved type as MHTML
+    if (ShouldSaveAsMHTML() && !vivaldi::IsVivaldiRunning())
       preferred_save_type = content::SAVE_PAGE_TYPE_AS_MHTML;
 
     // Select the item saved in the pref.

@@ -475,6 +475,33 @@
             "description": "Y-coordinates of the click"
           }
         ]
+      },
+      {
+        "name": "onPageZoom",
+        "type": "function",
+        "description": "Fires on page zoom events",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "windowId",
+            "description": "Id of the Vivaldi window where the event was originated"
+          },
+          {
+            "type": "number",
+            "name": "steps",
+            "description": "Number of basic steps to increase or decrease zoom."
+          },
+          {
+            "type": "number",
+            "name": "clientX",
+            "description": "X-coordinates of the pointer position"
+          },
+          {
+            "type": "number",
+            "name": "clientY",
+            "description": "Y-coordinates of the pointer position"
+          }
+        ]
       }
     ]
   }

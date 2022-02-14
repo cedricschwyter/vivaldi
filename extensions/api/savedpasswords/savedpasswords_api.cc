@@ -12,8 +12,8 @@
 #include "chrome/browser/password_manager/password_store_factory.h"
 #include "chrome/browser/platform_util.h"
 #include "chrome/browser/profiles/profile.h"
-#include "chrome/common/pref_names.h"
 #include "components/autofill/core/common/password_form.h"
+#include "components/language/core/browser/pref_names.h"
 #include "components/password_manager/core/browser/password_store.h"
 #include "components/prefs/pref_service.h"
 #include "components/url_formatter/url_formatter.h"
@@ -47,7 +47,7 @@ void SavedpasswordsGetListFunction::SetPasswordList(
     const std::vector<std::unique_ptr<autofill::PasswordForm>>& password_list) {
   std::vector<SavedPasswordItem> svd_pwd_entries;
   base::ListValue entries;
-  languages_ = GetProfile()->GetPrefs()->GetString(prefs::kAcceptLanguages);
+  languages_ = GetProfile()->GetPrefs()->GetString(language::prefs::kAcceptLanguages);
 
   for (size_t i = 0; i < password_list.size(); ++i) {
     std::unique_ptr<SavedPasswordItem> new_node(

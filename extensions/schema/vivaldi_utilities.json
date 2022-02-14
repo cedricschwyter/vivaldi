@@ -34,10 +34,16 @@
         "id": "DialogName",
         "type": "string",
         "description": "Name of the dialog to set position for.",
-        "enum": [{
-          "name": "password",
-          "description": "The password dialog opening to save a password."
-        }]
+        "enum": [
+          {
+            "name": "chromecast",
+            "description": "The Chromecast dialog with source and destination. Centered over the active webview."
+          },
+          {
+            "name": "password",
+            "description": "The password dialog opening to save a password."
+          }
+        ]
       },
       {
         "id": "FlowDirection",
@@ -442,10 +448,6 @@
             "name": "callback",
             "description": "Return value true for success, false for failure.",
             "parameters": [
-              {
-                "name": "result",
-                "type": "boolean"
-              }
             ]
           }
         ]
@@ -479,7 +481,7 @@
             "parameters": [
               {
                 "name": "result",
-                "type": "string"
+                "type": "boolean"
               }
             ]
           }
@@ -496,7 +498,7 @@
             "parameters": [
               {
                 "name": "result",
-                "type": "string"
+                "type": "boolean"
               }
             ]
           }
@@ -528,10 +530,6 @@
             "type": "function",
             "name": "callback",
             "parameters": [
-              {
-                "name": "result",
-                "type": "string"
-              }
             ]
           }
         ]
@@ -545,10 +543,6 @@
             "type": "function",
             "name": "callback",
             "parameters": [
-              {
-                "name": "result",
-                "type": "string"
-              }
             ]
           }
         ]
@@ -570,10 +564,6 @@
             "type": "function",
             "name": "callback",
             "parameters": [
-              {
-                "name": "result",
-                "type": "string"
-              }
             ]
           }
         ]
@@ -646,10 +636,6 @@
             "type": "function",
             "name": "callback",
             "parameters": [
-              {
-                "name": "result",
-                "type": "string"
-              }
             ]
           }
         ]
@@ -683,7 +669,7 @@
           {
             "name": "urls",
             "type": "array",
-            "items": {"type": "string"}
+            "items": { "type": "string" }
           },
           {
             "type": "function",
@@ -797,7 +783,7 @@
       {
         "name": "isRazerChromaAvailable",
         "type": "function",
-        "description": "Is the Razer Chroma API available",
+        "description": "Is the Razer Chroma API available.",
         "parameters": [
           {
             "type": "function",
@@ -813,6 +799,24 @@
         ]
       },
       {
+        "name": "isRazerChromaReady",
+        "type": "function",
+        "description": "Is the Razer Chroma API initialized and ready to accept commands.",
+        "parameters": [
+          {
+            "type": "function",
+            "name": "callback",
+            "parameters": [
+              {
+                "name": "results",
+                "type": "boolean",
+                "description": "true if the Razer Chroma API is ready, otherwise false."
+              }
+            ]
+          }
+        ]
+      },
+      {
         "name": "setRazerChromaColor",
         "type": "function",
         "description": "Set the color(s) for the configured Razer Chroma lights.",
@@ -822,7 +826,7 @@
             "type": "array",
             "items": {
               "$ref": "Color",
-              "description":  "Array of colors to be set for the configured lights. If multiple colors are set, it will cycle quickly between them from the first to the last."
+              "description": "Array of colors to be set for the configured lights. If multiple colors are set, it will cycle quickly between them from the first to the last."
             }
           },
           {
@@ -867,7 +871,7 @@
             "type": "integer",
             "name": "scrollType",
             "minimum": 0,
-            "description":"Device that triggers scrolling. 1: Mouse, 2: Trackpad 3: Inertial"
+            "description": "Device that triggers scrolling. 1: Mouse, 2: Trackpad 3: Inertial"
           }
         ]
       },
@@ -904,6 +908,11 @@
         "description": "Fires for password icon status change.",
         "parameters": [
           {
+            "name": "windowId",
+            "type": "integer",
+            "description": "Window id to show/hide icon for"
+          },
+          {
             "name": "show",
             "type": "boolean",
             "description": "Whether to show or hide icon"
@@ -914,7 +923,13 @@
         "name": "onDownloadManagerReady",
         "type": "function",
         "description": "Fired when the download manager has loaded all its data.",
-        "parameters": [ ]
+        "parameters": []
+      },
+      {
+        "name": "onRazerChromaReady",
+        "type": "function",
+        "description": "Fired when the Razer Chroma API has been initialized.",
+        "parameters": []
       }
     ]
   }

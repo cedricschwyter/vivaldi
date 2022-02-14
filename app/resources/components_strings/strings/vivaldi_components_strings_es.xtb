@@ -11,7 +11,6 @@
 <translation id="1375198122581997741">Información sobre esta versión</translation>
 <translation id="139305205187523129"><ph name="HOST_NAME" /> no ha enviado ningún dato.</translation>
 <translation id="14171126816530869">La identidad de <ph name="ORGANIZATION" /> en <ph name="LOCALITY" /> ha sido verificada por <ph name="ISSUER" />.</translation>
-<translation id="1506687042165942984">Muestra una copia guardada (es decir, no actualizada) de esta página.</translation>
 <translation id="1559528461873125649">No existe tal archivo o carpeta</translation>
 <translation id="1620510694547887537">Cámara</translation>
 <translation id="1640244768702815859">Prueba a <ph name="BEGIN_LINK" />acceder a la página principal del sitio web<ph name="END_LINK" />.</translation>
@@ -38,6 +37,7 @@
 <translation id="2337852623177822836">Configuración controlada por tu administrador</translation>
 <translation id="2355395290879513365">Puede ser que los atacantes sepan qué imágenes estás viendo en este sitio web y que las modifiquen para engañarte.</translation>
 <translation id="2356070529366658676">Preguntar</translation>
+<translation id="2359808026110333948">Continuar</translation>
 <translation id="2467694685043708798"><ph name="BEGIN_LINK" />Ejecutar diagnósticos de red<ph name="END_LINK" /></translation>
 <translation id="2482878487686419369">Notificaciones</translation>
 <translation id="2539524384386349900">Detectar</translation>
@@ -108,7 +108,6 @@
 <translation id="4744603770635761495">Ruta al ejecutable</translation>
 <translation id="4750917950439032686">Tu información (por ejemplo, las contraseñas o los números de las tarjetas de crédito) es privada cuando se envía a este sitio web.</translation>
 <translation id="4764776831041365478">Es posible que la página web <ph name="URL" /> esté temporalmente inactiva o que se haya trasladado definitivamente a otra dirección.</translation>
-<translation id="4916962322362512664"><ph name="DEVICE_NAME" /></translation>
 <translation id="4974590756084640048">Reactivar los avisos</translation>
 <translation id="5023310440958281426">Consulta las políticas del administrador</translation>
 <translation id="5039804452771397117">Permitir</translation>
@@ -137,7 +136,6 @@
 <translation id="5810442152076338065">Tu conexión con <ph name="DOMAIN" /> está cifrada con un conjunto de cifrado obsoleto.</translation>
 <translation id="5838278095973806738">No deberías introducir información confidencial en este sitio web (por ejemplo, contraseñas o tarjetas de crédito) porque los atacantes podrían robarla.</translation>
 <translation id="5869405914158311789">No se puede acceder a este sitio web</translation>
-<translation id="5920262536204764679">{NUM_COOKIES,plural, =1{1 en uso}other{# en uso}}</translation>
 <translation id="5932224571077948991">El sitio web muestra anuncios invasivos o engañosos</translation>
 <translation id="5990559369517809815">Una extensión ha bloqueado el envío de solicitudes al servidor.</translation>
 <translation id="6051221802930200923">Ahora mismo no puedes acceder a <ph name="SITE" /> porque el sitio web utiliza la fijación de certificados (certificate pinning). Los ataques y los errores de red suelen ser temporales, por lo que es probable que esta página funcione más tarde.</translation>
@@ -157,6 +155,7 @@
 <translation id="6417515091412812850">No se ha podido comprobar si se ha revocado el certificado.</translation>
 <translation id="6433595998831338502">La página <ph name="HOST_NAME" /> ha rechazado la conexión.</translation>
 <translation id="6447842834002726250">Cookies</translation>
+<translation id="6451458296329894277">Confirmar reenvío del formulario</translation>
 <translation id="6569060085658103619">Estas viendo la página de una extensión</translation>
 <translation id="6657585470893396449">Contraseña</translation>
 <translation id="6685834062052613830">Cierra sesión y completa la configuración</translation>
@@ -201,6 +200,7 @@
 <translation id="8184538546369750125">Usar valor predeterminado global (Permitir)</translation>
 <translation id="8211406090763984747">La conexión es segura</translation>
 <translation id="8225771182978767009">La persona que ha configurado este ordenador ha elegido bloquear este sitio web.</translation>
+<translation id="8241707690549784388">La página que buscas usó la información que especificaste. Volver a la página podría hacer que tengas que repetir alguna acción. ¿Quieres continuar?</translation>
 <translation id="8241712895048303527">Bloquear en este sitio web</translation>
 <translation id="8288807391153049143">Mostrar certificado</translation>
 <translation id="8289355894181816810">Si tienes alguna duda, ponte en contacto con el administrador de red.</translation>

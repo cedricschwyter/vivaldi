@@ -138,8 +138,6 @@ class CONTENT_EXPORT ResourceHandler {
       const net::URLRequestStatus& status,
       std::unique_ptr<ResourceController> controller) = 0;
 
-  virtual void SetOpenFlags(bool open_when_done, bool ask_for_target) {};
-
  protected:
   explicit ResourceHandler(net::URLRequest* request);
 

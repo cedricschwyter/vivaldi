@@ -11,7 +11,6 @@
 <translation id="1375198122581997741">Om version</translation>
 <translation id="139305205187523129"><ph name="HOST_NAME" /> skickade ingen data.</translation>
 <translation id="14171126816530869">Identiteten hos <ph name="ORGANIZATION" /> på <ph name="LOCALITY" /> har verifierats av <ph name="ISSUER" />.</translation>
-<translation id="1506687042165942984">Visa en sparad kopia av sidan (en som vi vet är inaktuell).</translation>
 <translation id="1559528461873125649">Filen eller katalogen finns inte</translation>
 <translation id="1620510694547887537">Kamera</translation>
 <translation id="1640244768702815859">Försök <ph name="BEGIN_LINK" />besöka webbplatsens startsida<ph name="END_LINK" />.</translation>
@@ -38,6 +37,7 @@
 <translation id="2337852623177822836">Inställningen styrs av administratören</translation>
 <translation id="2355395290879513365">Det är möjligt att angripare kan se vilka bilder du visar på den här webbplatsen och att de försöker lura dig genom att modifiera dem.</translation>
 <translation id="2356070529366658676">Fråga</translation>
+<translation id="2359808026110333948">Fortsätt</translation>
 <translation id="2467694685043708798"><ph name="BEGIN_LINK" />Köra nätverksdiagnostik<ph name="END_LINK" /></translation>
 <translation id="2482878487686419369">Aviseringar</translation>
 <translation id="2539524384386349900">Identifiera</translation>
@@ -108,7 +108,6 @@
 <translation id="4744603770635761495">Sökväg till körbar fil</translation>
 <translation id="4750917950439032686">Dina uppgifter (till exempel lösenord eller kreditkortsnummer) är privata när de skickas till den här webbplatsen.</translation>
 <translation id="4764776831041365478">Webbsidan på <ph name="URL" /> kan ligga nere för tillfället eller kan ha flyttats permanent till en ny webbadress.</translation>
-<translation id="4916962322362512664"><ph name="DEVICE_NAME" /></translation>
 <translation id="4974590756084640048">Aktivera varningar igen</translation>
 <translation id="5023310440958281426">Kontrollera administratörsprinciperna</translation>
 <translation id="5039804452771397117">Tillåt</translation>
@@ -137,7 +136,6 @@
 <translation id="5810442152076338065">Anslutningen till <ph name="DOMAIN" /> är krypterad med en gammal krypteringssvit.</translation>
 <translation id="5838278095973806738">Du bör inte ange några känsliga uppgifter på den här webbplatsen (till exempel lösenord eller kreditkortsuppgifter) eftersom angripare kan stjäla dem.</translation>
 <translation id="5869405914158311789">Webbplatsen kan inte nås</translation>
-<translation id="5920262536204764679">{NUM_COOKIES,plural, =1{1 används}other{# används}}</translation>
 <translation id="5932224571077948991">Påträngande eller vilseledande annonser visas på webbplatsen</translation>
 <translation id="5990559369517809815">Förfrågningar till servern har blockerats av ett tillägg.</translation>
 <translation id="6051221802930200923">Du kan inte besöka <ph name="SITE" /> just nu eftersom tekniken att fästa certifikat används på webbplatsen. Nätverksfel och attacker är ofta tillfälliga, så sidan kommer förmodligen att fungera senare.</translation>
@@ -157,6 +155,7 @@
 <translation id="6417515091412812850">Det gick inte att kontrollera om certifikatet har återkallats.</translation>
 <translation id="6433595998831338502"><ph name="HOST_NAME" /> avvisade anslutningen.</translation>
 <translation id="6447842834002726250">Kakor (cookies)</translation>
+<translation id="6451458296329894277">Bekräfta återsändning av formulär</translation>
 <translation id="6569060085658103619">Du visar en tilläggssida</translation>
 <translation id="6657585470893396449">Lösenord</translation>
 <translation id="6685834062052613830">Logga ut och slutför konfigurationen</translation>
@@ -201,6 +200,7 @@
 <translation id="8184538546369750125">Använd global standardinställning (Tillåt)</translation>
 <translation id="8211406090763984747">Anslutningen är säker</translation>
 <translation id="8225771182978767009">Personen som konfigurerade datorn har valt att blockera den här webbplatsen.</translation>
+<translation id="8241707690549784388">Sidan du ser efter använde informationen du sände in. Om du återgår till sidan kan eventuella åtgärder du utförde på sidan komma att upprepas. Vill du fortsätta?</translation>
 <translation id="8241712895048303527">Blockera på den här webbplatsen</translation>
 <translation id="8288807391153049143">Visa certifikat</translation>
 <translation id="8289355894181816810">Kontakta din nätverksadministratör om du är osäker på vad det här innebär.</translation>

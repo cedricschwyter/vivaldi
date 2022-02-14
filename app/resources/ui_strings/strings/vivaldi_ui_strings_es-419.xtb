@@ -19,7 +19,7 @@
 <translation id="3740362395218339114"><ph name="QUANTITY" />GB/s</translation>
 <translation id="3757388668994797779"><ph name="QUANTITY" /> GB</translation>
 <translation id="3889424535448813030">Flecha derecha</translation>
-<translation id="4968171027979920686">{SECONDS,plural, =1{1 segundo}other{# segundos}}</translation>
+<translation id="4968171027979920686">{SECONDS, plural, =1 {1 segundo} other {# segundos}}</translation>
 <translation id="5076340679995252485">&amp;Pegar</translation>
 <translation id="520299402983819650"><ph name="QUANTITY" /> PB</translation>
 <translation id="5613020302032141669">Flecha izquierda</translation>
@@ -42,5 +42,5 @@
 <translation id="8677655579646609597"><ph name="QUANTITY" /> KB/s</translation>
 <translation id="8798099450830957504">Predeterminado</translation>
 <translation id="8901569739625249689"><ph name="QUANTITY" /> KB</translation>
-<translation id="9044832324875206639">{SECONDS,plural, =1{1 seg}other{# segs}}</translation>
+<translation id="9044832324875206639">{SECONDS, plural, =1 {1 seg} other {# segs}}</translation>
 </translationbundle>

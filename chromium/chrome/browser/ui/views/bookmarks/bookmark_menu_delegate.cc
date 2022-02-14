@@ -57,9 +57,17 @@ SkColor TextColorForMenu(MenuItemView* menu, views::Widget* widget) {
   // macOS incognito currently has a light on dark bookmark bar, but
   // dark on light menus, so using the theme color in the folders is
   // incorrect.
+  if (vivaldi::IsVivaldiRunning()) {
+    // Use the same code as in MenuItemView::GetTextColor() for best result.
+    if (widget && widget->GetNativeTheme()) {
+      return widget->GetNativeTheme()->GetSystemColor(
+          ui::NativeTheme::kColorId_EnabledMenuItemForegroundColor);
+    }
+  } else {
   if (widget && widget->GetThemeProvider()) {
     return widget->GetThemeProvider()->GetColor(
         ThemeProperties::COLOR_BOOKMARK_TEXT);
+  }
   }
 #endif
   return menu->GetNativeTheme()->GetSystemColor(
@@ -160,9 +168,19 @@ void BookmarkMenuDelegate::SetActiveMenu(const BookmarkNode* node,
   menu_ = node_to_menu_map_[node];
 }
 
+// Added by vivaldi
+void BookmarkMenuDelegate::VivaldiSelectionChanged(views::MenuItemView* menu) {
+  const BookmarkNode* node = menu_id_to_node_map_[menu->GetCommand()];
+  vivaldi::HandleHoverUrl(browser_, node ? node->url().spec() : std::string());
+}
+
 base::string16 BookmarkMenuDelegate::GetTooltipText(
     int id,
     const gfx::Point& screen_loc) const {
+  if (vivaldi::IsVivaldiRunning() && vivaldi::IsVivaldiMenuItem(id)) {
+    return base::string16();
+  }
+
   auto i = menu_id_to_node_map_.find(id);
   // When removing bookmarks it may be possible to end up here without a node.
   if (i == menu_id_to_node_map_.end()) {
@@ -192,7 +210,8 @@ void BookmarkMenuDelegate::ExecuteCommand(int id, int mouse_event_flags) {
 
   if (vivaldi::IsVivaldiRunning()) {
     const BookmarkNode* node = menu_id_to_node_map_[id];
-    vivaldi::OpenBookmarkById(browser_, node->id(), mouse_event_flags);
+    vivaldi::ExecuteBookmarkMenuCommand(browser_, id, node ? node->id() : -1,
+                                        mouse_event_flags);
     return;
   }
 
@@ -267,6 +286,10 @@ int BookmarkMenuDelegate::GetDropOperation(
     MenuItemView* item,
     const ui::DropTargetEvent& event,
     views::MenuDelegate::DropPosition* position) {
+  if (vivaldi::IsVivaldiRunning() &&
+      vivaldi::IsVivaldiMenuItem(item->GetCommand())) {
+    return ui::DragDropTypes::DRAG_NONE;
+  }
   // Should only get here if we have drop data.
   DCHECK(drop_data_.is_valid());
 
@@ -347,6 +370,9 @@ bool BookmarkMenuDelegate::ShowContextMenu(MenuItemView* source,
                                            int id,
                                            const gfx::Point& p,
                                            ui::MenuSourceType source_type) {
+  if (vivaldi::IsVivaldiRunning() && vivaldi::IsVivaldiMenuItem(id)) {
+    return false;
+  }
   DCHECK(menu_id_to_node_map_.find(id) != menu_id_to_node_map_.end());
   const BookmarkNode* node = menu_id_to_node_map_[id];
   std::vector<const BookmarkNode*> nodes(1, node);
@@ -359,6 +385,11 @@ bool BookmarkMenuDelegate::ShowContextMenu(MenuItemView* source,
 }
 
 bool BookmarkMenuDelegate::CanDrag(MenuItemView* menu) {
+  if (vivaldi::IsVivaldiRunning() &&
+      vivaldi::IsVivaldiMenuItem(menu->GetCommand())) {
+    return false;
+  }
+
   const BookmarkNode* node = menu_id_to_node_map_[menu->GetCommand()];
   // Don't let users drag the other folder.
   return node->parent() != GetBookmarkModel()->root_node();
@@ -557,11 +588,15 @@ void BookmarkMenuDelegate::BuildMenu(const BookmarkNode* parent,
   DCHECK(parent->empty() || start_child_index < parent->child_count());
   ui::ResourceBundle* rb = &ui::ResourceBundle::GetSharedInstance();
   const gfx::ImageSkia folder_icon =
+      vivaldi::IsVivaldiRunning() ?
+      vivaldi::GetBookmarkFolderIcon(TextColorForMenu(menu, parent_)) :
       chrome::GetBookmarkFolderIcon(TextColorForMenu(menu, parent_));
 
   std::vector<bookmarks::BookmarkNode*> nodes;
   if (vivaldi::IsVivaldiRunning()) {
     vivaldi::SortBookmarkNodes(parent, nodes);
+    // Call vivaldi::AddVivaldiBookmarkMenuItems here if in front of bookmarks.
+    vivaldi::AddSeparator(menu);
   }
 
   for (int i = start_child_index; i < parent->child_count(); ++i) {
@@ -576,15 +611,23 @@ void BookmarkMenuDelegate::BuildMenu(const BookmarkNode* parent,
     if (node->is_url()) {
       const gfx::Image& image = GetBookmarkModel()->GetFavicon(node);
       const gfx::ImageSkia* icon = image.IsEmpty() ?
+          vivaldi::IsVivaldiRunning() ? vivaldi::GetBookmarkDefaultIcon() :
           rb->GetImageSkiaNamed(IDR_DEFAULT_FAVICON) : image.ToImageSkia();
       child_menu_item = menu->AppendMenuItemWithIcon(
           id, MaybeEscapeLabel(node->GetTitle()), *icon);
     } else {
       DCHECK(node->is_folder());
       child_menu_item = menu->AppendSubMenuWithIcon(
-          id, MaybeEscapeLabel(node->GetTitle()), folder_icon);
+          id, MaybeEscapeLabel(node->GetTitle()),
+          vivaldi::IsVivaldiRunning() && node->GetSpeeddial() ?
+          vivaldi::GetBookmarkSpeeddialIcon(TextColorForMenu(menu, parent_)) :
+          folder_icon);
     }
     AddMenuToMaps(child_menu_item, node);
+  }
+  if (vivaldi::IsVivaldiRunning() && start_child_index == 0) {
+    vivaldi::AddSeparator(menu);
+    vivaldi::AddVivaldiBookmarkMenuItems(profile_, menu, parent);
   }
 }
 

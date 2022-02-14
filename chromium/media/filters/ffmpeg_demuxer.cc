@@ -570,7 +570,8 @@ void FFmpegDemuxerStream::EnqueuePacket(ScopedAVPacket packet) {
   const base::TimeDelta stream_timestamp =
       ConvertStreamTimestamp(stream_->time_base, packet->pts);
 
-  if (stream_timestamp == kNoTimestamp) {
+  if (stream_timestamp == kNoTimestamp ||
+      stream_timestamp == kInfiniteDuration) {
     MEDIA_LOG(ERROR, media_log_) << "FFmpegDemuxer: PTS is not defined";
     demuxer_->NotifyDemuxerError(DEMUXER_ERROR_COULD_NOT_PARSE);
     return;
@@ -1032,7 +1033,7 @@ void FFmpegDemuxer::AbortPendingReads() {
   // Aborting the read may cause EOF to be marked, undo this.
   blocking_task_runner_->PostTask(
       FROM_HERE,
-      base::Bind(&UnmarkEndOfStreamAndClearError, glue_->format_context()));
+      base::BindOnce(&UnmarkEndOfStreamAndClearError, glue_->format_context()));
   pending_read_ = false;
 
   // TODO(dalecurtis): We probably should report PIPELINE_ERROR_ABORT here
@@ -1440,7 +1441,7 @@ void FFmpegDemuxer::OnFindStreamInfoDone(int result) {
 
       media_track = media_tracks->AddAudioTrack(audio_config, track_id, "main",
                                                 track_label, track_language);
-      media_track->set_id(base::UintToString(track_id));
+      media_track->set_id(base::NumberToString(track_id));
       DCHECK(track_id_to_demux_stream_map_.find(media_track->id()) ==
              track_id_to_demux_stream_map_.end());
       track_id_to_demux_stream_map_[media_track->id()] = streams_[i].get();
@@ -1452,7 +1453,7 @@ void FFmpegDemuxer::OnFindStreamInfoDone(int result) {
 
       media_track = media_tracks->AddVideoTrack(video_config, track_id, "main",
                                                 track_label, track_language);
-      media_track->set_id(base::UintToString(track_id));
+      media_track->set_id(base::NumberToString(track_id));
       DCHECK(track_id_to_demux_stream_map_.find(media_track->id()) ==
              track_id_to_demux_stream_map_.end());
       track_id_to_demux_stream_map_[media_track->id()] = streams_[i].get();
@@ -1605,7 +1606,7 @@ void FFmpegDemuxer::LogMetadata(AVFormatContext* avctx,
       ++audio_track_count;
       std::string suffix = "";
       if (audio_track_count > 1)
-        suffix = "_track" + base::IntToString(audio_track_count);
+        suffix = "_track" + base::NumberToString(audio_track_count);
       const AVCodecParameters* audio_parameters = avctx->streams[i]->codecpar;
       const AudioDecoderConfig& audio_config = stream->audio_decoder_config();
       params.SetString("audio_codec_name" + suffix,
@@ -1620,7 +1621,7 @@ void FFmpegDemuxer::LogMetadata(AVFormatContext* avctx,
       ++video_track_count;
       std::string suffix = "";
       if (video_track_count > 1)
-        suffix = "_track" + base::IntToString(video_track_count);
+        suffix = "_track" + base::NumberToString(video_track_count);
       const AVStream* video_av_stream = avctx->streams[i];
       const AVCodecParameters* video_parameters = video_av_stream->codecpar;
       const VideoDecoderConfig& video_config = stream->video_decoder_config();

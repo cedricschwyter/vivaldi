@@ -317,7 +317,7 @@
       "update_default_download_when_saving_as": {
         "description": "Update default download directory when setting download target via 'Save as...'",
         "type": "boolean",
-        "default": true,
+        "default": false,
         "syncable": true
       }
     },
@@ -649,12 +649,76 @@
       }
     },
     "startpage": {
+      "background": {
+        "color": {
+          "description": "Background color or 'user_defined' reference",
+          "type": "string",
+          "default": "#cccccc",
+          "syncable": true
+        },
+        "color_custom": {
+          "description": "User-defined background color",
+          "type": "string",
+          "default": "#bfb8b0",
+          "syncable": true
+        }
+      },
       "image": {
-        "type": "file_path",
-        "default": "./../resources/bg.jpg",
-        "syncable": false
+        "enable": {
+          "type": "boolean",
+          "default": true,
+          "syncable": false
+        },
+        "path": {
+          "description": "Start page image path, 'user_defined', or 'desktop_image' reference",
+          "type": "file_path",
+          "default": "./../resources/bg.jpg",
+          "syncable": false
+        },
+        "path_custom": {
+          "description": "User-defined start page image path",
+          "type": "file_path",
+          "default": "./../resources/bg.jpg",
+          "syncable": false
+        },
+        "repeat": {
+          "type": "boolean",
+          "default": false,
+          "syncable": false
+        },
+        "stretch": {
+          "type": "boolean",
+          "default": true,
+          "syncable": false
+        }
       },
       "speed_dial": {
+        "add_button_visible": {
+          "type": "boolean",
+          "default": true,
+          "syncable": true
+        },
+        "allow_dnd": {
+          "description": "Allow Speed Dial entries reordering by drag & drop",
+          "type": "boolean",
+          "default": true,
+          "syncable": true
+        },
+        "columns": {
+          "type": "integer",
+          "default": 6,
+          "syncable": true
+        },
+        "controls_visible": {
+          "type": "boolean",
+          "default": true,
+          "syncable": true
+        },
+        "delete_visible": {
+          "type": "boolean",
+          "default": true,
+          "syncable": true
+        },
         "display_navigation": {
           "description": "Controls Speed Dial navigation display in other Start Page components",
           "type": "boolean",
@@ -665,6 +729,21 @@
           "description": "Display search field on Speed Dial page",
           "type": "boolean",
           "default": true,
+          "syncable": true
+        },
+        "titles_visible": {
+          "type": "enum",
+          "enum_values": {
+            "always": 0,
+            "hover": 1,
+            "never": 2
+          },
+          "default": "always",
+          "syncable": true
+        },
+        "width": {
+          "type": "integer",
+          "default": 220,
           "syncable": true
         }
       }
@@ -677,9 +756,15 @@
         "syncable": false
       },
       "last_seen_version": {
-        "description": "Most resent version number seen on startup",
+        "description": "Most recent version number seen on startup",
         "type": "string",
         "default": "",
+        "syncable": false
+      },
+      "remember_full_screen": {
+        "description": "Re-open vivaldi in full-screen if it was closed in full-screen. Unofficial setting, not exposed in the UI for now.",
+        "type": "boolean",
+        "default": false,
         "syncable": true
       }
     },
@@ -1058,6 +1143,11 @@
         "type": "boolean",
         "default": false,
         "syncable": false
+      },
+      "use_animation": {
+        "type": "boolean",
+        "default": true,
+        "syncable": true
       }
     },
     "toolbars": {
@@ -1160,8 +1250,8 @@
       },
       "focus_trap": {
         "type": "boolean",
-        "default": true,
-        "description": "true if the focus trap disabling tab cycling from web pages into the UI is enabled, otherwise false to allow it.",
+        "default": false,
+        "description": "Controls keyboard TAB focus trapping within individual UI toolbars and/or a webpage.",
         "syncable": true
       },
       "full_screen": {
@@ -1239,6 +1329,11 @@
       }
     },
     "windows": {
+      "linux_alt_controls": {
+        "type": "boolean",
+        "default": false,
+        "syncable": true
+      },
       "use_native_decoration": {
         "type": "boolean",
         "default": false,
@@ -1385,6 +1480,10 @@
   },
 
   "chromium_local": {
+    "kConfirmToQuitEnabled": {
+      "path": "browser.confirm_to_quit",
+      "type": "boolean"
+    },
     "kHardwareAccelerationModeEnabled": {
       "path": "hardware_acceleration_mode.enabled",
       "type": "boolean"

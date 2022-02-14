@@ -29,7 +29,7 @@ class VivaldiLocationBar : public LocationBar {
   ui::PageTransition GetPageTransition() const override;
   void AcceptInput() override {}
   void AcceptInput(base::TimeTicks match_selection_timestamp) override {}
-  void FocusLocation() override {}
+  void FocusLocation(bool select_all) override {}
   void FocusSearch() override {}
   void UpdateContentSettingsIcons() override {}
   void UpdateSaveCreditCardIcon() override {}

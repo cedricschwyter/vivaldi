@@ -57,6 +57,7 @@ class BookmarkMenuController : public bookmarks::BaseBookmarkModelObserver,
   void RunMenuAt(BookmarkBarView* bookmark_bar);
   // Added by Vivaldi to allow bookmark menus from a generic view
   void RunMenuAt(const views::View* parent, const gfx::Rect& rect);
+  void VivaldiSelectionChanged(views::MenuItemView* menu) override;
   void clear_bookmark_bar() {
     bookmark_bar_ = NULL;
   }

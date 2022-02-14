@@ -4,6 +4,7 @@
 
 #include "content/browser/renderer_host/render_widget_targeter.h"
 
+#include "base/bind.h"
 #include "base/metrics/histogram_functions.h"
 #include "base/metrics/histogram_macros.h"
 #include "base/rand_util.h"
@@ -226,6 +227,10 @@ void RenderWidgetTargeter::ViewWillBeDestroyed(RenderWidgetHostViewBase* view) {
   if (vivaldi::IsVivaldiRunning() && vivaldi_active_down_target_ == view) {
     vivaldi_active_down_target_ = nullptr;
   }
+}
+
+bool RenderWidgetTargeter::HasEventsPendingDispatch() const {
+  return request_in_flight_ || !requests_.empty();
 }
 
 void RenderWidgetTargeter::QueryClientInternal(

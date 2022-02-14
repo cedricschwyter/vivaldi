@@ -9,7 +9,6 @@
 #include "base/logging.h"
 #include "chrome/browser/badging/badge_manager.h"
 #include "chrome/browser/badging/badge_manager_factory.h"
-#include "chrome/browser/badging/badge_service_delegate.h"
 #include "chrome/browser/extensions/extension_util.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/browser_finder.h"
@@ -19,17 +18,8 @@
 #include "content/public/browser/web_contents.h"
 #include "extensions/common/extension.h"
 
-namespace {
-
-#if !defined(OS_CHROMEOS)
-BadgeServiceDelegate* GetDelegate(content::WebContents* web_contents) {
-  return chrome::FindBrowserWithWebContents(web_contents)
-      ->window()
-      ->GetBadgeServiceDelegate();
-}
-#endif
-
-}  // namespace
+#include "app/vivaldi_apptools.h"
+#include "browser/vivaldi_webcontents_util.h"
 
 // static
 void BadgeServiceImpl::Create(blink::mojom::BadgeServiceRequest request,
@@ -49,35 +39,27 @@ void BadgeServiceImpl::SetFlag() {
 }
 
 void BadgeServiceImpl::SetBadge(base::Optional<uint64_t> content) {
-#if defined(OS_CHROMEOS)
+  if (!IsInApp())
+    return;
+
   const extensions::Extension* extension = ExtensionFromLastUrl();
 
   if (!extension)
     return;
 
-  badge_manager_->UpdateBadge(extension->id(), base::nullopt);
-#else
-  if (!IsInApp())
-    return;
-
-  GetDelegate(web_contents_)->SetBadge(web_contents_, content);
-#endif
+  badge_manager_->UpdateBadge(extension->id(), content);
 }
 
 void BadgeServiceImpl::ClearBadge() {
-#if defined(OS_CHROMEOS)
+  if (!IsInApp())
+    return;
+
   const extensions::Extension* extension = ExtensionFromLastUrl();
 
   if (!extension)
     return;
 
   badge_manager_->ClearBadge(extension->id());
-#else
-  if (!IsInApp())
-    return;
-
-  GetDelegate(web_contents_)->ClearBadge(web_contents_);
-#endif
 }
 
 BadgeServiceImpl::BadgeServiceImpl(content::RenderFrameHost* render_frame_host,
@@ -87,10 +69,8 @@ BadgeServiceImpl::BadgeServiceImpl(content::RenderFrameHost* render_frame_host,
       render_frame_host_(render_frame_host) {
   web_contents_ = content::WebContents::FromRenderFrameHost(render_frame_host_);
   browser_context_ = web_contents_->GetBrowserContext();
-#if defined(OS_CHROMEOS)
   badge_manager_ = badging::BadgeManagerFactory::GetInstance()->GetForProfile(
       Profile::FromBrowserContext(browser_context_));
-#endif
 }
 
 BadgeServiceImpl::~BadgeServiceImpl() = default;
@@ -103,6 +83,10 @@ const extensions::Extension* BadgeServiceImpl::ExtensionFromLastUrl() {
 }
 
 bool BadgeServiceImpl::IsInApp() {
+  if (vivaldi::IsVivaldiRunning() &&
+      vivaldi::IsVivaldiWebPanel(web_contents_)) {
+    return false;
+  }
   extensions::HostedAppBrowserController* hosted_app_controller =
       chrome::FindBrowserWithWebContents(web_contents_)
           ->hosted_app_controller();

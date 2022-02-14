@@ -19,6 +19,7 @@
 <translation id="1274977772557788323">Nastavení úložiště přehrávače Adobe Flash Player</translation>
 <translation id="1297175357211070620">Cíl</translation>
 <translation id="1303101771013849280">Soubor HTML záložek</translation>
+<translation id="1380436189840894976">Přesto ukončit soukromé prohlížení?</translation>
 <translation id="1430915738399379752">Tisk</translation>
 <translation id="1433811987160647649">Před přístupem se zeptat</translation>
 <translation id="1451375123200651445">Webová stránka, jeden soubor</translation>
@@ -93,7 +94,6 @@
 <translation id="2662876636500006917">Internetový obchod Chrome</translation>
 <translation id="2678063897982469759">Znovu aktivovat</translation>
 <translation id="2721037002783622288">&amp;Vyhledat obrázek pomocí vyhledávače <ph name="SEARCH_ENGINE" /></translation>
-<translation id="2766006623206032690">Vložit a přejít</translation>
 <translation id="2785873697295365461">Popisovače souborů</translation>
 <translation id="2809586584051668049">a další (<ph name="NUMBER_ADDITIONAL_DISABLED" />)</translation>
 <translation id="2812989263793994277">Nezobrazovat žádné obrázky</translation>
@@ -127,14 +127,12 @@
 <translation id="3222066309010235055">Předběžně vykreslit: <ph name="PRERENDER_CONTENTS_NAME" /></translation>
 <translation id="3227137524299004712">Mikrofon</translation>
 <translation id="3241680850019875542">Vyberte kořenový adresář rozšíření, které chcete zabalit. Chcete-li rozšíření aktualizovat, vyberte také soubor soukromého klíče, jenž chcete znovu použít.</translation>
-<translation id="3269093882174072735">Načíst obrázek</translation>
 <translation id="3280237271814976245">Uložit &amp;jako...</translation>
 <translation id="3288047731229977326">Rozšíření spuštěná ve vývojářském režimu mohou poškodit počítač. Pokud nejste vývojář, měli byste s ohledem na svou bezpečnost rozšíření spuštěná v tomto režimu zakázat.</translation>
 <translation id="329838636886466101">Opravit aplikaci</translation>
 <translation id="3303818374450886607">Kopie</translation>
 <translation id="3305661444342691068">Zobrazovat náhled PDF</translation>
 <translation id="3317459757438853210">Oboustranně</translation>
-<translation id="3319048459796106952">Nové &amp;soukromé okno</translation>
 <translation id="3341703758641437857">Povolit přístup ke vzdáleným souborům</translation>
 <translation id="3347086966102161372">K&amp;opírovat adresu obrázku</translation>
 <translation id="3360297538363969800">Tisk se nezdařil. Zkontrolujte tiskárnu a zkuste to znovu.</translation>
@@ -149,6 +147,7 @@
 <translation id="3505030558724226696">Zrušit přístup k zařízení</translation>
 <translation id="3523642406908660543">Dotázat se, pokud chce web použít plugin k přístupu do počítače (doporučeno)</translation>
 <translation id="354068948465830244">Rozšíření může číst a měnit data webů</translation>
+<translation id="3574917942258583917">Přesto ukončit soukromé prohlížení?</translation>
 <translation id="357886715122934472">Uživatel &lt;strong&gt;<ph name="SENDER" />&lt;/strong&gt; chce sdílet tiskárnu &lt;strong&gt;<ph name="PRINTER_NAME" />&lt;/strong&gt; se skupinou, kterou vlastníte: &lt;strong&gt;<ph name="GROUP_NAME" />&lt;/strong&gt;. Pokud tuto akci přijmete, pomocí této tiskárny budou moci tisknout všichni členové skupiny.</translation>
 <translation id="3587482841069643663">Vše</translation>
 <translation id="3627588569887975815">Otevřít odkaz v &amp;soukromém okně</translation>
@@ -240,7 +239,6 @@
 <translation id="52912272896845572">Soubor soukromého klíče je neplatný.</translation>
 <translation id="5301954838959518834">Ano, chápu</translation>
 <translation id="5317780077021120954">Uložit</translation>
-<translation id="5329858601952122676">&amp;Smazat</translation>
 <translation id="5355926466126177564">Rozšíření <ph name="EXTENSION_NAME" /> změnilo stránku, která se zobrazí při vyhledávání z omniboxu.</translation>
 <translation id="5362741141255528695">Vyberte soubor soukromého klíče.</translation>
 <translation id="5370819323174483825">Načíst &amp;znovu</translation>
@@ -313,6 +311,7 @@
 <translation id="6498249116389603658">&amp;Všechny vaše jazyky</translation>
 <translation id="6503077044568424649">Nejnavštěvovanější</translation>
 <translation id="6508261954199872201">Aplikace: <ph name="APP_NAME" /></translation>
+<translation id="6516243500644829484">Nové &amp;soukromé okno</translation>
 <translation id="6518014396551869914">Kopírovat o&amp;brázek</translation>
 <translation id="6550675742724504774">Možnosti</translation>
 <translation id="6612358246767739896">Chráněný obsah</translation>

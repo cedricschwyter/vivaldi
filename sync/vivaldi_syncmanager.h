@@ -10,9 +10,11 @@
 #include "components/browser_sync/profile_sync_service.h"
 #include "sync/vivaldi_sync_ui_helper.h"
 
+class Profile;
+
 namespace base {
 class CommandLine;
-};
+}
 
 namespace vivaldi {
 class VivaldiInvalidationService;
@@ -52,13 +54,17 @@ class VivaldiSyncManager : public browser_sync::ProfileSyncService {
       const std::string& birthday,
       const std::string& bag_of_chips,
       bool success) override;
-  void OnConfigureDone(
-      const syncer::DataTypeManager::ConfigureResult& result) override;
 
  private:
   void ShutdownImpl(syncer::ShutdownReason reason) override;
+  void StartSyncingWithServer() override;
+
+  void OnClearDataComplete(scoped_refptr<net::HttpResponseHeaders> headers);
 
   bool is_clearing_sync_data_ = false;
+  std::unique_ptr<network::SimpleURLLoader> clear_data_url_loader_;
+
+  Profile* profile_;
 
   std::shared_ptr<VivaldiInvalidationService> invalidation_service_;
   VivaldiSyncUIHelper ui_helper_;

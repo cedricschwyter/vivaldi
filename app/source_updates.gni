@@ -201,6 +201,14 @@ foreach(
           have_strings_flag = false
         },
       ],
+      [
+        "//content/app/strings:strings",
+        "//vivaldi/app/resources/content/vivaldi_content_strings.grd",
+        {
+          translation_dir_setting = "strings"
+          pak_file_prefix="content_strings_"
+        },
+      ],
     ]) {
   _target = _target_config[0]
   vivaldi_source = _target_config[1]

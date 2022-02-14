@@ -4,15 +4,10 @@
 
 #include "base/task/post_task.h"
 #include "base/task/task_traits.h"
-#include "browser/history/top_sites_convert.h"
-#include "chrome/browser/browser_process.h"
-#include "chrome/browser/profiles/profile_manager.h"
-#include "components/datasource/vivaldi_data_source_api.h"
 #include "components/history/core/browser/top_sites_backend.h"
 #include "components/history/core/browser/top_sites_database.h"
 #include "components/history/core/browser/top_sites_impl.h"
 #include "content/public/browser/browser_task_traits.h"
-#include "content/public/browser/browser_thread.h"
 #include "sql/statement.h"
 
 namespace history {

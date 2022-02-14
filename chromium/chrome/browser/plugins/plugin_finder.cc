@@ -171,8 +171,9 @@ std::unique_ptr<base::DictionaryValue> PluginFinder::LoadBuiltInPluginList() {
           IDR_PLUGIN_DB_JSON));
   std::string error_str;
   int error_code = base::JSONReader::JSON_NO_ERROR;
-  std::unique_ptr<base::Value> value = base::JSONReader::ReadAndReturnError(
-      json_resource, base::JSON_PARSE_RFC, &error_code, &error_str);
+  std::unique_ptr<base::Value> value =
+      base::JSONReader::ReadAndReturnErrorDeprecated(
+          json_resource, base::JSON_PARSE_RFC, &error_code, &error_str);
   if (!value) {
     DLOG(ERROR) << error_str;
     switch (error_code) {
@@ -262,7 +263,7 @@ void PluginFinder::ReinitializePlugins(
     const base::DictionaryValue* plugin = nullptr;
     const std::string& identifier = plugin_it.key();
     if (plugin_list->GetDictionaryWithoutPathExpansion(identifier, &plugin)) {
-      //DCHECK(identifier_plugin_.find(identifier) == identifier_plugin_.end());
+      DCHECK(identifier_plugin_.find(identifier) == identifier_plugin_.end());
       identifier_plugin_[identifier] = CreatePluginMetadata(identifier, plugin);
 
       if (installers_.find(identifier) == installers_.end())

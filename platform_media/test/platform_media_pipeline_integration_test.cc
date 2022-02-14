@@ -16,7 +16,7 @@
 #include "media/base/media_switches.h"
 #include "media/base/test_data_util.h"
 #include "media/base/video_decoder_config.h"
-#include "media/test/mock_media_source.h"
+#include "media/test/test_media_source.h"
 #include "platform_media/renderer/decoders/ipc_demuxer.h"
 #include "platform_media/test/test_pipeline_host.h"
 
@@ -59,13 +59,13 @@ base::FilePath GetVivaldiTestDataFilePath(const std::string& name) {
 }
 
 
-class PlatformMediaMockMediaSource : public MockMediaSource {
+class PlatformMediaMockMediaSource : public TestMediaSource {
  public:
   PlatformMediaMockMediaSource(const std::string& filename,
                                const std::string& mimetype,
                                size_t initial_append_size,
                                bool initial_sequence_mode = false)
-      : MockMediaSource(filename,
+      : TestMediaSource(filename,
                         mimetype,
                         initial_append_size,
                         initial_sequence_mode,

@@ -13,6 +13,7 @@
 <translation id="1588438908519853928">Normal</translation>
 <translation id="1603914832182249871">(Incògnit)</translation>
 <translation id="1635033183663317347">Extensió instal·lada pel tutor.</translation>
+<translation id="1682548588986054654">Nova finestra discreta</translation>
 <translation id="1708338024780164500">(Inactiva)</translation>
 <translation id="1723824996674794290">&amp;Finestra nova</translation>
 <translation id="1729533290416704613">També controla la pàgina que es mostra quan feu una cerca des de l'omnibox.</translation>
@@ -62,7 +63,6 @@
 <translation id="3280237271814976245">Desa &amp;com a...</translation>
 <translation id="3288047731229977326">Les extensions que funcionen amb el mode desenvolupador poden malmetre el vostre ordinador. Si no sou desenvolupador, hauríeu de desactivar aquestes extensions per continuar protegit.</translation>
 <translation id="3305661444342691068">Obre el PDF en Previsualització</translation>
-<translation id="3319048459796106952">Finestra d'incògnit nova</translation>
 <translation id="3341703758641437857">Permet accedir als URLs dels fitxers</translation>
 <translation id="3347086966102161372">C&amp;opia l'adreça de la imatge</translation>
 <translation id="3378572629723696641">És possible que aquesta extensió estigui malmesa.</translation>
@@ -114,7 +114,6 @@
 <translation id="5233736638227740678">&amp;Enganxar</translation>
 <translation id="52912272896845572">El fitxer de clau privada no és vàlid.</translation>
 <translation id="5301954838959518834">D'acord</translation>
-<translation id="5329858601952122676">&amp;Suprimeix</translation>
 <translation id="5355926466126177564">L'extensió <ph name="EXTENSION_NAME" /> ha canviat la pàgina que es mostra quan feu una cerca des de l'omnibox.</translation>
 <translation id="5362741141255528695">Seleccioneu el fitxer de clau privada.</translation>
 <translation id="5370819323174483825">&amp;Tornar a carregar</translation>
@@ -209,6 +208,7 @@ Deseu el fitxer de clau en una ubicació segura. El necessitareu per crear versi
 <translation id="8916476537757519021">Submarc d'incògnit: <ph name="SUBFRAME_SITE" /></translation>
 <translation id="8962083179518285172">Amaga els detalls</translation>
 <translation id="9003647077635673607">Permetre a totes els webs</translation>
+<translation id="916607977885256133">Pantalla en pantalla</translation>
 <translation id="9170848237812810038">&amp;Desfés</translation>
 <translation id="9215293857209265904">S'ha afegit "<ph name="EXTENSION_NAME" />"</translation>
 <translation id="93766956588638423">Repara l'extensió</translation>

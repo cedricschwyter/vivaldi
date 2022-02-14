@@ -205,6 +205,11 @@ bool BookmarkMenuController::ShouldTryPositioningBesideAnchor() const {
   return false;
 }
 
+// Added by vivaldi
+void BookmarkMenuController::VivaldiSelectionChanged(MenuItemView* menu) {
+  menu_delegate_->VivaldiSelectionChanged(menu);
+}
+
 BookmarkMenuController::~BookmarkMenuController() {
   menu_delegate_->GetBookmarkModel()->RemoveObserver(this);
   if (observer_)

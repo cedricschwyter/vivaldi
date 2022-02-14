@@ -9,7 +9,7 @@
     "razer_chroma_support": {
       "friendly_name": "Razer Chroma support",
       "description": "Enables Razer Chroma color device integration (on Windows). Requires a restart of Vivaldi to be active.",
-      "value": "false",
+      "value": "true",
       "internal_value": "true"
     }
   }

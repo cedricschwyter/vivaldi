@@ -21,10 +21,8 @@ update_template_instance("//chrome/browser:browser") {
       "//vivaldi/browser/history/top_sites_convert.h",
       "//vivaldi/browser/menus/bookmark_sorter.cc",
       "//vivaldi/browser/menus/bookmark_sorter.h",
-      "//vivaldi/browser/menus/vivaldi_bookmark_context_menu.cpp",
-      "//vivaldi/browser/menus/vivaldi_bookmark_context_menu.h",
-      "//vivaldi/browser/menus/vivaldi_menus.cpp",
-      "//vivaldi/browser/menus/vivaldi_menus.h",
+      "//vivaldi/browser/menus/bookmark_support.cc",
+      "//vivaldi/browser/menus/bookmark_support.h",
       "//vivaldi/browser/vivaldi_session_service.cc",
     ]
   }

@@ -298,7 +298,7 @@ void VivaldiDataSourcesAPI::GetDataForIdOnFileThread(
         std::unique_ptr<char[]> buffer(new char[len]);
         int read_len = file.Read(0, buffer.get(), len);
         if (read_len == len) {
-          data = new base::RefCountedBytes(
+          data = base::MakeRefCounted<base::RefCountedBytes>(
               reinterpret_cast<unsigned char*>(buffer.get()), (size_t)len);
           it->second->SetCachedData(data);
         }
@@ -308,7 +308,7 @@ void VivaldiDataSourcesAPI::GetDataForIdOnFileThread(
   base::PostTaskWithTraits(
       FROM_HERE, {thread_id},
       base::Bind(&VivaldiDataSourcesAPI::PostResultsOnThread,
-                 base::Unretained(this), callback, data));
+                 base::Unretained(this), std::move(callback), data));
 }
 
 void VivaldiDataSourcesAPI::PostResultsOnThread(

@@ -11,7 +11,6 @@
 <translation id="1375198122581997741">Informationen zur Version</translation>
 <translation id="139305205187523129"><ph name="HOST_NAME" /> hat keine Daten gesendet.</translation>
 <translation id="14171126816530869">Die Identität von <ph name="ORGANIZATION" /> bei <ph name="LOCALITY" /> wurde von <ph name="ISSUER" /> verifiziert.</translation>
-<translation id="1506687042165942984">Zeigt eine gespeicherte (evtl. veraltete) Kopie dieser Seite an.</translation>
 <translation id="1559528461873125649">Datei oder Verzeichnis nicht vorhanden</translation>
 <translation id="1620510694547887537">Kamera</translation>
 <translation id="1640244768702815859">Versuchen Sie <ph name="BEGIN_LINK" />die Startseite aufzurufen<ph name="END_LINK" />.</translation>
@@ -38,6 +37,7 @@
 <translation id="2337852623177822836">Einstellung wird von Ihrem Administrator gesteuert</translation>
 <translation id="2355395290879513365">Angreifer können unter Umständen die Bilder sehen, die Sie sich auf dieser Website ansehen, und könnten dann versuchen, Sie durch Ändern der Bilder zu täuschen.</translation>
 <translation id="2356070529366658676">Nachfragen</translation>
+<translation id="2359808026110333948">Weiter</translation>
 <translation id="2467694685043708798"><ph name="BEGIN_LINK" />Eine Netzwerkdiagnose durchführen<ph name="END_LINK" /></translation>
 <translation id="2482878487686419369">Benachrichtigungen</translation>
 <translation id="2539524384386349900">Erkennen</translation>
@@ -107,7 +107,6 @@
 <translation id="4744603770635761495">Ausführbarer Pfad</translation>
 <translation id="4750917950439032686">Ihre Daten wie Passwörter oder Kreditkartennummern sind privat, wenn Sie sie an diese Website senden.</translation>
 <translation id="4764776831041365478">Die Webseite unter <ph name="URL" /> ist möglicherweise vorübergehend nicht verfügbar oder wurde dauerhaft an eine neue Webadresse verschoben.</translation>
-<translation id="4916962322362512664"><ph name="DEVICE_NAME" /></translation>
 <translation id="4974590756084640048">Warnmeldungen wieder aktivieren</translation>
 <translation id="5023310440958281426">Informieren Sie sich über die von Ihrem Administrator festgelegten Richtlinien.</translation>
 <translation id="5039804452771397117">Zulassen</translation>
@@ -136,7 +135,6 @@
 <translation id="5810442152076338065">Ihre Verbindung zu <ph name="DOMAIN" /> ist mit einer veralteten Verschlüsselungs-Suite verschlüsselt.</translation>
 <translation id="5838278095973806738">Sie sollten keine vertraulichen Informationen wie Passwörter oder Kreditkartendaten auf dieser Website eingeben, da sie von Angreifern gestohlen werden könnten.</translation>
 <translation id="5869405914158311789">Diese Website ist nicht erreichbar</translation>
-<translation id="5920262536204764679">{NUM_COOKIES, plural, =1 {1 wird verwendet} other {# werden verwendet}}</translation>
 <translation id="5932224571077948991">Website zeigt aufdringliche oder irreführende Werbung an</translation>
 <translation id="5990559369517809815">Anfragen an den Server wurden durch eine Erweiterung blockiert.</translation>
 <translation id="6051221802930200923">Sie können <ph name="SITE" /> zurzeit nicht aufrufen, da die Website Zertifikats-Pinning verwendet. Netzwerkfehler und Angriffe sind in der Regel nur vorübergehend, sodass die Seite wahrscheinlich später wieder funktioniert.</translation>
@@ -156,6 +154,7 @@
 <translation id="6417515091412812850">Es war nicht möglich zu überprüfen, ob das Zertifikat zurückgezogen wurde.</translation>
 <translation id="6433595998831338502"><ph name="HOST_NAME" /> hat die Verbindung abgelehnt.</translation>
 <translation id="6447842834002726250">Cookies</translation>
+<translation id="6451458296329894277">Erneute Formular-Übermittlung bestätigen</translation>
 <translation id="6569060085658103619">Dies ist eine Erweiterungsseite</translation>
 <translation id="6657585470893396449">Passwort</translation>
 <translation id="6685834062052613830">Abmelden und Einrichtung abschließen</translation>
@@ -200,6 +199,7 @@
 <translation id="8184538546369750125">Globalen Standard verwenden (Zulassen)</translation>
 <translation id="8211406090763984747">Verbindung ist sicher</translation>
 <translation id="8225771182978767009">Die Person, die diesen Computer eingerichtet hat, hat diese Website gesperrt.</translation>
+<translation id="8241707690549784388">Die gesuchte Seite hat die von Ihnen eingegebenen Informationen verwendet bzw. verarbeitet. Wenn Sie zu dieser Seite zurückgehen, wird eventuell eine schon ausgeführte Aktion wiederholt. Möchten Sie fortfahren?</translation>
 <translation id="8241712895048303527">Auf dieser Website blockieren</translation>
 <translation id="8288807391153049143">Zertifikat anzeigen</translation>
 <translation id="8289355894181816810">Wenn Sie weitere Informationen dazu benötigen, kann Ihnen Ihr Netzwerkadministrator weiterhelfen.</translation>

@@ -21,7 +21,7 @@ BookmarkSorter::BookmarkSorter(SortField sort_field, SortOrder sort_order,
   if (U_FAILURE(error)) {
     collator_.reset(nullptr);
   }
-};
+}
 
 BookmarkSorter::~BookmarkSorter() {
 }

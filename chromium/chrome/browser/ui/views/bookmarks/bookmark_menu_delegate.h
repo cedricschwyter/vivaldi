@@ -104,6 +104,7 @@ class BookmarkMenuDelegate : public bookmarks::BaseBookmarkModelObserver,
   bool is_mutating_model() const { return is_mutating_model_; }
 
   // MenuDelegate like methods (see class description for details).
+  void VivaldiSelectionChanged(views::MenuItemView* menu);
   base::string16 GetTooltipText(int id, const gfx::Point& p) const;
   bool IsTriggerableEvent(views::MenuItemView* menu,
                           const ui::Event& e);

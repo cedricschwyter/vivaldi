@@ -14,7 +14,6 @@
 
 #include <memory>
 
-#include "chrome/browser/ui/views/bookmarks/bookmark_menu_controller_observer.h"
 #include "content/public/common/context_menu_params.h"
 #include "ui/vivaldi_context_menu.h"
 
@@ -74,38 +73,6 @@ class VivaldiContextMenuViews : public vivaldi::VivaldiContextMenu {
   views::MenuItemView* menu_view_;  // owned by toolkit_delegate_
 
   DISALLOW_COPY_AND_ASSIGN(VivaldiContextMenuViews);
-};
-
-class VivaldiBookmarkMenuViews : public vivaldi::VivaldiBookmarkMenu,
-                                 public BookmarkMenuControllerObserver {
- public:
-  ~VivaldiBookmarkMenuViews() override;
-  VivaldiBookmarkMenuViews(content::WebContents* web_contents,
-                           const bookmarks::BookmarkNode* node,
-                           int offset,
-                           vivaldi::BookmarkSorter::SortField sort_field,
-                           vivaldi::BookmarkSorter::SortOrder sort_order,
-                           bool folder_group, const gfx::Rect& button_rect);
-  bool CanShow() override;
-  void Show() override;
-
-  void set_observer(vivaldi::VivaldiBookmarkMenuObserver* observer) override;
-
-  // BookmarkMenuControllerObserver
-  void BookmarkMenuControllerDeleted(
-      BookmarkMenuController* controller) override;
-
- private:
-  aura::Window* GetActiveNativeView();
-  views::Widget* GetTopLevelWidget();
-  Browser* GetBrowser();
-  std::unique_ptr<ToolkitDelegateViews> toolkit_delegate_;
-  content::WebContents* web_contents_;
-  gfx::Rect button_rect_;
-  BookmarkMenuController* controller_;  // Deletes iself
-  vivaldi::VivaldiBookmarkMenuObserver* observer_;
-
-  DISALLOW_COPY_AND_ASSIGN(VivaldiBookmarkMenuViews);
 };
 
 #endif  // UI_VIEWS_VIVALDI_CONTEXT_MENU_VIEWS_H_

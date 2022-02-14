@@ -6,6 +6,7 @@
 
 #include <utility>
 
+#include "base/bind.h"
 #include "base/logging.h"
 #include "base/macros.h"
 #include "base/memory/singleton.h"
@@ -332,9 +333,10 @@ void ExtensionFunction::OnQuotaExceeded(const std::string& violation_error) {
   SendResponseImpl(false);
 }
 
-void ExtensionFunction::SetArgs(const base::ListValue* args) {
+void ExtensionFunction::SetArgs(base::Value args) {
+  DCHECK(args.is_list());
   DCHECK(!args_.get());  // Should only be called once.
-  args_ = args->CreateDeepCopy();
+  args_ = base::ListValue::From(base::Value::ToUniquePtrValue(std::move(args)));
 }
 
 const base::ListValue* ExtensionFunction::GetResultList() const {
@@ -600,9 +602,7 @@ void UIThreadExtensionFunction::WriteToConsole(
       ->AddMessageToConsole(level, message);
 }
 
-IOThreadExtensionFunction::IOThreadExtensionFunction()
-    : routing_id_(MSG_ROUTING_NONE) {
-}
+IOThreadExtensionFunction::IOThreadExtensionFunction() {}
 
 IOThreadExtensionFunction::~IOThreadExtensionFunction() {
 }

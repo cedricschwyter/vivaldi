@@ -101,11 +101,6 @@
 #ifndef CONTENT_COMMON_GIN_JAVA_BRIDGE_MESSAGES_H_
 #error "Failed to include content/common/gin_java_bridge_messages.h"
 #endif
-#undef CONTENT_COMMON_MEDIA_MEDIA_PLAYER_MESSAGES_ANDROID_H_
-#include "content/common/media/media_player_messages_android.h"
-#ifndef CONTENT_COMMON_MEDIA_MEDIA_PLAYER_MESSAGES_ANDROID_H_
-#error "Failed to include content/common/media/media_player_messages_android.h"
-#endif
 #endif  // defined(OS_ANDROID)
 
 #undef RENDER_VIVALDI_RENDER_MESSAGES_H_

@@ -34,6 +34,7 @@
 #include "content/public/browser/render_widget_host.h"
 #include "content/public/browser/web_contents.h"
 #include "extensions/api/vivaldi_utilities/vivaldi_utilities_api.h"
+#include "extensions/api/window/window_private_api.h"
 #include "extensions/browser/app_window/app_window.h"
 #include "extensions/browser/guest_view/web_view/web_view_guest.h"
 #include "extensions/browser/image_loader.h"
@@ -1001,9 +1002,15 @@ void VivaldiAppWindowClientView::ContinueCloseInternal(bool close) {
 
 // Similar to |BrowserView::CanClose|
 bool VivaldiAppWindowClientView::CanClose() {
-  Browser *browser = window_->browser();
+  Browser* browser = window_->browser();
 
 #if !defined(OS_MACOSX)
+  extensions::VivaldiWindowsAPI* api =
+    extensions::VivaldiWindowsAPI::GetFactoryInstance()->Get(
+      window_->GetProfile());
+  // Is window closing due to a profile being closed?
+  bool closed_due_to_profile = api->IsWindowClosingBecauseProfileClose(browser);
+
   int tabbed_windows_cnt = vivaldi::GetBrowserCountOfType(Browser::TYPE_TABBED);
   const PrefService* prefs = window_->GetProfile()->GetPrefs();
   // Don't show exit dialog if the user explicitly selected exit
@@ -1032,7 +1039,7 @@ bool VivaldiAppWindowClientView::CanClose() {
   // is most likely a window that has been the source window of a move-tab
   // operation.
   if (!browser->tab_strip_model()->empty() &&
-      !window_->GetProfile()->IsGuestSession()) {
+      !window_->GetProfile()->IsGuestSession() && !closed_due_to_profile) {
     if (prefs->GetBoolean(
             vivaldiprefs::kWindowsShowWindowCloseConfirmationDialog)) {
       if (!close_dialog_shown_ && !browser_shutdown::IsTryingToQuit() &&

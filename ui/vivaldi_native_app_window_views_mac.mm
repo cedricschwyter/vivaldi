@@ -261,4 +261,4 @@ void VivaldiNativeAppWindowViewsMac::DispatchFullscreenMenubarChangedEvent(
     extensions::vivaldi::window_private::OnFullscreenMenubarChanged::kEventName,
     extensions::vivaldi::window_private::OnFullscreenMenubarChanged::Create(
         browser->session_id().id(), shown));
-};
+}

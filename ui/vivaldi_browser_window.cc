@@ -110,7 +110,7 @@ void VivaldiAppWindowContentsImpl::Initialize(
 
   web_contents_ = content::WebContents::Create(create_params);
 
-  content::RendererPreferences* render_prefs =
+  blink::mojom::RendererPreferences* render_prefs =
       web_contents_->GetMutableRendererPrefs();
   DCHECK(render_prefs);
 
@@ -323,6 +323,18 @@ void VivaldiAppWindowContentsImpl::RenderViewCreated(
 
 void VivaldiAppWindowContentsImpl::RenderProcessGone(
     base::TerminationStatus status) {
+  // TabStripModel owns WebContents for tabs. If the UI process exits
+  // abnormally we may still have some tabs with WebContents that will be
+  // destroyed without telling TabStripModel leading to access of freed
+  // memory.
+  if (status ==
+      base::TerminationStatus::TERMINATION_STATUS_NORMAL_TERMINATION) {
+    DCHECK(!host_->browser() || host_->browser()->tab_strip_model()->empty());
+  } else {
+    if (host_->browser()) {
+      host_->browser()->tab_strip_model()->CloseAllTabs();
+    }
+  }
   if (status == base::TerminationStatus::TERMINATION_STATUS_PROCESS_CRASHED) {
     chrome::AttemptRestart();
   }
@@ -413,7 +425,6 @@ void VivaldiBrowserWindow::Init(std::unique_ptr<Browser> browser,
     // No need to delay creating the web contents, we have a browser.
     CreateWebContents(nullptr);
   }
-  badge_service_delegate_ = std::make_unique<BadgeServiceDelegate>();
 }
 
 void VivaldiBrowserWindow::set_browser(Browser* browser) {
@@ -485,7 +496,6 @@ void VivaldiBrowserWindow::CreateWebContents(content::RenderFrameHost* host) {
 
   app_window_contents_->Initialize(browser_->profile(), host, url);
 
-  content::WebContentsObserver::Observe(web_contents());
   SetViewType(web_contents(), extensions::VIEW_TYPE_APP_WINDOW);
   app_delegate_->InitWebContents(web_contents());
 
@@ -775,12 +785,14 @@ VivaldiBrowserWindow::PreHandleKeyboardEvent(
 bool VivaldiBrowserWindow::HandleKeyboardEvent(
     const content::NativeWebKeyboardEvent& event) {
 
-  // Ideally we should test for blink::WebInputEvent::kIsAutoRepeat field
-  // in the modifier field of the event, but it is not 100% reliable (at least
-  // on Linux). Try pressing F1 for a while and switch to F2. The first auto
-  // repeat is not flagged as such. Works on Mac.
-  // (event.GetModifiers() & blink::WebInputEvent::kIsAutoRepeat)
-  bool is_auto_repeat = false;
+  bool is_auto_repeat;
+#if defined(OS_MACOSX)
+  is_auto_repeat = event.GetModifiers() & blink::WebInputEvent::kIsAutoRepeat;
+#else
+  // Ideally we should do what we do above for Mac, but it is not 100% reliable
+  // (at least on Linux). Try pressing F1 for a while and switch to F2. The
+  // first auto repeat is not flagged as such.
+  is_auto_repeat = false;
   if (event.GetType() == blink::WebInputEvent::kRawKeyDown) {
     is_auto_repeat = event.windows_key_code == last_key_code_;
     last_key_code_ = event.windows_key_code;
@@ -788,14 +800,10 @@ bool VivaldiBrowserWindow::HandleKeyboardEvent(
              event.GetType() != blink::WebInputEvent::kChar) {
     last_key_code_ = 0;
   }
+#endif  // defined(OS_MACOSX)
 
-#if defined(OS_MACOSX)
-  is_auto_repeat = event.GetModifiers() & blink::WebInputEvent::kIsAutoRepeat;
-#endif
-  extensions::TabsPrivateAPI* api =
-      extensions::TabsPrivateAPI::FromBrowserContext(browser_->profile());
-  if (api->SendKeyboardShortcutEvent(event, is_auto_repeat))
-    return true;
+  extensions::TabsPrivateAPI::SendKeyboardShortcutEvent(browser_->profile(),
+                                                        event, is_auto_repeat);
 
   return native_app_window_->HandleKeyboardEvent(event);
 }
@@ -896,10 +904,6 @@ gfx::Size VivaldiBrowserWindow::GetContentsSize() const {
   return gfx::Size();
 }
 
-BadgeServiceDelegate* VivaldiBrowserWindow::GetBadgeServiceDelegate() const {
-  return badge_service_delegate_.get();
-}
-
 void VivaldiBrowserWindow::ShowEmojiPanel() {
   native_app_window_->ShowEmojiPanel();
 }
@@ -935,6 +939,8 @@ void VivaldiBrowserWindow::HideDownloadShelf() {}
 ShowTranslateBubbleResult VivaldiBrowserWindow::ShowTranslateBubble(
     content::WebContents* contents,
     translate::TranslateStep step,
+    const std::string& source_language,
+    const std::string& target_language,
     translate::TranslateErrors::Type error_type,
     bool is_user_gesture) {
   return ShowTranslateBubbleResult::BROWSER_WINDOW_NOT_VALID;
@@ -1315,7 +1321,7 @@ void VivaldiBrowserWindow::VivaldiManagePasswordsIconView::SetState(
       profile_);
   bool show = state == password_manager::ui::State::PENDING_PASSWORD_STATE;
   show = state != password_manager::ui::State::INACTIVE_STATE;
-  utils_api->OnPasswordIconStatusChanged(show);
+  utils_api->OnPasswordIconStatusChanged(browser_->session_id().id(), show);
 }
 
 void VivaldiBrowserWindow::VivaldiManagePasswordsIconView::Update() {

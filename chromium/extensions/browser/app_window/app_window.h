@@ -407,6 +407,7 @@ class AppWindow : public content::WebContentsDelegate,
   friend class PlatformAppBrowserTest;
 
   // content::WebContentsDelegate implementation.
+  void ActivateContents(content::WebContents* contents) override;
   void CloseContents(content::WebContents* contents) override;
   bool ShouldSuppressDialogs(content::WebContents* source) override;
   content::ColorChooser* OpenColorChooser(
@@ -536,7 +537,8 @@ class AppWindow : public content::WebContentsDelegate,
                           const std::vector<SkBitmap>& bitmaps,
                           const std::vector<gfx::Size>& original_bitmap_sizes);
 
-  bool HandleContextMenu(const content::ContextMenuParams& params) override;
+  bool HandleContextMenu(content::RenderFrameHost* render_frame_host,
+                         const content::ContextMenuParams& params) override;
 
   // The browser context with which this window is associated. AppWindow does
   // not own this object.

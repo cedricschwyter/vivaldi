@@ -366,6 +366,9 @@ ConfirmQuitPanelController* g_confirmQuitPanelController = nil;
   NSMenu* appMenu = [[mainMenu itemAtIndex:0] submenu];
   for (NSMenuItem* item in [appMenu itemArray]) {
     // Find the Quit item.
+    if ([item tag] == IDC_VIV_EXIT) {
+      return item;
+    }
     if ([item action] == @selector(terminate:)) {
       return item;
     }

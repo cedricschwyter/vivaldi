@@ -93,17 +93,38 @@ void VivaldiWindowsAPI::Notify(app_modal::JavaScriptAppModalDialog* dialog) {
   }
 }
 
+void VivaldiWindowsAPI::WindowsForProfileClosing(Profile* profile) {
+  if (profile->IsGuestSession()) {
+    // We don't care about guest windows.
+    return;
+  }
+  for (auto* browser : *BrowserList::GetInstance()) {
+    if (browser->profile()->GetOriginalProfile() ==
+        profile->GetOriginalProfile())
+      closing_windows_.push_back(browser);
+  }
+}
+
+bool VivaldiWindowsAPI::IsWindowClosingBecauseProfileClose(Browser* browser) {
+  for (auto* item : *BrowserList::GetInstance()) {
+    if (browser == item) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void VivaldiWindowsAPI::OnBrowserAdded(Browser* browser) {
   // In Vivaldi we add the ExtensionActionUtil object as an tabstripobserver for
   // each browser. We fetch the correct browser for each update.
   extensions::ExtensionActionUtil* utils =
-      extensions::ExtensionActionUtilFactory::GetForProfile(
-          Profile::FromBrowserContext(browser_context_));
+      extensions::ExtensionActionUtilFactory::GetForBrowserContext(
+          browser_context_);
 
   browser->tab_strip_model()->AddObserver(utils);
 
-  TabsPrivateAPI* api = TabsPrivateAPI::FromBrowserContext(browser_context_);
-  browser->tab_strip_model()->AddObserver(api->GetTabStripModelObserver());
+  browser->tab_strip_model()->AddObserver(
+      TabsPrivateAPI::GetTabStripModelObserver(browser_context_));
 
   if (browser->is_vivaldi()) {
     ZoomAPI* zoom_api = ZoomAPI::GetFactoryInstance()->Get(
@@ -122,18 +143,23 @@ void VivaldiWindowsAPI::OnBrowserRemoved(Browser* browser) {
   // In Vivaldi we add the ExtensionActionUtil object as an tabstripobserver for
   // each browser. We fetch the correct browser for each update.
   extensions::ExtensionActionUtil* utils =
-      extensions::ExtensionActionUtilFactory::GetForProfile(
-          Profile::FromBrowserContext(browser_context_));
+      extensions::ExtensionActionUtilFactory::GetForBrowserContext(
+          browser_context_);
 
   browser->tab_strip_model()->RemoveObserver(utils);
 
-  TabsPrivateAPI* api = TabsPrivateAPI::FromBrowserContext(browser_context_);
-  browser->tab_strip_model()->RemoveObserver(api->GetTabStripModelObserver());
+  browser->tab_strip_model()->RemoveObserver(
+      TabsPrivateAPI::GetTabStripModelObserver(browser_context_));
 
   if (browser->is_vivaldi()) {
-    ZoomAPI* zoom_api = ZoomAPI::GetFactoryInstance()->Get(
-        Profile::FromBrowserContext(browser_context_));
+    ZoomAPI* zoom_api = ZoomAPI::GetFactoryInstance()->Get(browser_context_);
     zoom_api->RemoveZoomObserver(browser);
+  }
+  for (auto it = closing_windows_.begin(); it != closing_windows_.end(); ++it) {
+    if ((*it) == browser) {
+      closing_windows_.erase(it);
+      break;
+    }
   }
   int id = browser->session_id().id();
 

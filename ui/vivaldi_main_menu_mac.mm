@@ -13,6 +13,7 @@
 #import "chrome/browser/app_controller_mac.h"
 #include "components/favicon/core/favicon_service.h"
 #include "extensions/api/show_menu/show_menu_api.h"
+#include "ui/vivaldi_main_menu.h"
 
 // This tag value must be used in the js code setting up the menus.
 const int kSeparatorTag = 55555;
@@ -555,20 +556,14 @@ void CreateVivaldiMainMenu(
 
     NSMenu* mainMenu = [NSApp mainMenu];
     FaviconLoaderMac* faviconLoader = [g_window_menu_delegate faviconLoader];
-    for (std::vector<show_menu::MenuItem>::const_iterator it =
-         items->begin();
-         it != items->end(); ++it) {
-      const show_menu::MenuItem& item = *it;
+    for (const show_menu::MenuItem& item : *items) {
       PopulateMenu(item, mainMenu, true, -1, faviconLoader);
     }
   } else if (mode == "tabs") {
     [g_window_menu_delegate setMenuItems:items];
   } else if (mode == "update") {
     // Update one or more items. Title is not changed.
-    for (std::vector<show_menu::MenuItem>::const_iterator it =
-         items->begin();
-         it != items->end(); ++it) {
-      const show_menu::MenuItem& item = *it;
+    for (const show_menu::MenuItem& item : *items) {
       NSMenuItem* menuItem = GetMenuItemByTag([NSApp mainMenu], item.id);
       if (menuItem)
         UpdateMenuItem(item, menuItem);

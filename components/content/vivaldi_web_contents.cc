@@ -43,9 +43,15 @@ void FrameTreeNode::DidChangeLoadProgressExtended(double load_progress,
   frame_tree_->UpdateLoadProgress(load_progress);
 }
 
-void WebContentsImpl::FrameTreeNodeDestroyed(const WebContents* outermost) {
+void WebContentsImpl::FrameTreeNodeDestroyed() {
   for (auto& observer : observers_) {
-    observer.WebContentsDidDetach(outermost);
+    observer.WebContentsDidDetach();
+  }
+}
+
+void WebContentsImpl::AttachedToOuter() {
+  for (auto& observer : observers_) {
+    observer.WebContentsDidAttach();
   }
 }
 

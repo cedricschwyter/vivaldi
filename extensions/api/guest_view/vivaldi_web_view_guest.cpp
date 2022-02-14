@@ -694,7 +694,7 @@ void WebViewGuest::LoadTabContentsIfNecessary() {
     // Check if we need to make a tab active, this must be done when
     // starting with tabs through the commandline or through start with pages.
     if (viv_startup_data && viv_startup_data->start_as_active()) {
-      tab_strip->ActivateTabAt(tab_index, false);
+      tab_strip->ActivateTabAt(tab_index);
     }
   }
   web_contents()->SetUserData(::vivaldi::kVivaldiStartupTabUserDataKey,

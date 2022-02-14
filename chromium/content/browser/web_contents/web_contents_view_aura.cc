@@ -1054,8 +1054,11 @@ void WebContentsViewAura::StartDragging(
     return;
   }
 
+#if defined(OS_WIN)
   // NOTE(pettern@vivaldi.com): To be able to create a custom window
-  // when dropping tabs outside a window, we add this extra event.
+  // when dropping tabs outside a window. On Windows we add this extra event
+  // here and not in WebContentsImpl::DragSourceEndedAt to access
+  // Windows-specific drag cancel status.
   if (::vivaldi::IsVivaldiRunning()) {
     bool cancelled = !!(result_op & VivaldiEventHooks::DRAG_CANCEL);
     result_op &= ~VivaldiEventHooks::DRAG_CANCEL;
@@ -1070,6 +1073,7 @@ void WebContentsViewAura::StartDragging(
       }
     }
   }
+#endif  // defined(OS_WIN)
 
   EndDrag(source_rwh_weak_ptr.get(), ConvertToWeb(result_op));
 }
@@ -1343,6 +1347,27 @@ int WebContentsViewAura::OnPerformDrop(const ui::DropTargetEvent& event) {
     drag_dest_delegate_->OnDrop();
   current_drop_data_.reset();
   return ConvertFromWeb(current_drag_op_);
+}
+
+int WebContentsViewAura::GetTopControlsHeight() const {
+  WebContentsDelegate* delegate = web_contents_->GetDelegate();
+  if (!delegate)
+    return 0;
+  return delegate->GetTopControlsHeight();
+}
+
+int WebContentsViewAura::GetBottomControlsHeight() const {
+  WebContentsDelegate* delegate = web_contents_->GetDelegate();
+  if (!delegate)
+    return 0;
+  return delegate->GetBottomControlsHeight();
+}
+
+bool WebContentsViewAura::DoBrowserControlsShrinkRendererSize() const {
+  WebContentsDelegate* delegate = web_contents_->GetDelegate();
+  if (!delegate)
+    return false;
+  return delegate->DoBrowserControlsShrinkRendererSize(web_contents_);
 }
 
 #if BUILDFLAG(USE_EXTERNAL_POPUP_MENU)

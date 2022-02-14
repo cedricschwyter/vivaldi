@@ -142,6 +142,7 @@ Calendar GetCalendarItem(const calendar::CalendarRow& row) {
   calendar.orderindex.reset(new int(row.orderindex()));
   calendar.active.reset(new bool(row.active()));
   calendar.iconindex.reset(new int(row.iconindex()));
+  calendar.username.reset(new std::string(base::UTF16ToUTF8(row.username())));
   return calendar;
 }
 
@@ -283,9 +284,7 @@ std::unique_ptr<CalendarEvent> CreateVivaldiEvent(
   std::unique_ptr<CalendarEvent> cal_event(new CalendarEvent());
 
   cal_event->id = base::Int64ToString(event.id());
-  cal_event->calendar_id.reset(
-      new std::string(base::Int64ToString(event.calendar_id())));
-
+  cal_event->calendar_id = base::Int64ToString(event.calendar_id());
   cal_event->alarm_id.reset(
       new std::string(base::Int64ToString(event.alarm_id())));
 
@@ -305,6 +304,7 @@ std::unique_ptr<CalendarEvent> CreateVivaldiEvent(
   cal_event->url.reset(new std::string(base::UTF16ToUTF8(event.url())));
   cal_event->etag.reset(new std::string(event.etag()));
   cal_event->href.reset(new std::string(event.href()));
+  cal_event->uid.reset(new std::string(event.uid()));
 
   RecurrencePattern* pattern = new RecurrencePattern();
   pattern->interval = RecurrenceToUiRecurrence(event.recurrence().interval);
@@ -407,16 +407,17 @@ calendar::EventRow GetEventRow(const vivaldi::calendar::CreateDetails& event) {
     row.set_href(*event.href);
   }
 
+  if (event.uid.get()) {
+    row.set_uid(*event.uid);
+  }
+
   if (event.recurrence.get()) {
     row.set_recurrence(GetEventRecurrence(*event.recurrence));
   }
 
-  if (event.calendar_id.get()) {
-    calendar::CalendarID calendar_id;
-
-    if (GetStdStringAsInt64(*event.calendar_id, &calendar_id)) {
-      row.set_calendar_id(calendar_id);
-    }
+  calendar::CalendarID calendar_id;
+  if (GetStdStringAsInt64(event.calendar_id, &calendar_id)) {
+    row.set_calendar_id(calendar_id);
   }
 
   return row;
@@ -478,8 +479,8 @@ ExtensionFunction::ResponseAction CalendarEventsCreateFunction::Run() {
 CreateEventsResults GetCreateEventsItem(
     const calendar::CreateEventsResult& res) {
   CreateEventsResults event_item;
-  event_item.created_count.reset(new int(res.number_success));
-  event_item.failed_count.reset(new int(res.number_failed));
+  event_item.created_count = res.number_success;
+  event_item.failed_count = res.number_failed;
   return event_item;
 }
 
@@ -592,6 +593,11 @@ ExtensionFunction::ResponseAction CalendarUpdateEventFunction::Run() {
     updatedEvent.updateFields |= calendar::HREF;
   }
 
+  if (params->changes.uid.get()) {
+    updatedEvent.uid = *params->changes.uid;
+    updatedEvent.updateFields |= calendar::UID;
+  }
+
   CalendarService* model = CalendarServiceFactory::GetForProfile(GetProfile());
   model->UpdateCalendarEvent(
       eventId, updatedEvent,
@@ -660,6 +666,8 @@ std::unique_ptr<vivaldi::calendar::Calendar> CreateVivaldiCalendar(
   calendar->ctag.reset(new std::string(result.ctag()));
   calendar->active.reset(new bool(result.active()));
   calendar->iconindex.reset(new int(result.iconindex()));
+  calendar->username.reset(
+      new std::string(base::UTF16ToUTF8(result.username())));
   return calendar;
 }
 
@@ -709,6 +717,12 @@ ExtensionFunction::ResponseAction CalendarCreateFunction::Run() {
   if (params->calendar.active.get()) {
     active = *params->calendar.active.get();
     createCalendar.set_active(active);
+  }
+
+  base::string16 username;
+  if (params->calendar.username.get()) {
+    username = base::UTF8ToUTF16(*params->calendar.username.get());
+    createCalendar.set_username(username);
   }
 
   CalendarService* model = CalendarServiceFactory::GetForProfile(GetProfile());
@@ -813,6 +827,11 @@ ExtensionFunction::ResponseAction CalendarUpdateFunction::Run() {
   if (params->changes.iconindex.get()) {
     updatedCalendar.iconindex = *params->changes.iconindex;
     updatedCalendar.updateFields |= calendar::CALENDAR_ICONINDEX;
+  }
+
+  if (params->changes.username.get()) {
+    updatedCalendar.username = base::UTF8ToUTF16(*params->changes.username);
+    updatedCalendar.updateFields |= calendar::CALENDAR_USERNAME;
   }
 
   if (params->changes.ctag.get()) {

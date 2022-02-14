@@ -122,9 +122,6 @@ class CONTENT_EXPORT DownloadRequestCore
   // downstream receiver of its output.
   static const int kDownloadByteStreamSize;
 
-  bool open_when_done_ = false;
-  bool ask_for_target_ = false;
-
  protected:
   net::URLRequest* request() const { return request_; }
 

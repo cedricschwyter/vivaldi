@@ -19,6 +19,7 @@
 <translation id="1274977772557788323">Adobe Flash Playerin tallennusasetukset</translation>
 <translation id="1297175357211070620">Kohde</translation>
 <translation id="1303101771013849280">Kirjanmerkkien HTML-tiedosto</translation>
+<translation id="1380436189840894976">Poistutaanko silti yksityistilasta?</translation>
 <translation id="1430915738399379752">Tulosta</translation>
 <translation id="1433811987160647649">Kysy ennen käyttöä</translation>
 <translation id="1451375123200651445">Verkkosivu, yksittäinen tiedosto</translation>
@@ -93,7 +94,6 @@
 <translation id="2662876636500006917">Chrome Web Store</translation>
 <translation id="2678063897982469759">Ota uudelleen käyttöön</translation>
 <translation id="2721037002783622288">&amp;Etsi kuvaa hakukoneella <ph name="SEARCH_ENGINE" /></translation>
-<translation id="2766006623206032690">&amp;Liitä ja siirry</translation>
 <translation id="2785873697295365461">Tiedostokuvaajat</translation>
 <translation id="2809586584051668049">ja <ph name="NUMBER_ADDITIONAL_DISABLED" /> muuta</translation>
 <translation id="2812989263793994277">Älä näytä kuvia</translation>
@@ -127,14 +127,12 @@
 <translation id="3222066309010235055">Esihahmonna: <ph name="PRERENDER_CONTENTS_NAME" /></translation>
 <translation id="3227137524299004712">Mikrofoni</translation>
 <translation id="3241680850019875542">Voit pakata laajennuksen valitsemalla sen juurihakemiston. Jos haluat päivittää laajennuksen, valitse myös yksityinen avaintiedosto, jotta laajennusta voidaan käyttää uudelleen.</translation>
-<translation id="3269093882174072735">Lataa kuva</translation>
 <translation id="3280237271814976245">Tallenna &amp;nimellä...</translation>
 <translation id="3288047731229977326">Kehittäjätilassa olevat laajennukset voivat vahingoittaa tietokonettasi. Jos et ole kehittäjä, poista kehittäjätilassa olevat laajennukset käytöstä varmuuden vuoksi.</translation>
 <translation id="329838636886466101">Korjaa</translation>
 <translation id="3303818374450886607">Kopioita</translation>
 <translation id="3305661444342691068">Avaa PDF:ää esikatseluun</translation>
 <translation id="3317459757438853210">Kaksipuolinen</translation>
-<translation id="3319048459796106952">Uusi &amp;incognito-ikkuna</translation>
 <translation id="3341703758641437857">Salli pääsy tiedosto-osoitteisiin</translation>
 <translation id="3347086966102161372">K&amp;opioi kuvan osoite</translation>
 <translation id="3360297538363969800">Tulostus epäonnistui. Tarkista tulostin ja yritä uudelleen.</translation>
@@ -149,6 +147,7 @@
 <translation id="3505030558724226696">Peruuta laitteen käyttöoikeus</translation>
 <translation id="3523642406908660543">Kysy aina lupa sivuston halutessa käyttää tietokonettasi laajennuksen avulla (suositus)</translation>
 <translation id="354068948465830244">Voi lukea ja muuttaa sivustotietoa</translation>
+<translation id="3574917942258583917">Haluatko silti poistua yksityistilasta?</translation>
 <translation id="357886715122934472">&lt;strong&gt;<ph name="SENDER" />&lt;/strong&gt; haluaa jakaa tulostimen &lt;strong&gt;<ph name="PRINTER_NAME" />&lt;/strong&gt; omistamasi ryhmän kanssa: &lt;strong&gt;<ph name="GROUP_NAME" />&lt;/strong&gt;. Jos hyväksyt, kaikki ryhmän jäsenet voivat tulostaa tulostimeen.</translation>
 <translation id="3587482841069643663">Kaikki</translation>
 <translation id="3627588569887975815">Avaa linkki &amp;yksityisikkunaan</translation>
@@ -241,11 +240,11 @@
 <translation id="52912272896845572">Yksityinen avaintiedosto on virheellinen.</translation>
 <translation id="5301954838959518834">Selvä, ymmärrän</translation>
 <translation id="5317780077021120954">Tallenna</translation>
-<translation id="5329858601952122676">&amp;Poista</translation>
 <translation id="5355926466126177564">Laajennus <ph name="EXTENSION_NAME" /> on vaihtanut Omnibox-hakujen aloitussivun.</translation>
 <translation id="5362741141255528695">Valitse yksityinen avaintiedosto.</translation>
 <translation id="5370819323174483825">&amp;Lataa uudelleen</translation>
 <translation id="5398572795982417028">Sivuviittaus on rajojen ulkopuolella, raja on <ph name="MAXIMUM_PAGE" /></translation>
+<translation id="5425042808445046667">Jatka latausta</translation>
 <translation id="5431318178759467895">Väri</translation>
 <translation id="5483785310822538350">Peruuta tiedoston ja laitteen käyttöoikeudet</translation>
 <translation id="5485102783864353244">Lisää sovellus</translation>
@@ -266,6 +265,7 @@
 <translation id="5707185214361380026">Laajennuksen lataus epäonnistui kohteesta:</translation>
 <translation id="5715711091495208045">Laajennuksen välittäjä: <ph name="PLUGIN_NAME" /></translation>
 <translation id="5746169159649715125">Tallenna PDF:ksi</translation>
+<translation id="5747809636523347288">&amp;Liitä ja siirry osoitteeseen <ph name="URL" /></translation>
 <translation id="5759728514498647443">Sovelluksesta <ph name="APP_NAME" /> tulostamasi asiakirjat voi lukea sovellus <ph name="APP_NAME" />.</translation>
 <translation id="5764483294734785780">Tallenna &amp;äänitiedosto nimellä…</translation>
 <translation id="577624874850706961">Etsi evästeistä</translation>
@@ -314,6 +314,7 @@
 <translation id="6498249116389603658">K&amp;aikki valitsemasi kielet</translation>
 <translation id="6503077044568424649">Käydyimmät</translation>
 <translation id="6508261954199872201">Sovellus: <ph name="APP_NAME" /></translation>
+<translation id="6516243500644829484">Uusi &amp;yksityisikkuna</translation>
 <translation id="6518014396551869914">K&amp;opioi kuva</translation>
 <translation id="6550675742724504774">Asetukset</translation>
 <translation id="6612358246767739896">Suojattu sisältö</translation>
@@ -398,6 +399,8 @@ Tallenna avaintiedosto suojattuun sijaintiin. Tarvitset sitä, jos haluat luoda 
 <translation id="8137559199583651773">Laajennusten hallinta</translation>
 <translation id="8180239481735238521">sivu</translation>
 <translation id="8188120771410500975">&amp;Tarkista oikeinkirjoitus tekstikentissä</translation>
+<translation id="8212008074015601248">{NUM_DOWNLOAD, plural,
+        =1 {Lataus on meneillään} other {Latauksia on meneillään}}</translation>
 <translation id="8230134520748321204">Tallennetaanko salasanat: <ph name="ORIGIN" />?</translation>
 <translation id="8261378640211443080">Tätä laajennusta ei löydy kohteesta <ph name="IDS_EXTENSION_WEB_STORE_TITLE" />, ja se on voitu lisätä ilman lupaasi.</translation>
 <translation id="8270242299912238708">PDF-asiakirjat</translation>

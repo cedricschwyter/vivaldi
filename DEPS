@@ -253,45 +253,6 @@ hooks = [
                 '-d', 'chromium/chrome/build',
     ],
   },
-  # Pull luci-go binaries (isolate, swarming) using checked-in hashes.
-  # TODO(maruel): Remove, https://crbug.com/851596
-  {
-    'name': 'luci-go_win',
-    'pattern': '.',
-    'condition': 'host_os == "win"',
-    'action': [ 'python', "-u",
-      'chromium/third_party/depot_tools/download_from_google_storage.py',
-      '--no_resume',
-      '--no_auth',
-      '--bucket', 'chromium-luci',
-      '-d', 'chromium/tools/luci-go/win64'
-    ],
-  },
-  {
-    'name': 'luci-go_mac',
-    'pattern': '.',
-    'condition': 'host_os == "mac"',
-    'action': [ 'python', "-u",
-      'chromium/third_party/depot_tools/download_from_google_storage.py',
-      '--no_resume',
-      '--no_auth',
-      '--bucket', 'chromium-luci',
-      '-d', 'chromium/tools/luci-go/mac64'
-    ],
-  },
-  {
-    'name': 'luci-go_linux',
-    'pattern': '.',
-    'condition': 'host_os == "linux"',
-    'action': [ 'python', "-u",
-      'chromium/third_party/depot_tools/download_from_google_storage.py',
-      '--no_resume',
-      '--no_auth',
-      '--bucket', 'chromium-luci',
-      '-d', 'chromium/tools/luci-go/linux64'
-    ],
-  },
-
   # Pull down NPM dependencies for WebUI toolchain.
   {
     'name': 'webui_node_modules',
@@ -345,18 +306,6 @@ hooks = [
     ],
   },
   {
-    'name': 'gvr_static_shim_android_arm_ndk1',
-    'pattern': '\\.sha1',
-    'condition': 'checkout_android',
-    'action': [ 'python', "-u",
-                'chromium/third_party/depot_tools/download_from_google_storage.py',
-                '--no_resume',
-                '--no_auth',
-                '--bucket', 'chromium-gvr-static-shim',
-                '-s', 'chromium/third_party/gvr-android-sdk/libgvr_shim_static_arm_ndk1.a.sha1',
-      ],
-  },
-   {
     'name': 'gvr_static_shim_android_arm_Cr',
     'pattern': '\\.sha1',
     'condition': 'checkout_android',
@@ -380,7 +329,19 @@ hooks = [
                 '-s', 'chromium/third_party/gvr-android-sdk/libgvr_shim_static_arm64_1.a.sha1',
       ],
   },
- {
+  {
+    'name': 'gvr_static_shim_android_arm64_Cr',
+    'pattern': '\\.sha1',
+    'condition': 'checkout_android',
+    'action': [ 'python', "-u",
+                'chromium/third_party/depot_tools/download_from_google_storage.py',
+                '--no_resume',
+                '--no_auth',
+                '--bucket', 'chromium-gvr-static-shim',
+                '-s', 'chromium/third_party/gvr-android-sdk/libgvr_shim_static_arm64_Cr.a.sha1',
+    ],
+  },
+  {
     'name': 'vr_controller_test_api',
     'pattern': '\\.sha1',
     'condition': 'checkout_android',
@@ -427,6 +388,15 @@ hooks = [
     'action': [ 'vpython',
                 '-vpython-spec', 'chromium/.vpython',
                 '-vpython-tool', 'install',
+    ],
+  },
+  {
+    'name': 'mac-dsymutil',
+    'pattern': '.',
+    "condition": "checkout_mac",
+    'action': [
+      'python', "-u",
+      'scripts/mac_build_tools.py',
     ],
   },
   {

@@ -45,12 +45,13 @@
 #include "services/service_manager/embedder/result_codes.h"
 #include "ui/base/resource/resource_bundle.h"
 
+#include "app/vivaldi_apptools.h"
 #include "prefs/vivaldi_browser_prefs.h"
 
 #if defined(OS_CHROMEOS)
-#include "chrome/browser/chromeos/dbus/dbus_helper.h"
 #include "chrome/browser/chromeos/policy/browser_policy_connector_chromeos.h"
 #include "chromeos/constants/chromeos_paths.h"
+#include "chromeos/dbus/dbus_thread_manager.h"
 #endif  // defined(OS_CHROMEOS)
 
 namespace {
@@ -89,7 +90,10 @@ void ChromeFeatureListCreator::CreateFeatureList() {
 
 void ChromeFeatureListCreator::SetApplicationLocale(const std::string& locale) {
   actual_locale_ = locale;
-  metrics_services_manager_->GetVariationsService()->EnsureLocaleEquals(locale);
+  if (!vivaldi::IsVivaldiRunning()) {
+    // Don't care about google field trial variations.
+    metrics_services_manager_->GetVariationsService()->EnsureLocaleEquals(locale);
+  }
 }
 
 metrics_services_manager::MetricsServicesManagerClient*
@@ -135,7 +139,8 @@ void ChromeFeatureListCreator::CreatePrefService() {
 
 #if defined(OS_CHROMEOS)
   RegisterStubPathOverridesIfNecessary();
-  chromeos::PreEarlyInitDBus();
+  // DBus must be initialized before constructing the policy connector.
+  CHECK(chromeos::DBusThreadManager::IsInitialized());
   browser_policy_connector_ =
       std::make_unique<policy::BrowserPolicyConnectorChromeOS>();
 #else
@@ -188,7 +193,8 @@ void ChromeFeatureListCreator::ConvertFlagsToSwitches() {
 }
 
 void ChromeFeatureListCreator::SetupFieldTrials() {
-  browser_field_trials_ = std::make_unique<ChromeBrowserFieldTrials>();
+  browser_field_trials_ =
+      std::make_unique<ChromeBrowserFieldTrials>(local_state_.get());
 
   // Initialize FieldTrialList to support FieldTrials. This is intentionally
   // leaked since it needs to live for the duration of the browser process and

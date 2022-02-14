@@ -11,7 +11,7 @@
 #include "third_party/blink/renderer/platform/graphics/bitmap_image.h"
 #include "third_party/blink/renderer/platform/graphics/static_bitmap_image.h"
 #include "third_party/blink/renderer/platform/loader/fetch/resource_fetcher.h"
-#include "third_party/blink/renderer/platform/plugins/plugin_data.h"
+#include "third_party/blink/renderer/core/page/plugin_data.h"
 #include "third_party/skia/include/core/SkBitmap.h"
 
 namespace blink {

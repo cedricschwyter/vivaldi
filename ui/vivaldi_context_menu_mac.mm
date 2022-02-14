@@ -18,6 +18,7 @@
 #include "content/public/browser/web_contents.h"
 #include "ui/base/models/simple_menu_model.h"
 #import "ui/base/cocoa/menu_controller.h"
+#include "ui/views/vivaldi_bookmark_menu_views.h"
 
 using content::WebContents;
 
@@ -60,15 +61,27 @@ VivaldiContextMenu* CreateVivaldiContextMenu(
 
 VivaldiBookmarkMenu* CreateVivaldiBookmarkMenu(
     content::WebContents* web_contents,
-    const bookmarks::BookmarkNode* node,
-    int offset,
-    vivaldi::BookmarkSorter::SortField sort_field,
-    vivaldi::BookmarkSorter::SortOrder sort_order,
-    bool folder_group,
+    const vivaldi::BookmarkMenuParams& params,
     const gfx::Rect& button_rect) {
-  // TODO(espen): Add support for Mac.
-  NOTREACHED() << "CreateVivaldiBookmarkMenu not supported on Mac";
-  return nullptr;
+  // Transform coordinate from local to screen. Since Mac uses a lower-left
+  // origin and chrome does not we must adjust for this before and after,
+  NSView* view = web_contents->GetNativeView().GetNativeNSView();
+  NSWindow* window = [view window];
+  // Adjust position to lower left in view
+  NSPoint position = NSMakePoint(button_rect.x(),
+                                 NSHeight([view bounds]) - button_rect.y());
+  // Position in window
+  position = [view convertPoint:position toView:nil];
+  // Position in screen
+  NSRect screen_rect = [window convertRectToScreen:
+      NSMakeRect(position.x, position.y, 0, 0)];
+  // Adjust to upper left in screen
+  gfx::Rect rect(screen_rect.origin.x,
+                 window.screen.frame.size.height - screen_rect.origin.y,
+                 button_rect.width(),
+                 button_rect.height());
+
+  return new VivaldiBookmarkMenuViews(web_contents, params, rect);
 }
 }  // vivialdi
 

@@ -26,7 +26,8 @@ bool AccessKeysGetAccessKeysForPageFunction::RunAsync() {
   int tab_id = params->tab_id;
 
   content::WebContents* tabstrip_contents =
-    ::vivaldi::ui_tools::GetWebContentsFromTabStrip(tab_id, GetProfile());
+      ::vivaldi::ui_tools::GetWebContentsFromTabStrip(tab_id,
+                                                      browser_context());
   if (tabstrip_contents) {
     VivaldiPrivateTabObserver* tab_api =
         VivaldiPrivateTabObserver::FromWebContents(tabstrip_contents);
@@ -78,7 +79,8 @@ bool AccessKeysActionFunction::RunAsync() {
   std::string id = params->id;
 
   content::WebContents* tabstrip_contents =
-    ::vivaldi::ui_tools::GetWebContentsFromTabStrip(tab_id, GetProfile());
+      ::vivaldi::ui_tools::GetWebContentsFromTabStrip(tab_id,
+                                                      browser_context());
   if (tabstrip_contents) {
     VivaldiPrivateTabObserver* tab_api =
         VivaldiPrivateTabObserver::FromWebContents(tabstrip_contents);

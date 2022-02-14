@@ -72,13 +72,13 @@ QUERYDEVICE pQueryDevice;
 // static
 RazerChromaPlatformDriver*
 RazerChromaPlatformDriver::CreateRazerChromaPlatformDriver(
-    PrefService* pref_service) {
-  return new RazerChromaPlatformDriverWin(pref_service);
+    Profile* profile) {
+  return new RazerChromaPlatformDriverWin(profile);
 }
 
-RazerChromaPlatformDriverWin::RazerChromaPlatformDriverWin(
-    PrefService* pref_service)
-    : RazerChromaPlatformDriver(pref_service), pref_service_(pref_service) {}
+RazerChromaPlatformDriverWin::RazerChromaPlatformDriverWin(Profile* profile)
+    : RazerChromaPlatformDriver(profile), pref_service_(profile->GetPrefs()) {
+}
 
 RazerChromaPlatformDriverWin::~RazerChromaPlatformDriverWin() {}
 
@@ -152,6 +152,24 @@ void RazerChromaPlatformDriverWin::Shutdown() {
   task_tracker_.reset();
   task_runner_ = nullptr;
   thread_.reset();
+}
+
+bool RazerChromaPlatformDriverWin::IsAvailable() {
+  if (module_) {
+    // If we already have it open, return immediately.
+    return true;
+  }
+  HMODULE library;
+  library = ::LoadLibraryEx(CHROMASDKDLL, NULL, LOAD_LIBRARY_AS_DATAFILE);
+  if (library != NULL) {
+    ::FreeLibrary(library);
+    return true;
+  }
+  return false;
+}
+
+bool RazerChromaPlatformDriverWin::IsReady() {
+  return module_ != nullptr;
 }
 
 void RazerChromaPlatformDriverWin::GenerateDeviceListFromPrefs(

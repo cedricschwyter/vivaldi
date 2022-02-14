@@ -100,7 +100,7 @@ class BookmarksPrivateUpdateSpeedDialsForWindowsJumplistFunction
  public:
   DECLARE_EXTENSION_FUNCTION(
       "bookmarksPrivate.updateSpeedDialsForWindowsJumplist",
-      BOOKMARKSPRIVATE_UPDATESPEEDDIALSFORWINDOWSJUMPLIST);
+      BOOKMARKSPRIVATE_UPDATESPEEDDIALSFORWINDOWSJUMPLIST)
 
   BookmarksPrivateUpdateSpeedDialsForWindowsJumplistFunction();
 
@@ -118,7 +118,7 @@ class BookmarksPrivateUpdateSpeedDialsForWindowsJumplistFunction
 class BookmarksPrivateEmptyTrashFunction : public BookmarksFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("bookmarksPrivate.emptyTrash",
-                             BOOKMARKSPRIVATE_EMPTYTRASH);
+                             BOOKMARKSPRIVATE_EMPTYTRASH)
 
   BookmarksPrivateEmptyTrashFunction();
 

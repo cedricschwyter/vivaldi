@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-#include "app/vivaldi_apptools.h"
+#include "base/bind.h"
 #include "base/command_line.h"
 #include "base/debug/alias.h"
 #include "base/debug/dump_without_crashing.h"
@@ -80,6 +80,8 @@
 #include "extensions/browser/api/vpn_provider/vpn_service.h"
 #include "extensions/browser/api/vpn_provider/vpn_service_factory.h"
 #endif  // defined(OS_CHROMEOS)
+
+#include "app/vivaldi_apptools.h"
 
 using content::BrowserContext;
 using content::BrowserThread;

@@ -90,8 +90,9 @@
 
 using content::BrowserContext;
 using content::BrowserThread;
-using download::DownloadItem;
 using content::DownloadManager;
+using download::DownloadItem;
+using download::DownloadPathReservationTracker;
 
 namespace download_extension_errors {
 
@@ -602,8 +603,8 @@ void RunDownloadQuery(
   query_out.Search(all_items.begin(), all_items.end(), results);
 }
 
-DownloadPathReservationTracker::FilenameConflictAction ConvertConflictAction(
-    downloads::FilenameConflictAction action) {
+download::DownloadPathReservationTracker::FilenameConflictAction
+ConvertConflictAction(downloads::FilenameConflictAction action) {
   switch (action) {
     case downloads::FILENAME_CONFLICT_ACTION_NONE:
     case downloads::FILENAME_CONFLICT_ACTION_UNIQUIFY:
@@ -614,7 +615,7 @@ DownloadPathReservationTracker::FilenameConflictAction ConvertConflictAction(
       return DownloadPathReservationTracker::PROMPT;
   }
   NOTREACHED();
-  return DownloadPathReservationTracker::UNIQUIFY;
+  return download::DownloadPathReservationTracker::UNIQUIFY;
 }
 
 class ExtensionDownloadsEventRouterData : public base::SupportsUserData::Data {

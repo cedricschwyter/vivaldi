@@ -9,15 +9,26 @@
 #include "chrome/browser/ui/browser.h"
 #include "chrome/app/chrome_command_ids.h"
 #include "components/bookmarks/browser/bookmark_model.h"
+#include "components/bookmarks/browser/bookmark_utils.h"
 #include "extensions/api/bookmark_context_menu/bookmark_context_menu_api.h"
+#include "ui/base/l10n/l10n_util.h"
 #include "ui/base/models/simple_menu_model.h"
+#include "ui/gfx/color_utils.h"
 #include "ui/views/controls/menu/menu_item_view.h"
-
+#include "ui/views/controls/menu/submenu_view.h"
+#include "ui/vivaldi_context_menu.h"
 namespace vivaldi {
 
-static BookmarkSorter::SortField SortField = BookmarkSorter::FIELD_NONE;
-static BookmarkSorter::SortOrder SortOrder = BookmarkSorter::ORDER_NONE;
-static bool FolderGroup = false;
+// This pointer is owned by the bookmark context menu api and is valid as long
+// as its menu is open.
+static const vivaldi::BookmarkMenuParams* Params;
+
+typedef std::map<int, const bookmarks::BookmarkNode*> MenuIDToNodeMap;
+static int NextMenuId = 0;
+static MenuIDToNodeMap MenuIdMap;
+
+
+
 
 void BuildBookmarkContextMenu(ui::SimpleMenuModel* menu_model) {
   menu_model->AddItemWithStringId(IDC_VIV_BOOKMARK_BAR_OPEN_CURRENT_TAB,
@@ -35,15 +46,12 @@ void BuildBookmarkContextMenu(ui::SimpleMenuModel* menu_model) {
   menu_model->AddItemWithStringId(IDC_VIV_BOOKMARK_BAR_ADD_ACTIVE_TAB,
       IDS_VIV_BOOKMARK_ADD_ACTIVE_TAB);
   menu_model->AddSeparator(ui::NORMAL_SEPARATOR);
-  // Hide these entries as long as UI is missing in JS.
-  /*
   menu_model->AddItemWithStringId(IDC_BOOKMARK_BAR_ADD_NEW_BOOKMARK,
       IDS_VIV_BOOKMARK_BAR_NEW_BOOKMARK);
   menu_model->AddItemWithStringId(IDC_BOOKMARK_BAR_NEW_FOLDER,
       IDS_VIV_BOOKMARK_BAR_NEW_FOLDER);
   menu_model->AddItemWithStringId(IDC_BOOKMARK_BAR_EDIT,
       IDS_VIV_BOOKMARK_BAR_EDIT);
-  */
   menu_model->AddSeparator(ui::NORMAL_SEPARATOR);
   menu_model->AddItemWithStringId(IDC_CUT,
       IDS_VIV_BOOKMARK_BAR_CUT);
@@ -56,7 +64,18 @@ void BuildBookmarkContextMenu(ui::SimpleMenuModel* menu_model) {
       IDS_VIV_BOOKMARK_BAR_REMOVE);
 }
 
-void ExecuteBookmarkContextMenuCommand(Browser* browser, int id, int command) {
+void MoveToTrash(bookmarks::BookmarkModel* model, int64_t id) {
+  const bookmarks::BookmarkNode *node =
+      bookmarks::GetBookmarkNodeByID(model, id);
+  if (node && model->trash_node()) {
+    model->Move(node, model->trash_node(), 0);
+  }
+}
+
+void ExecuteBookmarkContextMenuCommand(Browser* browser,
+                                       bookmarks::BookmarkModel* model,
+                                       int64_t id,
+                                       int command) {
   extensions::BookmarkContextMenuAPI* api =
     extensions::BookmarkContextMenuAPI::GetFactoryInstance()
         ->Get(browser->profile()->GetOriginalProfile());
@@ -73,26 +92,41 @@ void ExecuteBookmarkContextMenuCommand(Browser* browser, int id, int command) {
     case IDC_CUT:
     case IDC_COPY:
     case IDC_PASTE:
-    case IDC_BOOKMARK_BAR_REMOVE:
       api->OnAction(id, 0, command);
+      break;
+    case IDC_BOOKMARK_BAR_REMOVE:
+      // Handle locally so we can use chrome's code to keep menu open.
+      MoveToTrash(model, id);
       break;
   }
 }
 
-void OpenBookmarkById(Browser* browser, int id, int mouse_event_flags) {
+void ExecuteBookmarkMenuCommand(Browser* browser, int menu_command,
+                                int64_t bookmark_id, int mouse_event_flags) {
   extensions::BookmarkContextMenuAPI* api =
     extensions::BookmarkContextMenuAPI::GetFactoryInstance()
         ->Get(browser->profile()->GetOriginalProfile());
-  api->OnActivated(id, mouse_event_flags);
+  if (IsVivaldiMenuItem(menu_command)) {
+    // Currently (and probably forever we only have one specific menu item) so
+    // no more tests.
+    api->OnAction(MenuIdMap[menu_command]->id(), 0,
+        IDC_VIV_BOOKMARK_BAR_ADD_ACTIVE_TAB);
+  } else if (bookmark_id != -1) {
+    api->OnActivated(bookmark_id, mouse_event_flags);
+  }
 }
 
+void HandleHoverUrl(Browser* browser, const std::string& url) {
+  extensions::BookmarkContextMenuAPI* api =
+    extensions::BookmarkContextMenuAPI::GetFactoryInstance()
+        ->Get(browser->profile()->GetOriginalProfile());
+  api->OnHover(url);
+}
 
-void SetBookmarkSortProperties(BookmarkSorter::SortField sort_field,
-                               BookmarkSorter::SortOrder sort_order,
-                               bool folder_group) {
-  SortField = sort_field;
-  SortOrder = sort_order;
-  FolderGroup = folder_group;
+void SetBookmarkMenuProperties(const BookmarkMenuParams* params) {
+  Params = params;
+  NextMenuId = 0;
+  MenuIdMap.clear();
 }
 
 void SortBookmarkNodes(const bookmarks::BookmarkNode* parent,
@@ -101,8 +135,27 @@ void SortBookmarkNodes(const bookmarks::BookmarkNode* parent,
   for (int i = 0; i < parent->child_count(); ++i) {
     nodes.push_back(const_cast<bookmarks::BookmarkNode*>(parent->GetChild(i)));
   }
-  BookmarkSorter sorter(SortField, SortOrder, FolderGroup);
+  BookmarkSorter sorter(Params->sort_field, Params->sort_order,
+                        Params->folder_group);
   sorter.sort(nodes);
+}
+
+void AddVivaldiBookmarkMenuItems(Profile* profile, views::MenuItemView* menu,
+                                 const bookmarks::BookmarkNode* parent) {
+  menu->AppendMenuItemWithLabel(NextMenuId,
+      l10n_util::GetStringUTF16(IDS_VIV_BOOKMARK_ADD_ACTIVE_TAB));
+  MenuIdMap[NextMenuId] = parent;
+  NextMenuId ++;
+}
+
+bool IsVivaldiMenuItem(int id) {
+  return MenuIdMap[id] != nullptr;
+}
+
+void AddSeparator(views::MenuItemView* menu) {
+  if ( menu->HasSubmenu() &&  menu->GetSubmenu()->GetMenuItemCount() > 0) {
+    menu->AppendSeparator();
+  }
 }
 
 bool AddIfSeparator(const bookmarks::BookmarkNode* node,
@@ -112,7 +165,7 @@ bool AddIfSeparator(const bookmarks::BookmarkNode* node,
   if (node->GetTitle().compare(separator) == 0 &&
       node->GetDescription().compare(separator_description) == 0) {
     // Old add separators in unsorted mode
-    if (SortField == BookmarkSorter::FIELD_NONE) {
+    if (Params->sort_field == BookmarkSorter::FIELD_NONE) {
       menu->AppendSeparator();
     }
     return true;
@@ -120,5 +173,19 @@ bool AddIfSeparator(const bookmarks::BookmarkNode* node,
   return false;
 }
 
+const gfx::ImageSkia* GetBookmarkDefaultIcon() {
+  return Params->support.icons[BookmarkSupport::kUrl].ToImageSkia();
+}
+
+gfx::ImageSkia GetBookmarkFolderIcon(SkColor text_color) {
+  return *Params->support.icons[color_utils::IsDark(text_color) ?
+      BookmarkSupport::kFolder : BookmarkSupport::kFolderDark].ToImageSkia();
+}
+
+gfx::ImageSkia GetBookmarkSpeeddialIcon(SkColor text_color) {
+  return *Params->support.icons[color_utils::IsDark(text_color) ?
+      BookmarkSupport::kSpeeddial :
+      BookmarkSupport::kSpeeddialDark].ToImageSkia();
+}
 
 }  // vivaldi

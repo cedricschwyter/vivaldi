@@ -37,7 +37,7 @@ class BookmarkContextMenuAPI : public BrowserContextKeyedAPI,
   void OnAction(int id, int index, int action);
   void OnOpen();
   void OnClose();
-  void OnUrlHighlighted(const std::string& url);
+  void OnHover(const std::string& url);
 
  private:
   friend class BrowserContextKeyedAPIFactory<BookmarkContextMenuAPI>;
@@ -51,6 +51,10 @@ class BookmarkContextMenuAPI : public BrowserContextKeyedAPI,
 
   // Created lazily upon OnListenerAdded.
   std::unique_ptr<class BookmarkContextMenuEventRouter> event_router_;
+
+  // Hover url as reported by menu code. Cached here to avoid repeated events
+  // with same value
+  std::string hover_url_;
 };
 
 
@@ -90,6 +94,7 @@ class BookmarkContextMenuShowFunction :
  private:
   std::unique_ptr<vivaldi::bookmark_context_menu::Show::Params> params_;
   Profile* profile_;
+  ::vivaldi::BookmarkMenuParams menuParams_;
 
   DISALLOW_COPY_AND_ASSIGN(BookmarkContextMenuShowFunction);
 };

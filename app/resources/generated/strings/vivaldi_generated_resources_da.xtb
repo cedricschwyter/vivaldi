@@ -19,6 +19,7 @@
 <translation id="1274977772557788323">Lagerindstillinger for Adobe Flash Player</translation>
 <translation id="1297175357211070620">Destination</translation>
 <translation id="1303101771013849280">Tilføjer HTML-fil som bogmærke</translation>
+<translation id="1380436189840894976">Afslut inkognitotilstand alligevel?</translation>
 <translation id="1430915738399379752">Udskriv</translation>
 <translation id="1433811987160647649">Spørg, før der gives adgang</translation>
 <translation id="1451375123200651445">Webside, enkelt fil</translation>
@@ -93,7 +94,6 @@
 <translation id="2662876636500006917">Chromes netbutik</translation>
 <translation id="2678063897982469759">Genaktiver</translation>
 <translation id="2721037002783622288">&amp;Søg efter billedet på <ph name="SEARCH_ENGINE" /></translation>
-<translation id="2766006623206032690">Indsæt og gå til</translation>
 <translation id="2785873697295365461">Filbeskrivelser</translation>
 <translation id="2809586584051668049">og <ph name="NUMBER_ADDITIONAL_DISABLED" /> mere</translation>
 <translation id="2812989263793994277">Vis ikke billeder</translation>
@@ -127,14 +127,12 @@
 <translation id="3222066309010235055">Forhåndsgengivelse: <ph name="PRERENDER_CONTENTS_NAME" /></translation>
 <translation id="3227137524299004712">Mikrofon</translation>
 <translation id="3241680850019875542">Vælg rodmappen for udvidelsen, der skal pakkes. Opdater en udvidelse ved også at vælge den private nøglefil til genbrug.</translation>
-<translation id="3269093882174072735">Indlæs billede</translation>
 <translation id="3280237271814976245">Gem &amp;som...</translation>
 <translation id="3288047731229977326">Udvidelser, der kører i udviklertilstand, kan skade din computer. Hvis du ikke er udvikler, skal du deaktivere udvidelserne, der kører i udviklertilstand, af hensyn til sikkerheden.</translation>
 <translation id="329838636886466101">Reparer</translation>
 <translation id="3303818374450886607">Kopier</translation>
 <translation id="3305661444342691068">Åbn PDF i Billedfremviser</translation>
 <translation id="3317459757438853210">To-sidet</translation>
-<translation id="3319048459796106952">Nyt &amp;inkognito-vindue</translation>
 <translation id="3341703758641437857">Tillad adgang til fil-URL'er</translation>
 <translation id="3347086966102161372">K&amp;opiér webadressen til billedet</translation>
 <translation id="3360297538363969800">Udskrift mislykkedes. Kontrollér din printer, og prøv igen.</translation>
@@ -149,6 +147,7 @@
 <translation id="3505030558724226696">Tilbagekald adgang til enhed</translation>
 <translation id="3523642406908660543">Spørg om tilladelse, når et website ønsker at anvende et plugin til at få adgang til din computer (anbefales)</translation>
 <translation id="354068948465830244">Den kan læse og ændre websitedata</translation>
+<translation id="3574917942258583917">Vil du afslutte inkognitotilstand alligevel?</translation>
 <translation id="357886715122934472">&lt;strong&gt;<ph name="SENDER" />&lt;/strong&gt; vil dele printeren &lt;strong&gt;<ph name="PRINTER_NAME" />&lt;/strong&gt; med en gruppe du ejer: &lt;strong&gt;<ph name="GROUP_NAME" />&lt;/strong&gt;. Hvis du accepterer dette, vil alle gruppens medlemmer kunne udskrive til denne printer.</translation>
 <translation id="3587482841069643663">Alle</translation>
 <translation id="3627588569887975815">Åbn link i inkognitovindue</translation>
@@ -241,11 +240,11 @@
 <translation id="52912272896845572">Den private nøglefil er ugyldig.</translation>
 <translation id="5301954838959518834">OK, det er forstået</translation>
 <translation id="5317780077021120954">Gem</translation>
-<translation id="5329858601952122676">&amp;Slet</translation>
 <translation id="5355926466126177564">Udvidelsen <ph name="EXTENSION_NAME" /> har ændret, hvilken side der vises, når du søger via omnifeltet.</translation>
 <translation id="5362741141255528695">Vælg privat nøglefil.</translation>
 <translation id="5370819323174483825">&amp;Opdater</translation>
 <translation id="5398572795982417028">Sidereferencen er ugyldig. Grænsen er <ph name="MAXIMUM_PAGE" /></translation>
+<translation id="5425042808445046667">Fortsæt download</translation>
 <translation id="5431318178759467895">Farve</translation>
 <translation id="5483785310822538350">Tilbagekald adgang til fil og enhed</translation>
 <translation id="5485102783864353244">Tilføj app</translation>
@@ -266,6 +265,7 @@
 <translation id="5707185214361380026">En fejl opstod ved indlæsning af udvidelsen fra:</translation>
 <translation id="5715711091495208045">Pluginmægler: <ph name="PLUGIN_NAME" /></translation>
 <translation id="5746169159649715125">Gem som PDF</translation>
+<translation id="5747809636523347288">Ind&amp;sæt, og gå til <ph name="URL" /></translation>
 <translation id="5759728514498647443">De dokumenter, du sender til udskrift via <ph name="APP_NAME" />, kan læses af <ph name="APP_NAME" />.</translation>
 <translation id="5764483294734785780">&amp;Gem lyd som...</translation>
 <translation id="577624874850706961">Søg i cookies</translation>
@@ -314,6 +314,7 @@
 <translation id="6498249116389603658">&amp;Alle dine sprog</translation>
 <translation id="6503077044568424649">Mest besøgte</translation>
 <translation id="6508261954199872201">Program: <ph name="APP_NAME" /></translation>
+<translation id="6516243500644829484">Nyt &amp;privat-vindue</translation>
 <translation id="6518014396551869914">Ko&amp;pier billede</translation>
 <translation id="6550675742724504774">Valgmuligheder</translation>
 <translation id="6612358246767739896">Beskyttet indhold</translation>
@@ -398,6 +399,8 @@ Opbevar din nøglefil på et sikkert sted. Du skal bruge den til at oprette nye 
 <translation id="8137559199583651773">Håndter udvidelser</translation>
 <translation id="8180239481735238521">side</translation>
 <translation id="8188120771410500975">&amp;Kontrollér stavning i tekstfelter</translation>
+<translation id="8212008074015601248">{NUM_DOWNLOAD,plural,
+         =1 {Download er i gang} other {Downloads er i gang}}</translation>
 <translation id="8230134520748321204">Vil du gemme adgangskoden til <ph name="ORIGIN" />?</translation>
 <translation id="8261378640211443080">Denne udvidelse er ikke anført i <ph name="IDS_EXTENSION_WEB_STORE_TITLE" /> og er muligvis blevet tilføjet, uden at du vidste det.</translation>
 <translation id="8270242299912238708">PDF-dokumenter</translation>

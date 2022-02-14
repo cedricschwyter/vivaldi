@@ -67,6 +67,8 @@ class MEDIA_BLINK_EXPORT UrlData : public base::RefCounted<UrlData> {
   // Cross-origin access mode
   CorsMode cors_mode() const { return cors_mode_; }
 
+  bool has_access_control() const { return has_access_control_; }
+
   const std::string& mime_type() const { return mime_type_; }
 
   // Are HTTP range requests supported?
@@ -125,6 +127,7 @@ class MEDIA_BLINK_EXPORT UrlData : public base::RefCounted<UrlData> {
   void set_last_modified(base::Time last_modified);
   void set_etag(const std::string& etag);
   void set_is_cors_cross_origin(bool is_cors_cross_origin);
+  void set_has_access_control();
 
   // A redirect has occured (or we've found a better UrlData for the same
   // resource).
@@ -185,6 +188,7 @@ class MEDIA_BLINK_EXPORT UrlData : public base::RefCounted<UrlData> {
 
   // Cross-origin access mode.
   const CorsMode cors_mode_;
+  bool has_access_control_;
 
   UrlIndex* const url_index_;
 
@@ -202,7 +206,7 @@ class MEDIA_BLINK_EXPORT UrlData : public base::RefCounted<UrlData> {
   // Does the server support ranges?
   bool range_supported_;
 
-  // Set to false if we have reason to beleive the chrome disk cache
+  // Set to false if we have reason to believe the chrome disk cache
   // will not cache this url.
   bool cacheable_;
 

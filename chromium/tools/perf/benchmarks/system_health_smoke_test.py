@@ -134,6 +134,9 @@ _DISABLED_TESTS = frozenset({
 
   # crbug.com/903849
   'system_health.memory_mobile/browse:news:cnn:2018',
+
+  # crbug.com/937006
+  'system_health.memory_mobile/browse:news:toi',
 })
 
 
@@ -235,15 +238,14 @@ def GenerateBenchmarkOptions(benchmark_class):
   # all crashes and hence remove the need to enable logging in actual perf
   # benchmarks.
   options.browser_options.logging_verbosity = 'non-verbose'
+  options.target_platforms = benchmark_class.GetSupportedPlatformNames(
+      benchmark_class.SUPPORTED_PLATFORMS)
   return options
 
 
 def load_tests(loader, standard_tests, pattern):
   del loader, standard_tests, pattern  # unused
   suite = progress_reporter.TestSuite()
-  # Vivaldi does not test these but waiting for the filters will cause
-  # load failures to trigger
-  return suite
   benchmark_classes = GetSystemHealthBenchmarksToSmokeTest()
   assert benchmark_classes, 'This list should never be empty'
   names_stories_to_smoke_tests = []

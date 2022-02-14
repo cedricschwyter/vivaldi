@@ -139,6 +139,7 @@
 <translation id="3989511127559254552">כדי להמשיך, ראשית עליך להעניק הרשאות גישה מורחבות למחשב שלך. עליך לעשות זאת פעם אחת בלבד.</translation>
 <translation id="4006787130661126000">‏אם ברצונך להשתמש ב-Chrome Remote Desktop כדי לגשת למחשב זה, עליך להפעיל חיבורים מרוחקים.</translation>
 <translation id="405887016757208221">המחשב המרוחק לא הצליח לאתחל את ההפעלה. אם הבעיה נמשכת, נסה להגדיר שוב את המארח.</translation>
+<translation id="4060747889721220580">הורדת קובץ</translation>
 <translation id="4068946408131579958">כל החיבורים</translation>
 <translation id="409800995205263688">הערה: הגדרות המדיניות מתירות חיבורים רק בין מחשבים הנמצאים בתוך הרשת שלך.</translation>
 <translation id="4126409073460786861">‏כשתהליך ההגדרה יסתיים, צריך יהיה לרענן את הדף ואז אפשר יהיה לבחור את המכשיר שלך ולהזין את ה-PIN כדי לגשת למחשב</translation>
@@ -186,7 +187,7 @@ Desktop
 <translation id="4808503597364150972">‏הזן את ה-PIN של <ph name="HOSTNAME" />.</translation>
 <translation id="4812684235631257312">מארח</translation>
 <translation id="4867841927763172006">‏שלח PrtScn</translation>
-<translation id="4913529628896049296">ממתין לחיבור...</translation>
+<translation id="4913529628896049296">תיכף נתחבר…</translation>
 <translation id="4918086044614829423">אשר</translation>
 <translation id="492843737083352574">נתקלתי בקשיים עם המקלדת או העכבר.</translation>
 <translation id="4973800994433240357">‏בהורדת מנהל ההתקנה של מארח Chromoting, אתה מביע הסכמה ל<ph name="LINK_BEGIN" />תנאים ולהגבלות<ph name="LINK_END" /> של Google.</translation>

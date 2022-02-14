@@ -19,6 +19,7 @@
 <translation id="1274977772557788323">Подешавања складишта Adobe Flash Player-а</translation>
 <translation id="1297175357211070620">Одредиште</translation>
 <translation id="1303101771013849280">HTML датотека са обележивачима</translation>
+<translation id="1380436189840894976">Желите ли ипак да изађете из приватног режима?</translation>
 <translation id="1430915738399379752">Одштампај</translation>
 <translation id="1433811987160647649">Питај пре приступања</translation>
 <translation id="1451375123200651445">Веб страница, једна датотека</translation>
@@ -93,7 +94,6 @@
 <translation id="2662876636500006917">Chrome веб-продавница</translation>
 <translation id="2678063897982469759">Поново омогући</translation>
 <translation id="2721037002783622288">&amp;Тражи слику помоћу <ph name="SEARCH_ENGINE" /></translation>
-<translation id="2766006623206032690">На&amp;лепи и иди</translation>
 <translation id="2785873697295365461">Дескриптори датотека</translation>
 <translation id="2809586584051668049">и још <ph name="NUMBER_ADDITIONAL_DISABLED" /> других</translation>
 <translation id="2812989263793994277">Не приказуј ниједну слику</translation>
@@ -127,14 +127,12 @@
 <translation id="3222066309010235055">Претприказивање: <ph name="PRERENDER_CONTENTS_NAME" /></translation>
 <translation id="3227137524299004712">Микрофон</translation>
 <translation id="3241680850019875542">Изаберите основни директоријум проширења који ћете упаковати. Да бисте ажурирали проширење, изаберите и датотеку приватног кључа за поновно коришћење.</translation>
-<translation id="3269093882174072735">Учитај слику</translation>
 <translation id="3280237271814976245">&amp;Сачувај као...</translation>
 <translation id="3288047731229977326">Проширења покренута у режиму програмера могу да нашкоде рачунару. Ако нисте програмер, требало би да онемогућите ова проширења покренута у режиму програмера да бисте се заштитили.</translation>
 <translation id="329838636886466101">Поправи</translation>
 <translation id="3303818374450886607">Примерака</translation>
 <translation id="3305661444342691068">PDF - отвори преглед</translation>
 <translation id="3317459757438853210">Обострано</translation>
-<translation id="3319048459796106952">Нови приватни прозор</translation>
 <translation id="3341703758641437857">Дозволи приступ URL адресама датотеке</translation>
 <translation id="3347086966102161372">К&amp;опирај адресу слике</translation>
 <translation id="3360297538363969800">Штампање није успело. Проверите штампач и покушајте поново.</translation>
@@ -149,6 +147,7 @@
 <translation id="3505030558724226696">Опозови приступ уређају</translation>
 <translation id="3523642406908660543">Питај када сајт жели да приступи мом рачунару помоћу додатне компоненте (препоручено)</translation>
 <translation id="354068948465830244">Ово може да чита и мења податке сајта</translation>
+<translation id="3574917942258583917">Желите ли ипак да изађете из приватног режима?</translation>
 <translation id="357886715122934472">&lt;strong&gt;<ph name="SENDER" />&lt;/strong&gt; жели да дели штампач &lt;strong&gt;<ph name="PRINTER_NAME" />&lt;/strong&gt; са групом чији сте власник: &lt;strong&gt;<ph name="GROUP_NAME" />&lt;/strong&gt;. Ако прихватите, сви чланови групе ће моћи да штампају помоћу штампача.</translation>
 <translation id="3587482841069643663">Све</translation>
 <translation id="3627588569887975815">Отвори везу у при&amp;ватном прозору</translation>
@@ -241,11 +240,11 @@
 <translation id="52912272896845572">Датотека приватног кључа је неважећа.</translation>
 <translation id="5301954838959518834">У реду, схватам</translation>
 <translation id="5317780077021120954">Сачувај</translation>
-<translation id="5329858601952122676">&amp;Избриши</translation>
 <translation id="5355926466126177564">Проширење „<ph name="EXTENSION_NAME" />“ је променило страницу која се приказује када претражујете из траке адресе.</translation>
 <translation id="5362741141255528695">Изаберите датотеку приватног кључа.</translation>
 <translation id="5370819323174483825">Поново &amp;учитај</translation>
 <translation id="5398572795982417028">Превелика референца за странице, ограничење је <ph name="MAXIMUM_PAGE" /></translation>
+<translation id="5425042808445046667">Настави преузимање</translation>
 <translation id="5431318178759467895">Боја</translation>
 <translation id="5483785310822538350">Опозови приступ датотекама и уређају</translation>
 <translation id="5485102783864353244">Додај апликацију</translation>
@@ -266,6 +265,7 @@
 <translation id="5707185214361380026">Неуспешно учитавање проширења из:</translation>
 <translation id="5715711091495208045">Посредник додатне компоненте: <ph name="PLUGIN_NAME" /></translation>
 <translation id="5746169159649715125">Сачувај као PDF</translation>
+<translation id="5747809636523347288">&amp;Налепи и иди на <ph name="URL" /></translation>
 <translation id="5759728514498647443">Документе које шаљете на штампање преко <ph name="APP_NAME" /> може да чита <ph name="APP_NAME" />.</translation>
 <translation id="5764483294734785780">Сачувај &amp;звучни запис као...</translation>
 <translation id="577624874850706961">Претражите колачиће</translation>
@@ -314,6 +314,7 @@
 <translation id="6498249116389603658">&amp;Сви ваши језици</translation>
 <translation id="6503077044568424649">Најпосећенији</translation>
 <translation id="6508261954199872201">Апликација: <ph name="APP_NAME" /></translation>
+<translation id="6516243500644829484">Нови &amp;приватни прозор</translation>
 <translation id="6518014396551869914">&amp;Копирај слику</translation>
 <translation id="6550675742724504774">Опције</translation>
 <translation id="6612358246767739896">Заштићени садржај</translation>
@@ -398,6 +399,7 @@
 <translation id="8137559199583651773">Управљај проширењима</translation>
 <translation id="8180239481735238521">страница</translation>
 <translation id="8188120771410500975">Про&amp;вери правопис у текстуалним пољима</translation>
+<translation id="8212008074015601248">{NUM_DOWNLOAD,plural, =1 {Преузимање је у току} one {Преузимања су у току} few {Преузимања су у току} other {Преузимања су у току}}</translation>
 <translation id="8230134520748321204">Сачувати лозинку за <ph name="ORIGIN" />?</translation>
 <translation id="8261378640211443080"><ph name="IDS_EXTENSION_WEB_STORE_TITLE" /> не наводи ово проширење и можда је додато без вашег знања.</translation>
 <translation id="8270242299912238708">PDF документи</translation>

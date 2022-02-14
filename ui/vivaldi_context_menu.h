@@ -5,6 +5,7 @@
 #define UI_VIVALDI_CONTEXT_MENU_H_
 
 #include "browser/menus/bookmark_sorter.h"
+#include "browser/menus/bookmark_support.h"
 
 namespace bookmarks {
 class BookmarkNode;
@@ -33,6 +34,23 @@ class VivaldiContextMenu;
 }
 
 namespace vivaldi {
+struct BookmarkMenuParams {
+  BookmarkMenuParams();
+  ~BookmarkMenuParams();
+
+  // The folder to display
+  const bookmarks::BookmarkNode* node;
+  // Offset into the folder
+  int offset;
+  // Place all subfolders together
+  bool folder_group;
+  // Icons to use for folders and bookmarks missing a fav icon
+  BookmarkSupport support;
+  // What to sort for and order
+  vivaldi::BookmarkSorter::SortField sort_field;
+  vivaldi::BookmarkSorter::SortOrder sort_order;
+};
+
 VivaldiContextMenu* CreateVivaldiContextMenu(
     content::WebContents* web_contents,
     ui::SimpleMenuModel* menu_model,
@@ -40,11 +58,7 @@ VivaldiContextMenu* CreateVivaldiContextMenu(
 
 VivaldiBookmarkMenu* CreateVivaldiBookmarkMenu(
     content::WebContents* web_contents,
-    const bookmarks::BookmarkNode* node,
-    int offset,
-    vivaldi::BookmarkSorter::SortField sort_field,
-    vivaldi::BookmarkSorter::SortOrder sort_order,
-    bool folder_group,
+    const BookmarkMenuParams& params,
     const gfx::Rect& button_rect);
 
 class VivaldiBookmarkMenuObserver {

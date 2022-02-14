@@ -16,7 +16,7 @@
 #include "content/public/browser/reload_type.h"
 #include "content/public/browser/visibility.h"
 #include "content/public/common/frame_navigate_params.h"
-#include "content/public/common/resource_load_info.mojom.h"
+#include "content/public/common/resource_load_info.mojom-forward.h"
 #include "content/public/common/resource_type.h"
 #include "ipc/ipc_listener.h"
 #include "mojo/public/cpp/system/message_pipe.h"
@@ -363,6 +363,14 @@ class CONTENT_EXPORT WebContentsObserver : public IPC::Listener {
   virtual void FrameReceivedFirstUserActivation(
       RenderFrameHost* render_frame_host) {}
 
+  // Invoked when the display state of the frame changes.
+  virtual void FrameDisplayStateChanged(RenderFrameHost* render_frame_host,
+                                        bool is_display_none) {}
+
+  // Invoked when a frame changes size.
+  virtual void FrameSizeChanged(RenderFrameHost* render_frame_host,
+                                const gfx::Size& frame_size) {}
+
   // This method is invoked when the title of the WebContents is set. Note that
   // |entry| may be null if the web page whose title changed has not yet had a
   // NavigationEntry assigned to it.
@@ -397,6 +405,11 @@ class CONTENT_EXPORT WebContentsObserver : public IPC::Listener {
   virtual void PluginHungStatusChanged(int plugin_child_id,
                                        const base::FilePath& plugin_path,
                                        bool is_hung) {}
+
+  // Notifies that an inner WebContents instance has been created with the
+  // observed WebContents as its container. |inner_web_contents| has not been
+  // added to the WebContents tree at this point, but can be observed safely.
+  virtual void InnerWebContentsCreated(WebContents* inner_web_contents) {}
 
   // Invoked when WebContents::Clone() was used to clone a WebContents.
   virtual void DidCloneToNewWebContents(WebContents* old_web_contents,
@@ -572,11 +585,9 @@ class CONTENT_EXPORT WebContentsObserver : public IPC::Listener {
 
   // NOTE(andre@vivaldi.com) : This is invoked only for embedded contents where
   // the containing element node is removed.
-  virtual void WebContentsDidDetach(
-      const content::WebContents* embedder_contents) {}
-  // Element node is removed.
-  virtual void WebContentsDidAttach(
-      const content::WebContents* embedder_contents) {}
+  virtual void WebContentsDidDetach() {}
+  // Element node is attached.
+  virtual void WebContentsDidAttach() {}
 
  protected:
   // Use this constructor when the object is tied to a single WebContents for

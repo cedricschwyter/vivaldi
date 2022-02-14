@@ -429,6 +429,15 @@ bool CheckAndResolveLocale(const std::string& locale,
 
 std::string GetApplicationLocaleInternal(const std::string& pref_locale) {
 #if defined(OS_MACOSX)
+  if (vivaldi::IsVivaldiRunning()) {
+    if (!pref_locale.empty()) {
+      std::string app_locale = base::i18n::GetCanonicalLocale(pref_locale);
+      if (!app_locale.empty()) {
+        return app_locale;
+      }
+    }
+  }
+
   // Use any override (Cocoa for the browser), otherwise use the preference
   // passed to the function.
   std::string app_locale = l10n_util::GetLocaleOverride();

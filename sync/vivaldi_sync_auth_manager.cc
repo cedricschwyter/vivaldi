@@ -31,27 +31,24 @@ GoogleServiceAuthError ToGoogleServiceAuthError(
   }
 }
 
-AccountInfo ToChromiumAccountInfo(
+syncer::SyncAccountInfo ToSyncAccountInfo(
     VivaldiAccountManager::AccountInfo account_info) {
-  AccountInfo chromium_account_info;
+  CoreAccountInfo chromium_account_info;
   // Email is the closest thing to a username that the chromium account info
   // takes. It isn't really used for anything else than disply purposes anyway.
   chromium_account_info.email = account_info.username;
   chromium_account_info.account_id = account_info.account_id;
-  chromium_account_info.picture_url = account_info.picture_url;
 
-  return chromium_account_info;
+  return syncer::SyncAccountInfo(chromium_account_info, true);
 }
 }  // anonymous namespace
 
 VivaldiSyncAuthManager::VivaldiSyncAuthManager(
-    syncer::SyncPrefs* sync_prefs,
     identity::IdentityManager* identity_manager,
     const AccountStateChangedCallback& account_state_changed,
     const CredentialsChangedCallback& credentials_changed,
     VivaldiAccountManager* account_manager)
-    : SyncAuthManager(sync_prefs,
-                      identity_manager,
+    : SyncAuthManager(identity_manager,
                       account_state_changed,
                       credentials_changed),
       account_manager_(account_manager) {}
@@ -65,14 +62,7 @@ void VivaldiSyncAuthManager::RegisterForAuthNotifications() {
   account_manager_->AddObserver(this);
   registered_for_account_notifications_ = true;
 
-  account_info_ = ToChromiumAccountInfo(account_manager_->account_info());
-}
-
-syncer::SyncAccountInfo VivaldiSyncAuthManager::GetActiveAccountInfo() const {
-  if (!registered_for_account_notifications_)
-    return syncer::SyncAccountInfo();
-
-  return syncer::SyncAccountInfo(account_info_, true);
+  sync_account_ = ToSyncAccountInfo(account_manager_->account_info());
 }
 
 syncer::SyncTokenStatus VivaldiSyncAuthManager::GetSyncTokenStatus() const {
@@ -116,19 +106,19 @@ void VivaldiSyncAuthManager::ConnectionStatusChanged(
 }
 
 void VivaldiSyncAuthManager::OnVivaldiAccountUpdated() {
-  AccountInfo new_account =
-      ToChromiumAccountInfo(account_manager_->account_info());
-  if (new_account.account_id == account_info_.account_id)
+  syncer::SyncAccountInfo new_account =
+      ToSyncAccountInfo(account_manager_->account_info());
+  if (new_account.account_info.account_id == sync_account_.account_info.account_id)
     return;
 
-  if (!account_info_.IsEmpty()) {
-    account_info_ = AccountInfo();
-    Clear();
+  if (!sync_account_.account_info.account_id.empty()) {
+    sync_account_ = syncer::SyncAccountInfo();
+    ConnectionClosed();
     account_state_changed_callback_.Run();
   }
 
-  if (!new_account.IsEmpty()) {
-    account_info_ = new_account;
+  if (!new_account.account_info.account_id.empty()) {
+    sync_account_ = new_account;
     account_state_changed_callback_.Run();
   }
 }
@@ -144,7 +134,6 @@ void VivaldiSyncAuthManager::OnTokenFetchFailed() {
       VivaldiAccountManager::INVALID_CREDENTIALS)
     return;
 
-  sync_prefs_->SetSyncAuthError(true);
   last_auth_error_ =
       ToGoogleServiceAuthError(account_manager_->last_token_fetch_error());
   credentials_changed_callback_.Run();

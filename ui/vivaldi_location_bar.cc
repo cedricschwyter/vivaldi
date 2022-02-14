@@ -16,15 +16,15 @@ VivaldiLocationBar::~VivaldiLocationBar() { }
 
 GURL VivaldiLocationBar::GetDestinationURL() const {
   return GURL();
-};
+}
 
 WindowOpenDisposition VivaldiLocationBar::GetWindowOpenDisposition() const {
   return WindowOpenDisposition::UNKNOWN;
-};
+}
 
 ui::PageTransition VivaldiLocationBar::GetPageTransition() const {
   return ui::PageTransition::PAGE_TRANSITION_LINK;
-};
+}
 
 const OmniboxView* VivaldiLocationBar::GetOmniboxView() const {
   return nullptr;

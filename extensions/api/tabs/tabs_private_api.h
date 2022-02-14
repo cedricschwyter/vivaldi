@@ -11,7 +11,6 @@
 #include "base/memory/shared_memory_handle.h"
 #include "base/scoped_observer.h"
 #include "chrome/browser/extensions/api/tabs/tabs_api.h"
-#include "chrome/browser/extensions/chrome_extension_function.h"
 #include "chrome/browser/ui/tabs/tab_change_type.h"
 #include "components/content_settings/core/common/content_settings.h"
 #include "components/prefs/pref_change_registrar.h"
@@ -19,8 +18,8 @@
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "extensions/browser/browser_context_keyed_api_factory.h"
-#include "extensions/browser/event_router.h"
 #include "extensions/browser/extension_event_histogram_value.h"
+#include "extensions/browser/extension_function.h"
 #include "renderer/vivaldi_render_messages.h"
 #include "ui/events/keycodes/keyboard_codes.h"
 
@@ -48,12 +47,13 @@ class TabsPrivateAPI : public BrowserContextKeyedAPI {
   explicit TabsPrivateAPI(content::BrowserContext* context);
   ~TabsPrivateAPI() override;
 
-  TabStripModelObserver* GetTabStripModelObserver();
+  static TabStripModelObserver* GetTabStripModelObserver(
+      content::BrowserContext* browser_context);
 
-  // Return true to indicate that the event was processed and further event
-  // dispatching should be stopped.
-  bool SendKeyboardShortcutEvent(const content::NativeWebKeyboardEvent& event,
-                                 bool is_auto_repeat);
+  static void SendKeyboardShortcutEvent(
+      content::BrowserContext* browser_context,
+      const content::NativeWebKeyboardEvent& event,
+      bool is_auto_repeat);
 
   // KeyedService implementation.
   void Shutdown() override;
@@ -61,9 +61,9 @@ class TabsPrivateAPI : public BrowserContextKeyedAPI {
   // BrowserContextKeyedAPI implementation.
   static BrowserContextKeyedAPIFactory<TabsPrivateAPI>* GetFactoryInstance();
 
-  static TabsPrivateAPI* FromBrowserContext(content::BrowserContext* context);
-
   static void SetupWebContents(content::WebContents* web_contents);
+
+  static TabsPrivateAPIPrivate* GetPrivate(content::BrowserContext* context);
 
  private:
   friend class VivaldiEventHooksImpl;
@@ -100,10 +100,8 @@ class VivaldiPrivateTabObserver
   void WebContentsDestroyed() override;
   bool OnMessageReceived(const IPC::Message& message) override;
   void DocumentAvailableInMainFrame() override;
-  void WebContentsDidDetach(
-      const content::WebContents* embedder_contents) override;
-  void WebContentsDidAttach(
-      const content::WebContents* embedder_contents) override;
+  void WebContentsDidDetach() override;
+  void WebContentsDidAttach() override;
 
   void SetShowImages(bool show_images);
   void SetLoadFromCacheOnly(bool load_from_cache_only);
@@ -154,10 +152,6 @@ class VivaldiPrivateTabObserver
   void OnPermissionAccessed(ContentSettingsType type, std::string origin,
                             ContentSetting content_setting);
 
-  static void BroadcastEvent(const std::string& eventname,
-    std::unique_ptr<base::ListValue> args,
-    content::BrowserContext* context);
-
 private:
   friend class content::WebContentsUserData<VivaldiPrivateTabObserver>;
 
@@ -197,95 +191,95 @@ private:
   DISALLOW_COPY_AND_ASSIGN(VivaldiPrivateTabObserver);
 };
 
-class TabsPrivateUpdateFunction : public ChromeAsyncExtensionFunction {
+class TabsPrivateUpdateFunction : public UIThreadExtensionFunction {
  public:
-  DECLARE_EXTENSION_FUNCTION("tabsPrivate.update", TABSSPRIVATE_UPDATE);
+  DECLARE_EXTENSION_FUNCTION("tabsPrivate.update", TABSSPRIVATE_UPDATE)
 
-  TabsPrivateUpdateFunction();
+  TabsPrivateUpdateFunction() = default;
 
  protected:
-  ~TabsPrivateUpdateFunction() override;
+  ~TabsPrivateUpdateFunction() override = default;
 
  private:
   // BookmarksFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(TabsPrivateUpdateFunction);
 };
 
-class TabsPrivateGetFunction : public ChromeAsyncExtensionFunction {
+class TabsPrivateGetFunction : public UIThreadExtensionFunction {
  public:
-  DECLARE_EXTENSION_FUNCTION("tabsPrivate.get", TABSSPRIVATE_GET);
+  DECLARE_EXTENSION_FUNCTION("tabsPrivate.get", TABSSPRIVATE_GET)
 
-  TabsPrivateGetFunction();
+  TabsPrivateGetFunction() = default;
 
  protected:
-  ~TabsPrivateGetFunction() override;
+  ~TabsPrivateGetFunction() override = default;
 
  private:
   // BookmarksFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(TabsPrivateGetFunction);
 };
 
-class TabsPrivateDiscardFunction : public ChromeAsyncExtensionFunction {
+class TabsPrivateDiscardFunction : public UIThreadExtensionFunction {
  public:
-  DECLARE_EXTENSION_FUNCTION("tabsPrivate.discard", TABSSPRIVATE_DISCARD);
+  DECLARE_EXTENSION_FUNCTION("tabsPrivate.discard", TABSSPRIVATE_DISCARD)
 
-  TabsPrivateDiscardFunction();
+  TabsPrivateDiscardFunction() = default;
 
  protected:
-  ~TabsPrivateDiscardFunction() override;
+  ~TabsPrivateDiscardFunction() override = default;
 
  private:
   // BookmarksFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(TabsPrivateDiscardFunction);
 };
 
-class TabsPrivateInsertTextFunction : public ChromeAsyncExtensionFunction {
+class TabsPrivateInsertTextFunction : public UIThreadExtensionFunction {
  public:
-  DECLARE_EXTENSION_FUNCTION("tabsPrivate.insertText", TABSSPRIVATE_INSERTTEXT);
+  DECLARE_EXTENSION_FUNCTION("tabsPrivate.insertText", TABSSPRIVATE_INSERTTEXT)
 
-  TabsPrivateInsertTextFunction();
+  TabsPrivateInsertTextFunction() = default;
 
  protected:
-  ~TabsPrivateInsertTextFunction() override;
+  ~TabsPrivateInsertTextFunction() override = default;
 
  private:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(TabsPrivateInsertTextFunction);
 };
 
-class TabsPrivateStartDragFunction : public ChromeAsyncExtensionFunction {
+class TabsPrivateStartDragFunction : public UIThreadExtensionFunction {
  public:
-  DECLARE_EXTENSION_FUNCTION("tabsPrivate.startDrag", TABSSPRIVATE_STARTDRAG);
+  DECLARE_EXTENSION_FUNCTION("tabsPrivate.startDrag", TABSSPRIVATE_STARTDRAG)
 
-  TabsPrivateStartDragFunction();
+  TabsPrivateStartDragFunction() = default;
 
  protected:
-  ~TabsPrivateStartDragFunction() override;
+  ~TabsPrivateStartDragFunction() override = default;
 
  private:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(TabsPrivateStartDragFunction);
 };
 
-class TabsPrivateScrollPageFunction : public ChromeAsyncExtensionFunction {
+class TabsPrivateScrollPageFunction : public UIThreadExtensionFunction {
  public:
-  DECLARE_EXTENSION_FUNCTION("tabsPrivate.scrollPage", TABSSPRIVATE_SCROLLPAGE);
+  DECLARE_EXTENSION_FUNCTION("tabsPrivate.scrollPage", TABSSPRIVATE_SCROLLPAGE)
 
-  TabsPrivateScrollPageFunction();
+  TabsPrivateScrollPageFunction() = default;
 
  protected:
-  ~TabsPrivateScrollPageFunction() override;
+  ~TabsPrivateScrollPageFunction() override = default;
 
  private:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(TabsPrivateScrollPageFunction);
 };

@@ -11,7 +11,6 @@
 <translation id="1375198122581997741">关于版本</translation>
 <translation id="139305205187523129"><ph name="HOST_NAME" /> 未发送任何数据。</translation>
 <translation id="14171126816530869">位于<ph name="LOCALITY" />的<ph name="ORGANIZATION" />的身份已通过了<ph name="ISSUER" />的验证。</translation>
-<translation id="1506687042165942984">显示为此页面保存的已知过时副本。</translation>
 <translation id="1559528461873125649">该文件或目录不存在</translation>
 <translation id="1620510694547887537">摄像头</translation>
 <translation id="1640244768702815859">请尝试<ph name="BEGIN_LINK" />访问该网站的首页<ph name="END_LINK" />。</translation>
@@ -38,6 +37,7 @@
 <translation id="2337852623177822836">设置由管理员控制</translation>
 <translation id="2355395290879513365">攻击者可能能够看到您正在此网站上浏览的图片，并通过编辑这些图片让您受骗。</translation>
 <translation id="2356070529366658676">询问</translation>
+<translation id="2359808026110333948">继续</translation>
 <translation id="2467694685043708798"><ph name="BEGIN_LINK" />正在进行网络诊断<ph name="END_LINK" /></translation>
 <translation id="2482878487686419369">通知</translation>
 <translation id="2539524384386349900">检测</translation>
@@ -105,7 +105,6 @@
 <translation id="4744603770635761495">可执行文件路径</translation>
 <translation id="4750917950439032686">您发送给这个网站的信息（例如密码或信用卡号）不会外泄。</translation>
 <translation id="4764776831041365478">网址为 <ph name="URL" /> 的网页可能暂时无法连接，或者它已永久性地移动到了新网址。</translation>
-<translation id="4916962322362512664"><ph name="DEVICE_NAME" /></translation>
 <translation id="4974590756084640048">重新启用警告功能</translation>
 <translation id="5023310440958281426">请查看管理员制定的政策</translation>
 <translation id="5039804452771397117">允许</translation>
@@ -134,7 +133,6 @@
 <translation id="5810442152076338065">您与 <ph name="DOMAIN" /> 之间的连接采用过时的加密套件进行了加密。</translation>
 <translation id="5838278095973806738">请勿在此网站上输入任何敏感信息（例如密码或信用卡信息），因为攻击者可能会盗取这些信息。</translation>
 <translation id="5869405914158311789">无法访问此网站</translation>
-<translation id="5920262536204764679">{NUM_COOKIES,plural, =1{正在使用 1 个} other {正在使用 # 个}}</translation>
 <translation id="5932224571077948991">网站展示过侵扰性或误导性广告</translation>
 <translation id="5990559369517809815">对服务器的请求已遭到某个扩展程序的阻止。</translation>
 <translation id="6051221802930200923">您目前无法访问 <ph name="SITE" />，因为此网站使用了证书锁定。网络错误和攻击通常是暂时的，因此，此网页稍后可能会恢复正常。</translation>
@@ -153,6 +151,7 @@
 <translation id="6417515091412812850">无法检查证书是否已吊销。</translation>
 <translation id="6433595998831338502"><ph name="HOST_NAME" /> 拒绝了我们的连接请求。</translation>
 <translation id="6447842834002726250">Cookie</translation>
+<translation id="6451458296329894277">确认重新提交表单</translation>
 <translation id="6569060085658103619">您正在查看扩展程序页面</translation>
 <translation id="6657585470893396449">密码</translation>
 <translation id="6685834062052613830">请退出并完成设置</translation>
@@ -197,6 +196,7 @@
 <translation id="8184538546369750125">使用全局默认设置（允许）</translation>
 <translation id="8211406090763984747">连接是安全的</translation>
 <translation id="8225771182978767009">设置此计算机的用户已选择屏蔽此网站。</translation>
+<translation id="8241707690549784388">您所查找的网页要使用已输入的信息。返回此页可能需要重复已进行的所有操作。是否要继续操作？</translation>
 <translation id="8241712895048303527">在此网站上拦截</translation>
 <translation id="8288807391153049143">显示证书</translation>
 <translation id="8289355894181816810">如果您不确定这是什么意思，请与您的网络管理员联系。</translation>

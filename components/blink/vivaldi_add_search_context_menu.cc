@@ -15,7 +15,8 @@
 #include "third_party/blink/renderer/core/editing/frame_selection.h"
 #include "third_party/blink/renderer/core/editing/visible_selection.h"
 #include "third_party/blink/renderer/core/html/html_element.h"
-#include "third_party/blink/renderer/core/html/html_frame_element_base.h"
+#include "third_party/blink/renderer/core/html/html_frame_element.h"
+#include "third_party/blink/renderer/core/html/html_iframe_element.h"
 #include "third_party/blink/renderer/core/html/forms/html_form_control_element.h"
 #include "third_party/blink/public/platform/web_url.h"
 #include "third_party/blink/public/web/web_searchable_form_data.h"
@@ -47,15 +48,20 @@ HTMLFormElement* ScanForForm(const Node* start) {
     return nullptr;
 
   const HTMLElement* start_element = ToHTMLElement(start);
-
   for (HTMLElement& element : Traversal<HTMLElement>::StartsAt(
            *Traversal<HTMLElement>::Next(*start_element))) {
     if (HTMLFormElement* form = AssociatedFormElement(element))
       return form;
 
-    if (IsHTMLFrameElementBase(element)) {
-      blink::HTMLElement* child_document = &element;
-      if (HTMLFormElement* frame_result = ScanForForm(child_document))
+    const blink::Document* child_document = nullptr;
+    if (IsHTMLIFrameElement(element)) {
+      child_document = ToHTMLIFrameElement(&element)->contentDocument();
+    } else if (IsHTMLFrameElement(element)) {
+      child_document = ToHTMLFrameElement(&element)->contentDocument();
+    }
+    if (child_document) {
+      const blink::Element* child_root = child_document->documentElement();
+      if (HTMLFormElement* frame_result = ScanForForm(child_root))
         return frame_result;
     }
   }

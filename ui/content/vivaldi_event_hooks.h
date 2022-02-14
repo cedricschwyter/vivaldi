@@ -13,7 +13,8 @@ class WebMouseWheelEvent;
 }  // namespace blink
 
 namespace content {
-struct DropData;
+struct NativeWebKeyboardEvent;
+class RenderWidgetHostImpl;
 class RenderWidgetHostViewBase;
 class WebContents;
 }  // namespace content
@@ -36,7 +37,15 @@ class CONTENT_EXPORT VivaldiEventHooks : public base::SupportsUserData::Data {
   static VivaldiEventHooks* FromRootView(
       content::RenderWidgetHostViewBase* root_view);
 
+  static VivaldiEventHooks* FromRenderWidgetHost(
+      content::RenderWidgetHostImpl* widget_host);
+
   static VivaldiEventHooks* FromWebContents(content::WebContents* web_contents);
+
+  // Handle a keyboard event before it is send to the renderer process. Return
+  // true to stop further event propagation or false to allow normal event flow.
+  virtual bool HandleKeyboardEvent(
+      const content::NativeWebKeyboardEvent& event) = 0;
 
   // Check for a mouse gesture event before it is dispatched to the web page
   // or default chromium handlers. Return true to stop further event
@@ -51,11 +60,15 @@ class CONTENT_EXPORT VivaldiEventHooks : public base::SupportsUserData::Data {
                                 const blink::WebMouseWheelEvent& event,
                                 const ui::LatencyInfo& latency) = 0;
 
-  // A method to hook into InputRouterImpl::MouseWheelEventHandled. Check for a
-  // wheel gesture after the event was not consumed by a child view. Return true
-  // to send a copy of the event to the root view for further processing.
-  virtual bool ShouldCopyWheelEventToRoot(
-      content::RenderWidgetHostViewBase* view,
+  // Check for a wheel gesture after the event was not consumed by a child view.
+  // If the event targets the root view, child_view is null. Compared with
+  // HandleWheelEvent in the latter case the hook is called after it is known
+  // for sure that the event targets the root view, not any of its ancestors.
+  // Return true to stop further event propagation or false to allow normal
+  // event flow.
+  virtual bool HandleWheelEventAfterChild(
+      content::RenderWidgetHostViewBase* root_view,
+      content::RenderWidgetHostViewBase* child_view,
       const blink::WebMouseWheelEvent& event) = 0;
 
   // Hook to notify UI about the end of the drag operation and pointer position

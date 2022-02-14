@@ -11,7 +11,6 @@
 
 #include "base/lazy_instance.h"
 #include "base/power_monitor/power_observer.h"
-#include "chrome/browser/extensions/chrome_extension_function.h"
 #include "chrome/browser/external_protocol/external_protocol_handler.h"
 #include "chrome/browser/password_manager/reauth_purpose.h"
 #include "chrome/browser/shell_integration.h"
@@ -22,6 +21,7 @@
 #include "extensions/browser/app_window/app_window_registry.h"
 #include "extensions/browser/browser_context_keyed_api_factory.h"
 #include "extensions/browser/event_router.h"
+#include "extensions/browser/extension_function.h"
 #include "extensions/schema/vivaldi_utilities.h"
 #include "ui/gfx/geometry/rect.h"
 #include "ui/shell_dialogs/select_file_dialog.h"
@@ -30,20 +30,6 @@
 class Browser;
 
 namespace extensions {
-
-class VivaldiUtilitiesEventRouter {
- public:
-  explicit VivaldiUtilitiesEventRouter(Profile* profile);
-  ~VivaldiUtilitiesEventRouter();
-
-  // Helper to actually dispatch an event to extension listeners.
-  void DispatchEvent(const std::string& event_name,
-                     std::unique_ptr<base::ListValue> event_args);
-
- private:
-  content::BrowserContext* browser_context_;
-  DISALLOW_COPY_AND_ASSIGN(VivaldiUtilitiesEventRouter);
-};
 
 class VivaldiUtilitiesAPI : public BrowserContextKeyedAPI,
                             public EventRouter::Observer,
@@ -65,7 +51,8 @@ class VivaldiUtilitiesAPI : public BrowserContextKeyedAPI,
 
   // Fires an event to JS with the active device that triggers scrolling.
   // 1: Mouse, 2: Trackpad 3: Inertial"
-  void ScrollType(int scrollType);
+  static void ScrollType(content::BrowserContext* browser_context,
+                         int scrollType);
 
   // Returns true if the key didn't not exist previously, false if it updated
   // an existing value
@@ -95,7 +82,7 @@ class VivaldiUtilitiesAPI : public BrowserContextKeyedAPI,
   // DownloadManager::Observer implementation
   void OnManagerInitialized() override;
 
-  void OnPasswordIconStatusChanged(bool show);
+  void OnPasswordIconStatusChanged(int window_id, bool show);
 
   // Close all app windows generating thumbnails.
   void CloseAllThumbnailWindows();
@@ -105,6 +92,9 @@ class VivaldiUtilitiesAPI : public BrowserContextKeyedAPI,
 
   // Is the Razer Chroma API available on this machine
   bool IsRazerChromaAvailable();
+
+  // Is the Razer Chroma API ready to accept commands.
+  bool IsRazerChromaReady();
 
   // Set RGB color of the configured Razer Chroma devices.
   bool SetRazerChromaColors(RazerChromaColors& colors);
@@ -142,8 +132,6 @@ class VivaldiUtilitiesAPI : public BrowserContextKeyedAPI,
   static const bool kServiceIsNULLWhileTesting = true;
   static const bool kServiceRedirectedInIncognito = true;
 
-  std::unique_ptr<VivaldiUtilitiesEventRouter> event_router_;
-
   // Map used for the *sharedData apis.
   std::map<std::string, base::Value*> key_to_values_map_;
 
@@ -162,12 +150,12 @@ class VivaldiUtilitiesAPI : public BrowserContextKeyedAPI,
   std::unique_ptr<RazerChromaHandler> razer_chroma_handler_;
 };
 
-class UtilitiesPrintFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesPrintFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.print", UTILITIES_PRINT)
   UtilitiesPrintFunction() = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  protected:
   ~UtilitiesPrintFunction() override = default;
@@ -177,16 +165,16 @@ class UtilitiesPrintFunction : public ChromeAsyncExtensionFunction {
 };
 
 class UtilitiesClearAllRecentlyClosedSessionsFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.clearAllRecentlyClosedSessions",
                              UTILITIES_CLEARALLRECENTLYCLOSEDSESSIONS)
   UtilitiesClearAllRecentlyClosedSessionsFunction() = default;
 
  protected:
-  ~UtilitiesClearAllRecentlyClosedSessionsFunction() override;
+  ~UtilitiesClearAllRecentlyClosedSessionsFunction() override = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesClearAllRecentlyClosedSessionsFunction);
@@ -196,16 +184,16 @@ class UtilitiesClearAllRecentlyClosedSessionsFunction
 // as a unique user id. The user id is stored in the vivaldi user profile
 // with a backup copy stored in the OS user profile (registry on Windows).
 // If no stored user id is found, a new one is generated.
-class UtilitiesGetUniqueUserIdFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesGetUniqueUserIdFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.getUniqueUserId",
                              UTILITIES_GETUNIQUEUSERID)
   UtilitiesGetUniqueUserIdFunction() = default;
 
  protected:
-  ~UtilitiesGetUniqueUserIdFunction() override;
+  ~UtilitiesGetUniqueUserIdFunction() override = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   bool ReadUserIdFromOSProfile(std::string* user_id);
   void WriteUserIdToOSProfile(const std::string& user_id);
@@ -218,23 +206,23 @@ class UtilitiesGetUniqueUserIdFunction : public ChromeAsyncExtensionFunction {
 };
 
 class UtilitiesIsTabInLastSessionFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.isTabInLastSession",
                              UTILITIES_ISTABINLASTSESSION)
-  UtilitiesIsTabInLastSessionFunction();
+  UtilitiesIsTabInLastSessionFunction() = default;
 
  protected:
-  ~UtilitiesIsTabInLastSessionFunction() override;
+  ~UtilitiesIsTabInLastSessionFunction() override = default;
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesIsTabInLastSessionFunction);
 };
 
-class UtilitiesIsUrlValidFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesIsUrlValidFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.isUrlValid", UTILITIES_ISURLVALID)
   UtilitiesIsUrlValidFunction();
@@ -243,44 +231,35 @@ class UtilitiesIsUrlValidFunction : public ChromeAsyncExtensionFunction {
   ~UtilitiesIsUrlValidFunction() override;
 
   void OnDefaultProtocolClientWorkerFinished(
-    const GURL& url,
-    bool prompt_user,
-    ui::PageTransition page_transition,
-    ExternalProtocolHandler::BlockState block,
-    shell_integration::DefaultWebClientState state);
+      shell_integration::DefaultWebClientState state);
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
+  bool prompt_user_ = false;
   vivaldi::utilities::UrlValidResults result_;
-
-  scoped_refptr<shell_integration::DefaultProtocolClientWorker>
-      default_protocol_worker_;
-
-  // Used to get WeakPtr to self for use on the UI thread.
-  base::WeakPtrFactory<UtilitiesIsUrlValidFunction> weak_ptr_factory_;
 
   DISALLOW_COPY_AND_ASSIGN(UtilitiesIsUrlValidFunction);
 };
 
-class UtilitiesGetSelectedTextFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesGetSelectedTextFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.getSelectedText",
                              UTILITIES_GETSELECTEDTEXT)
-  UtilitiesGetSelectedTextFunction();
+  UtilitiesGetSelectedTextFunction() = default;
 
  protected:
-  ~UtilitiesGetSelectedTextFunction() override;
+  ~UtilitiesGetSelectedTextFunction() override = default;
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesGetSelectedTextFunction);
 };
 
-class UtilitiesCreateUrlMappingFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesCreateUrlMappingFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.createUrlMapping",
                              UTILITIES_CREATEURLMAPPING)
@@ -290,13 +269,13 @@ class UtilitiesCreateUrlMappingFunction : public ChromeAsyncExtensionFunction {
   ~UtilitiesCreateUrlMappingFunction() override = default;
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesCreateUrlMappingFunction);
 };
 
-class UtilitiesRemoveUrlMappingFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesRemoveUrlMappingFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.removeUrlMapping",
                              UTILITIES_REMOVEURLMAPPING)
@@ -306,13 +285,13 @@ class UtilitiesRemoveUrlMappingFunction : public ChromeAsyncExtensionFunction {
   ~UtilitiesRemoveUrlMappingFunction() override = default;
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesRemoveUrlMappingFunction);
 };
 
-class UtilitiesSelectFileFunction : public ChromeAsyncExtensionFunction,
+class UtilitiesSelectFileFunction : public UIThreadExtensionFunction,
                                     public ui::SelectFileDialog::Listener {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.selectFile", UTILITIES_SELECTFILE)
@@ -322,7 +301,7 @@ class UtilitiesSelectFileFunction : public ChromeAsyncExtensionFunction,
   ~UtilitiesSelectFileFunction() override;
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   // ui::SelectFileDialog::Listener:
   void FileSelected(const base::FilePath& path,
@@ -336,7 +315,7 @@ class UtilitiesSelectFileFunction : public ChromeAsyncExtensionFunction,
   DISALLOW_COPY_AND_ASSIGN(UtilitiesSelectFileFunction);
 };
 
-class UtilitiesGetVersionFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesGetVersionFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.getVersion",
                              UTILITIES_GETVERSION)
@@ -345,13 +324,13 @@ class UtilitiesGetVersionFunction : public ChromeAsyncExtensionFunction {
  protected:
   ~UtilitiesGetVersionFunction() override = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesGetVersionFunction);
 };
 
-class UtilitiesSetSharedDataFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesSetSharedDataFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.setSharedData", UTILITIES_SETSHAREDDATA)
 
@@ -360,13 +339,13 @@ class UtilitiesSetSharedDataFunction : public ChromeAsyncExtensionFunction {
  protected:
   ~UtilitiesSetSharedDataFunction() override = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesSetSharedDataFunction);
 };
 
-class UtilitiesGetSharedDataFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesGetSharedDataFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.getSharedData", UTILITIES_GETSHAREDDATA)
 
@@ -375,7 +354,7 @@ class UtilitiesGetSharedDataFunction : public ChromeAsyncExtensionFunction {
  protected:
   ~UtilitiesGetSharedDataFunction() override = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesGetSharedDataFunction);
@@ -399,7 +378,7 @@ class UtilitiesGetSystemDateFormatFunction : public UIThreadExtensionFunction {
   DISALLOW_COPY_AND_ASSIGN(UtilitiesGetSystemDateFormatFunction);
 };
 
-class UtilitiesSetLanguageFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesSetLanguageFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.setLanguage", UTILITIES_SETLANGUAGE)
   UtilitiesSetLanguageFunction() = default;
@@ -407,13 +386,13 @@ class UtilitiesSetLanguageFunction : public ChromeAsyncExtensionFunction {
  protected:
   ~UtilitiesSetLanguageFunction() override = default;
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesSetLanguageFunction);
 };
 
-class UtilitiesGetLanguageFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesGetLanguageFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.getLanguage", UTILITIES_GETLANGUAGE)
   UtilitiesGetLanguageFunction() = default;
@@ -421,228 +400,215 @@ class UtilitiesGetLanguageFunction : public ChromeAsyncExtensionFunction {
  protected:
   ~UtilitiesGetLanguageFunction() override = default;
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesGetLanguageFunction);
 };
 
 class UtilitiesSetVivaldiAsDefaultBrowserFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.setVivaldiAsDefaultBrowser",
                              UTILITIES_SETVIVALDIDEFAULT)
-  UtilitiesSetVivaldiAsDefaultBrowserFunction();
+  UtilitiesSetVivaldiAsDefaultBrowserFunction() = default;
 
  protected:
   ~UtilitiesSetVivaldiAsDefaultBrowserFunction() override;
-  scoped_refptr<shell_integration::DefaultBrowserWorker>
-      default_browser_worker_;
 
   void OnDefaultBrowserWorkerFinished(
       shell_integration::DefaultWebClientState state);
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
-  // Used to get WeakPtr to self for use on the UI thread.
-  base::WeakPtrFactory<UtilitiesSetVivaldiAsDefaultBrowserFunction>
-      weak_ptr_factory_;
-
   DISALLOW_COPY_AND_ASSIGN(UtilitiesSetVivaldiAsDefaultBrowserFunction);
 };
 
 class UtilitiesIsVivaldiDefaultBrowserFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.isVivaldiDefaultBrowser",
                              UTILITIES_ISVIVALDIDEFAULT)
-  UtilitiesIsVivaldiDefaultBrowserFunction();
+  UtilitiesIsVivaldiDefaultBrowserFunction() = default;
 
  protected:
   ~UtilitiesIsVivaldiDefaultBrowserFunction() override;
-
-  scoped_refptr<shell_integration::DefaultBrowserWorker>
-      default_browser_worker_;
 
   void OnDefaultBrowserWorkerFinished(
       shell_integration::DefaultWebClientState state);
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
-  // Used to get WeakPtr to self for use on the UI thread.
-  base::WeakPtrFactory<UtilitiesIsVivaldiDefaultBrowserFunction>
-      weak_ptr_factory_;
-
   DISALLOW_COPY_AND_ASSIGN(UtilitiesIsVivaldiDefaultBrowserFunction);
 };
 
 class UtilitiesLaunchNetworkSettingsFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.launchNetworkSettings",
                              UTILITIES_LAUNCHNETWORKSETTINGS)
-  UtilitiesLaunchNetworkSettingsFunction();
+  UtilitiesLaunchNetworkSettingsFunction() = default;
 
  protected:
-  ~UtilitiesLaunchNetworkSettingsFunction() override;
+  ~UtilitiesLaunchNetworkSettingsFunction() override = default;
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesLaunchNetworkSettingsFunction);
 };
 
-class UtilitiesSavePageFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesSavePageFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.savePage", UTILITIES_SAVEPAGE)
-  UtilitiesSavePageFunction();
+  UtilitiesSavePageFunction() = default;
 
  protected:
-  ~UtilitiesSavePageFunction() override;
+  ~UtilitiesSavePageFunction() override = default;
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesSavePageFunction);
 };
 
-class UtilitiesOpenPageFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesOpenPageFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.openPage",
                              UTILITIES_OPENPAGE)
-  UtilitiesOpenPageFunction();
+  UtilitiesOpenPageFunction() = default;
 
  protected:
-  ~UtilitiesOpenPageFunction() override;
+  ~UtilitiesOpenPageFunction() override = default;
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesOpenPageFunction);
 };
 
 class UtilitiesSetDefaultContentSettingsFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.setDefaultContentSettings",
                              UTILITIES_SETDEFAULTCONTENTSETTING)
-  UtilitiesSetDefaultContentSettingsFunction();
+  UtilitiesSetDefaultContentSettingsFunction() = default;
 
  protected:
-  ~UtilitiesSetDefaultContentSettingsFunction() override;
+  ~UtilitiesSetDefaultContentSettingsFunction() override = default;
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesSetDefaultContentSettingsFunction);
 };
 
 class UtilitiesGetDefaultContentSettingsFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.getDefaultContentSettings",
                              UTILITIES_GETDEFAULTCONTENTSETTING)
-  UtilitiesGetDefaultContentSettingsFunction();
+  UtilitiesGetDefaultContentSettingsFunction() = default;
 
  protected:
-  ~UtilitiesGetDefaultContentSettingsFunction() override;
+  ~UtilitiesGetDefaultContentSettingsFunction() override = default;
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesGetDefaultContentSettingsFunction);
 };
 
 class UtilitiesSetBlockThirdPartyCookiesFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.setBlockThirdPartyCookies",
                              UTILITIES_SET_BLOCKTHIRDPARTYCOOKIES)
-  UtilitiesSetBlockThirdPartyCookiesFunction();
+  UtilitiesSetBlockThirdPartyCookiesFunction() = default;
 
  protected:
-  ~UtilitiesSetBlockThirdPartyCookiesFunction() override;
+  ~UtilitiesSetBlockThirdPartyCookiesFunction() override = default;
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesSetBlockThirdPartyCookiesFunction);
 };
 
 class UtilitiesGetBlockThirdPartyCookiesFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.getBlockThirdPartyCookies",
                              UTILITIES_GET_BLOCKTHIRDPARTYCOOKIES)
-  UtilitiesGetBlockThirdPartyCookiesFunction();
+  UtilitiesGetBlockThirdPartyCookiesFunction() = default;
 
  protected:
-  ~UtilitiesGetBlockThirdPartyCookiesFunction() override;
+  ~UtilitiesGetBlockThirdPartyCookiesFunction() override = default;
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesGetBlockThirdPartyCookiesFunction);
 };
 
-class UtilitiesOpenTaskManagerFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesOpenTaskManagerFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.openTaskManager",
                              UTILITIES_OPENTASKMANAGER)
-  UtilitiesOpenTaskManagerFunction();
+  UtilitiesOpenTaskManagerFunction() = default;
 
  protected:
-  ~UtilitiesOpenTaskManagerFunction() override;
+  ~UtilitiesOpenTaskManagerFunction() override = default;
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesOpenTaskManagerFunction);
 };
 
 
-class UtilitiesGetStartupActionFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesGetStartupActionFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.getStartupAction",
                              UTILITIES_GET_STARTUPTYPE)
-  UtilitiesGetStartupActionFunction();
+  UtilitiesGetStartupActionFunction() = default;
 
  protected:
-  ~UtilitiesGetStartupActionFunction() override;
+  ~UtilitiesGetStartupActionFunction() override = default;
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesGetStartupActionFunction);
 };
 
-class UtilitiesSetStartupActionFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesSetStartupActionFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.setStartupAction",
                              UTILITIES_SET_STARTUPTYPE)
-  UtilitiesSetStartupActionFunction();
+  UtilitiesSetStartupActionFunction() = default;
 
  protected:
-  ~UtilitiesSetStartupActionFunction() override;
+  ~UtilitiesSetStartupActionFunction() override = default;
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(UtilitiesSetStartupActionFunction);
 };
 
 class UtilitiesCanShowWelcomePageFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.canShowWelcomePage",
                              UTILITIES_CANSHOWWELCOMEPAGE)
   UtilitiesCanShowWelcomePageFunction() = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  protected:
   ~UtilitiesCanShowWelcomePageFunction() override = default;
@@ -652,13 +618,13 @@ class UtilitiesCanShowWelcomePageFunction
 };
 
 class UtilitiesCanShowWhatsNewPageFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.canShowWhatsNewPage",
                              UTILITIES_CANSHOWWHATSNEWPAGE)
   UtilitiesCanShowWhatsNewPageFunction() = default;
 
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
  protected:
   ~UtilitiesCanShowWhatsNewPageFunction() override = default;
@@ -668,70 +634,83 @@ class UtilitiesCanShowWhatsNewPageFunction
 };
 
 class UtilitiesShowPasswordDialogFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.showPasswordDialog",
-                             UTILITIES_SHOW_PASSWORD_DIALOG);
+                             UTILITIES_SHOW_PASSWORD_DIALOG)
   UtilitiesShowPasswordDialogFunction() = default;
 
  private:
   ~UtilitiesShowPasswordDialogFunction() override = default;
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(UtilitiesShowPasswordDialogFunction);
 };
 
-class UtilitiesSetDialogPositionFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesSetDialogPositionFunction : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.setDialogPosition",
-                             UTILITIES_SET_DIALOG_POSITION);
+                             UTILITIES_SET_DIALOG_POSITION)
   UtilitiesSetDialogPositionFunction() = default;
 
  private:
   ~UtilitiesSetDialogPositionFunction() override = default;
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(UtilitiesSetDialogPositionFunction);
 };
 
 class UtilitiesIsRazerChromaAvailableFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.isRazerChromaAvailable",
-                             UTILITIES_IS_RAZER_CHROMA_AVAILABLE);
+                             UTILITIES_IS_RAZER_CHROMA_AVAILABLE)
   UtilitiesIsRazerChromaAvailableFunction() = default;
 
  private:
   ~UtilitiesIsRazerChromaAvailableFunction() override = default;
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(UtilitiesIsRazerChromaAvailableFunction);
 };
 
+class UtilitiesIsRazerChromaReadyFunction : public UIThreadExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("utilities.isRazerChromaReady",
+                             UTILITIES_IS_RAZER_CHROMA_READY)
+  UtilitiesIsRazerChromaReadyFunction() = default;
+
+ private:
+  ~UtilitiesIsRazerChromaReadyFunction() override = default;
+  ResponseAction Run() override;
+
+  DISALLOW_COPY_AND_ASSIGN(UtilitiesIsRazerChromaReadyFunction);
+};
+
 class UtilitiesSetRazerChromaColorFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.setRazerChromaColor",
-                             UTILITIES_SET_RAZER_CHROMA_COLOR);
+                             UTILITIES_SET_RAZER_CHROMA_COLOR)
   UtilitiesSetRazerChromaColorFunction() = default;
 
  private:
   ~UtilitiesSetRazerChromaColorFunction() override = default;
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(UtilitiesSetRazerChromaColorFunction);
 };
 
 class UtilitiesIsDownloadManagerReadyFunction
-    : public ChromeAsyncExtensionFunction {
+    : public UIThreadExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("utilities.isDownloadManagerReady",
-                             UTILITIES_IS_DOWNLOAD_MANAGER_READY);
+                             UTILITIES_IS_DOWNLOAD_MANAGER_READY)
   UtilitiesIsDownloadManagerReadyFunction() = default;
 
  private:
   ~UtilitiesIsDownloadManagerReadyFunction() override = default;
-  bool RunAsync() override;
+  ResponseAction Run() override;
 
   DISALLOW_COPY_AND_ASSIGN(UtilitiesIsDownloadManagerReadyFunction);
 };

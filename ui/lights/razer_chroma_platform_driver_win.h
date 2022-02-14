@@ -31,12 +31,15 @@ struct GUIDCompare {
 
 class RazerChromaPlatformDriverWin : public RazerChromaPlatformDriver {
 public:
-  explicit RazerChromaPlatformDriverWin(PrefService* pref_service);
+  explicit RazerChromaPlatformDriverWin(Profile* profile);
   ~RazerChromaPlatformDriverWin() override;
 
   // Initialize the platform layer, return false if Razer Chroma is
   // is not available or it could otherwise not initialize.
   bool Initialize() override;
+
+  bool IsAvailable() override;
+  bool IsReady() override;
 
   void SetColors(RazerChromaColors& colors) override;
 

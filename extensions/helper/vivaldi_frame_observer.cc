@@ -64,7 +64,7 @@ void VivaldiFrameObserver::RenderFrameHostChanged(
 
   Profile* profile_ =
       Profile::FromBrowserContext(web_contents()->GetBrowserContext());
-  content::RendererPreferences* prefs =
+  blink::mojom::RendererPreferences* prefs =
       web_contents()->GetMutableRendererPrefs();
   renderer_preferences_util::UpdateFromSystemSettings(prefs, profile_);
   web_contents()->GetRenderViewHost()->SyncRendererPrefs();

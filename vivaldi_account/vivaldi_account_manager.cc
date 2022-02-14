@@ -3,6 +3,7 @@
 #include "vivaldi_account/vivaldi_account_manager.h"
 
 #include "base/base64.h"
+#include "base/i18n/case_conversion.h"
 #include "base/json/json_reader.h"
 #include "base/rand_util.h"
 #include "base/strings/stringprintf.h"
@@ -55,17 +56,22 @@ constexpr char kPictureUrlKey[] = "picture";
 
 constexpr char kErrorDescriptionKey[] = "error_description";
 
-std::unique_ptr<base::DictionaryValue> ParseServerResponse(
+const base::string16 kVivaldiDomain = base::UTF8ToUTF16("vivaldi.net");
+
+base::Optional<base::DictionaryValue> ParseServerResponse(
     std::unique_ptr<std::string> data) {
   if (!data)
-    return nullptr;
+    return base::nullopt;
 
-  std::unique_ptr<base::Value> value = base::JSONReader::Read(*data);
-  if (!value.get() || value->type() != base::Value::Type::DICTIONARY)
+  base::Optional<base::Value> value = base::JSONReader::Read(*data);
+  if (!value || value->type() != base::Value::Type::DICTIONARY)
     value.reset();
 
-  return std::unique_ptr<base::DictionaryValue>(
-      static_cast<base::DictionaryValue*>(value.release()));
+  base::DictionaryValue* dict_value = nullptr;
+  if (!value.value().GetAsDictionary(&dict_value))
+    return base::nullopt;
+
+  return std::move(*dict_value);
 }
 
 bool ParseGetAccessTokenSuccessResponse(
@@ -75,7 +81,7 @@ bool ParseGetAccessTokenSuccessResponse(
     std::string* refresh_token) {
   CHECK(access_token);
   CHECK(refresh_token);
-  std::unique_ptr<base::DictionaryValue> value =
+  base::Optional<base::DictionaryValue> value =
       ParseServerResponse(std::move(response_body));
   if (!value)
     return false;
@@ -88,7 +94,7 @@ bool ParseGetAccountInfoSuccessResponse(
     std::unique_ptr<std::string> response_body,
     std::string* account_id,
     std::string* picture_url) {
-  std::unique_ptr<base::DictionaryValue> value =
+  base::Optional<base::DictionaryValue> value =
       ParseServerResponse(std::move(response_body));
   if (!value)
     return false;
@@ -100,7 +106,7 @@ bool ParseGetAccountInfoSuccessResponse(
 bool ParseFailureResponse(std::unique_ptr<std::string> response_body,
                           std::string* server_message) {
   CHECK(server_message);
-  std::unique_ptr<base::DictionaryValue> value =
+  base::Optional<base::DictionaryValue> value =
       ParseServerResponse(std::move(response_body));
   return value ? value->GetString(kErrorDescriptionKey, server_message) : false;
 }
@@ -225,10 +231,21 @@ void VivaldiAccountManager::Login(const std::string& username,
   profile_->GetPrefs()->SetString(vivaldiprefs::kVivaldiAccountUsername,
                                   username);
 
+  NotifyAccountUpdated();
+
+  auto domain_position = username.find_first_of("@");
+  if (domain_position != std::string::npos &&
+      base::i18n::ToLower(base::UTF8ToUTF16(
+          username.substr(domain_position + 1))) != kVivaldiDomain) {
+    NotifyTokenFetchFailed(INVALID_CREDENTIALS, "", -1);
+    return;
+  }
+
   std::string enc_client_id = net::EscapeUrlEncodedData(kClientId, true);
   std::string enc_client_secret =
       net::EscapeUrlEncodedData(kClientSecret, true);
-  std::string enc_username = net::EscapeUrlEncodedData(username, true);
+  std::string enc_username =
+      net::EscapeUrlEncodedData(username.substr(0, domain_position), true);
   std::string enc_password = net::EscapeUrlEncodedData(password, true);
   std::string body = base::StringPrintf(
       kRequestTokenFromCredentials, enc_client_id.c_str(),
@@ -239,8 +256,6 @@ void VivaldiAccountManager::Login(const std::string& username,
           profile_, GURL(kIdentityServerUrl), body, net::HttpRequestHeaders(),
           base::BindRepeating(&VivaldiAccountManager::OnTokenRequestDone,
                               base::Unretained(this), true));
-  NotifyAccountUpdated();
-
   if (save_password)
     password_for_saving_ = password;
   else

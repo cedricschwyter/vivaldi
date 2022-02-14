@@ -11,7 +11,6 @@
 <translation id="1375198122581997741">À propos de la version</translation>
 <translation id="139305205187523129"><ph name="HOST_NAME" /> n’a envoyé aucune donnée.</translation>
 <translation id="14171126816530869">L’identité de <ph name="ORGANIZATION" /> situé à <ph name="LOCALITY" /> a été vérifiée par <ph name="ISSUER" />.</translation>
-<translation id="1506687042165942984">Afficher une copie enregistrée en cache (non actualisée) de cette page.</translation>
 <translation id="1559528461873125649">Fichier ou répertoire inexistant</translation>
 <translation id="1620510694547887537">Caméra</translation>
 <translation id="1640244768702815859">Essayez de <ph name="BEGIN_LINK" />consulter la page d’accueil du site<ph name="END_LINK" />.</translation>
@@ -38,6 +37,7 @@
 <translation id="2337852623177822836">Paramètre contrôlé par votre administrateur</translation>
 <translation id="2355395290879513365">Il se peut que des pirates informatiques puissent voir les images que vous regardez sur ce site et vous piègent en les modifiant.</translation>
 <translation id="2356070529366658676">Demander</translation>
+<translation id="2359808026110333948">Continuer</translation>
 <translation id="2467694685043708798"><ph name="BEGIN_LINK" />Exécution des diagnostics réseau<ph name="END_LINK" /></translation>
 <translation id="2482878487686419369">Notifications</translation>
 <translation id="2539524384386349900">Détecter</translation>
@@ -108,7 +108,6 @@
 <translation id="4744603770635761495">Chemin d’accès à l’exécutable</translation>
 <translation id="4750917950439032686">Vos informations, par exemple vos mots de passe ou vos numéros de carte de paiement, sont privées lorsqu'elles sont transmises à ce site.</translation>
 <translation id="4764776831041365478">Il se peut que la page Web à l’adresse <ph name="URL" /> soit temporairement inaccessible ou qu'elle ait été déplacée de façon permanente à une autre adresse Web.</translation>
-<translation id="4916962322362512664"><ph name="DEVICE_NAME" /></translation>
 <translation id="4974590756084640048">Réactiver les avertissements</translation>
 <translation id="5023310440958281426">Vérifiez les règles définies par votre administrateur</translation>
 <translation id="5039804452771397117">Autoriser</translation>
@@ -137,7 +136,6 @@
 <translation id="5810442152076338065">Votre connexion à <ph name="DOMAIN" /> est chiffrée à l’aide d’une méthode de chiffrement obsolète.</translation>
 <translation id="5838278095973806738">Vous ne devriez pas saisir d’informations sensibles sur ce site (par exemple, vos mots de passe ou les informations de votre carte de paiement), car elles risquent d’être dérobées par des pirates informatiques.</translation>
 <translation id="5869405914158311789">Ce site est inaccessible</translation>
-<translation id="5920262536204764679">{NUM_COOKIES,plural, =1{1 en cours d’utilisation} other{# en cours d’utilisation}}</translation>
 <translation id="5932224571077948991">Le site affiche des publicités intrusives ou trompeuses</translation>
 <translation id="5990559369517809815">Les requêtes vers le serveur ont été bloquées par une extension.</translation>
 <translation id="6051221802930200923">Le site <ph name="SITE" /> est actuellement inaccessible, car il utilise l’épinglage des certificats. Les erreurs réseau et les attaques sont généralement temporaires. Vous devriez donc pouvoir accéder à cette page plus tard.</translation>
@@ -157,6 +155,7 @@
 <translation id="6417515091412812850">Impossible de vérifier si le certificat a été révoqué.</translation>
 <translation id="6433595998831338502"><ph name="HOST_NAME" /> n’autorise pas la connexion.</translation>
 <translation id="6447842834002726250">Cookies</translation>
+<translation id="6451458296329894277">Confirmer le nouvel envoi du formulaire</translation>
 <translation id="6569060085658103619">Vous consultez actuellement une page d’extension</translation>
 <translation id="6657585470893396449">Mot de passe</translation>
 <translation id="6685834062052613830">Déconnectez-vous et complétez la configuration</translation>
@@ -201,6 +200,7 @@
 <translation id="8184538546369750125">Utiliser le paramètre global par défaut (« Autoriser »)</translation>
 <translation id="8211406090763984747">La connexion est sécurisée</translation>
 <translation id="8225771182978767009">La personne qui a configuré cet ordinateur a choisi de bloquer ce site.</translation>
+<translation id="8241707690549784388">La page que vous recherchez a utilisé des informations que vous avez envoyées. Si vous revenez sur cette page, chaque action précédemment effectuée sera répétée. Souhaitez-vous continuer ?</translation>
 <translation id="8241712895048303527">Bloquer sur ce site</translation>
 <translation id="8288807391153049143">Afficher le certificat</translation>
 <translation id="8289355894181816810">Contactez votre administrateur réseau si vous n’êtes pas sûr(e) de vous.</translation>

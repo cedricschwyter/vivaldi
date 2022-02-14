@@ -160,8 +160,11 @@ void BookmarkContextMenuController::ExecuteCommand(int id, int event_flags) {
 
   if (vivaldi::IsVivaldiRunning()) {
     if (selection_.size() > 0) {
-      vivaldi::ExecuteBookmarkContextMenuCommand(browser_,
-          selection_.at(0)->id(), id);
+      vivaldi::ExecuteBookmarkContextMenuCommand(browser_, model_,
+                                                 selection_.at(0)->id(), id);
+      if (id == IDC_BOOKMARK_BAR_REMOVE) {
+        selection_.clear();
+      }
     }
   } else {
   switch (id) {

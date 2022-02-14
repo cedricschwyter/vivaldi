@@ -19,7 +19,7 @@ from telemetry import decorators
 
 import mock
 
-#import process_perf_results as ppr_module
+import process_perf_results as ppr_module
 
 
 class _FakeLogdogStream(object):
@@ -35,7 +35,6 @@ class _FakeLogdogStream(object):
 
 
 # pylint: disable=protected-access
-@unittest.skip("Does not work in Vivaldi environment")
 class DataFormatParsingUnitTest(unittest.TestCase):
   def tearDown(self):
     ppr_module._data_format_cache = {}
@@ -62,7 +61,6 @@ class DataFormatParsingUnitTest(unittest.TestCase):
     self.assertTrue(ppr_module._is_histogram('test.json'))
     self.assertFalse(ppr_module._is_gtest('test.json'))
 
-@unittest.skip("Does not work in Vivaldi environment")
 class ProcessPerfResultsIntegrationTest(unittest.TestCase):
   def setUp(self):
     self.test_dir = tempfile.mkdtemp()
@@ -120,7 +118,7 @@ class ProcessPerfResultsIntegrationTest(unittest.TestCase):
         })
     return_code, benchmark_upload_result_map = ppr_module.process_perf_results(
         self.output_json, configuration_name='test-builder',
-        service_account_file = self.service_account_file,
+        service_account_file=self.service_account_file,
         build_properties=build_properties,
         task_output_dir=self.task_output_dir,
         smoke_test_mode=False)
@@ -161,6 +159,22 @@ class ProcessPerfResultsIntegrationTest(unittest.TestCase):
           "octane": True,
           "speedometer.reference": True
         })
+
+
+class ProcessPerfResults_HardenedUnittest(unittest.TestCase):
+  def test_handle_perf_json_test_results_IOError(self):
+    directory_map = {
+        'benchmark.example': ['directory_that_does_not_exist']}
+    test_results_list = []
+    ppr_module._handle_perf_json_test_results(directory_map, test_results_list)
+    self.assertEqual(test_results_list, [])
+
+  def test_merge_perf_results_IOError(self):
+    results_filename = None
+    directories = ['directory_that_does_not_exist']
+    ppr_module._merge_perf_results('benchmark.example', results_filename,
+                                   directories)
+
 
 if __name__ == '__main__':
   unittest.main()

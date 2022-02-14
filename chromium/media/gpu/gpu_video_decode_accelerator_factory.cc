@@ -46,8 +46,10 @@ namespace {
 gpu::VideoDecodeAcceleratorCapabilities GetDecoderCapabilitiesInternal(
     const gpu::GpuPreferences& gpu_preferences,
     const gpu::GpuDriverBugWorkarounds& workarounds) {
+#if !defined(OS_MACOSX)
   if (gpu_preferences.disable_accelerated_video_decode)
     return gpu::VideoDecodeAcceleratorCapabilities();
+#endif
 
   // Query VDAs for their capabilities and construct a set of supported
   // profiles for current platform. This must be done in the same order as in
@@ -147,8 +149,10 @@ GpuVideoDecodeAcceleratorFactory::CreateVDA(
     MediaLog* media_log) {
   DCHECK(thread_checker_.CalledOnValidThread());
 
+#if !defined(OS_MACOSX)
   if (gpu_preferences.disable_accelerated_video_decode)
     return nullptr;
+#endif
 
   // Array of Create..VDA() function pointers, potentially usable on current
   // platform. This list is ordered by priority, from most to least preferred,
@@ -255,7 +259,8 @@ GpuVideoDecodeAcceleratorFactory::CreateVTVDA(
     const gpu::GpuPreferences& gpu_preferences,
     MediaLog* media_log) const {
   std::unique_ptr<VideoDecodeAccelerator> decoder;
-  decoder.reset(new VTVideoDecodeAccelerator(bind_image_cb_, media_log));
+  decoder.reset(new VTVideoDecodeAccelerator(bind_image_cb_, media_log,
+                             gpu_preferences.disable_accelerated_video_decode));
   return decoder;
 }
 #endif

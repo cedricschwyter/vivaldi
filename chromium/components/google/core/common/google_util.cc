@@ -55,11 +55,6 @@ void StripTrailingDot(base::StringPiece* host) {
     host->remove_suffix(1);
 }
 
-}  // namespace
-
-
-// Global functions (moved by Vivaldi) ----------------------------------------
-
 // True if the given canonical |host| is "[www.]<domain_in_lower_case>.<TLD>"
 // with a valid TLD. If |subdomain_permission| is ALLOW_SUBDOMAIN, we check
 // against host "*.<domain_in_lower_case>.<TLD>" instead. Will return the TLD
@@ -145,6 +140,8 @@ bool IsGoogleSearchSubdomainUrl(const GURL& url) {
 
   return google_subdomains->contains(host);
 }
+
+}  // namespace
 
 // Global functions -----------------------------------------------------------
 
@@ -289,6 +286,49 @@ bool IsYoutubeDomainUrl(const GURL& url,
   return IsValidURL(url, port_permission) &&
          IsValidHostName(url.host_piece(), "youtube", subdomain_permission,
                          nullptr);
+}
+
+bool IsGoogleAssociatedDomainUrl(const GURL& url) {
+  if (IsGoogleDomainUrl(url, ALLOW_SUBDOMAIN, ALLOW_NON_STANDARD_PORTS))
+    return true;
+
+  if (IsYoutubeDomainUrl(url, ALLOW_SUBDOMAIN, ALLOW_NON_STANDARD_PORTS))
+    return true;
+
+  // Some domains don't have international TLD extensions, so testing for them
+  // is very straightforward.
+  static const char* kSuffixesToSetHeadersFor[] = {
+      ".android.com",
+      ".doubleclick.com",
+      ".doubleclick.net",
+      ".ggpht.com",
+      ".googleadservices.com",
+      ".googleapis.com",
+      ".googlesyndication.com",
+      ".googleusercontent.com",
+      ".googlevideo.com",
+      ".gstatic.com",
+      ".litepages.googlezip.net",
+      ".ytimg.com",
+  };
+  const std::string host = url.host();
+  for (size_t i = 0; i < base::size(kSuffixesToSetHeadersFor); ++i) {
+    if (base::EndsWith(host, kSuffixesToSetHeadersFor[i],
+                       base::CompareCase::INSENSITIVE_ASCII)) {
+      return true;
+    }
+  }
+
+  // Exact hostnames in lowercase to set headers for.
+  static const char* kHostsToSetHeadersFor[] = {
+      "googleweblight.com",
+  };
+  for (size_t i = 0; i < base::size(kHostsToSetHeadersFor); ++i) {
+    if (base::LowerCaseEqualsASCII(host, kHostsToSetHeadersFor[i]))
+      return true;
+  }
+
+  return false;
 }
 
 const std::vector<std::string>& GetGoogleRegistrableDomains() {

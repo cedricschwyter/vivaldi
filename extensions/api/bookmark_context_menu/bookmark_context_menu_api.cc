@@ -67,8 +67,6 @@ static vivaldi::bookmark_context_menu::Action CommandToAction(int command) {
       return vivaldi::bookmark_context_menu::ACTION_COPY;
     case IDC_PASTE:
       return vivaldi::bookmark_context_menu::ACTION_PASTE;
-    case IDC_BOOKMARK_BAR_REMOVE:
-      return vivaldi::bookmark_context_menu::ACTION_DELETE;
     default:
       return vivaldi::bookmark_context_menu::ACTION_NONE;
   }
@@ -86,7 +84,7 @@ BookmarkContextMenuAPI::BookmarkContextMenuAPI(BrowserContext* context)
   event_router->RegisterObserver(
       this, vivaldi::bookmark_context_menu::OnClose::kEventName);
   event_router->RegisterObserver(
-      this, vivaldi::bookmark_context_menu::OnUrlHighlighted::kEventName);
+      this, vivaldi::bookmark_context_menu::OnHover::kEventName);
 }
 
 BookmarkContextMenuAPI::~BookmarkContextMenuAPI() {}
@@ -166,11 +164,14 @@ void BookmarkContextMenuAPI::OnClose() {
   }
 }
 
-void BookmarkContextMenuAPI::OnUrlHighlighted(const std::string& url) {
-  if (event_router_) {
-    event_router_->DispatchEvent(
-        vivaldi::bookmark_context_menu::OnUrlHighlighted::kEventName,
-        vivaldi::bookmark_context_menu::OnUrlHighlighted::Create(url));
+void BookmarkContextMenuAPI::OnHover(const std::string& url) {
+  if (hover_url_ != url) {
+    hover_url_ = url;
+    if (event_router_) {
+      event_router_->DispatchEvent(
+          vivaldi::bookmark_context_menu::OnHover::kEventName,
+          vivaldi::bookmark_context_menu::OnHover::Create(hover_url_));
+    }
   }
 }
 
@@ -243,15 +244,19 @@ bool BookmarkContextMenuShowFunction::RunAsync() {
           break;
       }
 
-      BookmarkContextMenuAPI::GetFactoryInstance()->Get(profile_)->OnOpen();
+      menuParams_.node = node;
+      menuParams_.offset = params_->properties.offset;
+      menuParams_.folder_group = params_->properties.folder_group;
+      menuParams_.support.initIcons(params_->properties.icons);
+      menuParams_.sort_field = sortField;
+      menuParams_.sort_order = sortOrder;
 
       ::vivaldi::VivaldiBookmarkMenu* menu =
-          ::vivaldi::CreateVivaldiBookmarkMenu(web_contents, node,
-              params_->properties.offset,
-              sortField, sortOrder, params_->properties.folder_group,
+          ::vivaldi::CreateVivaldiBookmarkMenu(web_contents, menuParams_,
               gfx::Rect(params_->properties.x, params_->properties.y,
                         params_->properties.width, params_->properties.height));
       if (menu->CanShow()) {
+        BookmarkContextMenuAPI::GetFactoryInstance()->Get(profile_)->OnOpen();
         AddRef();
         menu->set_observer(this);
         menu->Show();

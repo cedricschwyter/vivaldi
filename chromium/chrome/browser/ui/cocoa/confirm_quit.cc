@@ -15,7 +15,8 @@ void RecordHistogram(ConfirmQuitMetric sample) {
 }
 
 void RegisterLocalState(PrefRegistrySimple* registry) {
-  registry->RegisterBooleanPref(prefs::kConfirmToQuitEnabled, true);
+  // NOTE(tomas@vivaldi.com): We want this to be disabled by default
+  registry->RegisterBooleanPref(prefs::kConfirmToQuitEnabled, false);
 }
 
 }  // namespace confirm_quit

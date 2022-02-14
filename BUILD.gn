@@ -20,6 +20,7 @@ group("All") {
 
   deps = [
     ":vivaldi",
+    ":generate_files_cfg",
     "//base:base_unittests",
     "//cc:cc_unittests",
     "//chrome/test:browser_tests",
@@ -181,4 +182,38 @@ if (is_win) {
       args = ["-c"]
     }
   }
+}
+
+action("generate_files_cfg") {
+  if (is_win) {
+    plat = "win"
+  } else if (is_mac) {
+    plat = "mac"
+  } else if (is_android) {
+    plat = "android"
+  } else if (is_linux) {
+    plat = "linux"
+  } else {
+    assert(false, "Unknown target platform")
+  }
+
+  script = "//vivaldi/scripts/cat_files.py"
+  chromium_files_cfg = "//chrome/tools/build/$plat/FILES.cfg"
+  vivaldi_files_cfg = "//vivaldi/tools/build/$plat/FILES.cfg"
+
+  files_cfg_target = "$root_build_dir/FILES.cfg"
+
+  inputs = [
+    script,
+    chromium_files_cfg,
+    vivaldi_files_cfg,
+  ]
+
+  outputs = [files_cfg_target]
+
+  args = rebase_path([
+    files_cfg_target,
+    chromium_files_cfg,
+    vivaldi_files_cfg,
+  ], root_build_dir)
 }

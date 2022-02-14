@@ -59,6 +59,7 @@ class PrinterSpecifics;
 class PriorityPreferenceSpecifics;
 class ReadingListSpecifics;
 class SearchEngineSpecifics;
+class SecurityEventSpecifics;
 class SendTabToSelfSpecifics;
 class SessionHeader;
 class SessionSpecifics;
@@ -72,6 +73,7 @@ class TabNavigation;
 class ThemeSpecifics;
 class TimeRangeDirective;
 class TypedUrlSpecifics;
+class UrlDirective;
 class UserConsentSpecifics;
 class UserEventSpecifics;
 class WalletMaskedCreditCard;
@@ -230,6 +232,9 @@ std::unique_ptr<base::DictionaryValue> SearchEngineSpecificsToValue(
 std::unique_ptr<base::DictionaryValue> SendTabToSelfSpecificsToValue(
     const sync_pb::SendTabToSelfSpecifics& send_tab_specifics);
 
+std::unique_ptr<base::DictionaryValue> SecurityEventSpecificsToValue(
+    const sync_pb::SecurityEventSpecifics& security_event_specifics);
+
 std::unique_ptr<base::DictionaryValue> SessionHeaderToValue(
     const sync_pb::SessionHeader& session_header);
 
@@ -264,6 +269,9 @@ std::unique_ptr<base::DictionaryValue> TimeRangeDirectiveToValue(
 
 std::unique_ptr<base::DictionaryValue> TypedUrlSpecificsToValue(
     const sync_pb::TypedUrlSpecifics& typed_url_specifics);
+
+std::unique_ptr<base::DictionaryValue> UrlDirectiveToValue(
+    const sync_pb::UrlDirective& time_range_directive);
 
 std::unique_ptr<base::DictionaryValue> UserConsentSpecificsToValue(
     const sync_pb::UserConsentSpecifics& user_consent_specifics);

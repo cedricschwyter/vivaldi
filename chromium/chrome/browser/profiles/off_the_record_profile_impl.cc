@@ -15,6 +15,7 @@
 #include "base/strings/string_util.h"
 #include "base/task/post_task.h"
 #include "build/build_config.h"
+#include "chrome/browser/accessibility/accessibility_labels_service.h"
 #include "chrome/browser/background/background_contents_service_factory.h"
 #include "chrome/browser/background_fetch/background_fetch_delegate_factory.h"
 #include "chrome/browser/background_fetch/background_fetch_delegate_impl.h"
@@ -51,6 +52,8 @@
 #include "chrome/common/chrome_switches.h"
 #include "components/content_settings/core/browser/host_content_settings_map.h"
 #include "components/keyed_service/content/browser_context_dependency_manager.h"
+#include "components/keyed_service/core/simple_dependency_manager.h"
+#include "components/keyed_service/core/simple_keyed_service_factory.h"
 #include "components/prefs/json_pref_store.h"
 #include "components/sync_preferences/pref_service_syncable.h"
 #include "components/user_prefs/user_prefs.h"
@@ -137,7 +140,11 @@ void NotifyOTRProfileDestroyedOnIOThread(void* original_profile,
 }  // namespace
 
 OffTheRecordProfileImpl::OffTheRecordProfileImpl(Profile* real_profile)
-    : profile_(real_profile), start_time_(base::Time::Now()) {
+    : profile_(real_profile),
+      start_time_(base::Time::Now()),
+      key_(
+          std::make_unique<SimpleFactoryKey>(profile_->GetPath(),
+                                             profile_->GetSimpleFactoryKey())) {
   // Must happen before we ask for prefs as prefs needs the connection to the
   // service manager, which is set up in Initialize.
   BrowserContext::Initialize(this, profile_->GetPath());
@@ -193,6 +200,7 @@ void OffTheRecordProfileImpl::Init() {
 
   extensions::ExtensionSystem::Get(this)->InitForIncognitoProfile();
 
+  // This should match ExtensionService::PostActivateExtension.
   content::URLDataSource::Add(
       this, std::make_unique<VivaldiThumbDataSource>(profile_));
   content::URLDataSource::Add(this,
@@ -208,6 +216,9 @@ void OffTheRecordProfileImpl::Init() {
   // The DomDistillerViewerSource is not a normal WebUI so it must be registered
   // as a URLDataSource early.
   dom_distiller::RegisterViewerSource(this);
+
+  // AccessibilityLabelsService has a default prefs behavior in incognito.
+  AccessibilityLabelsService::InitOffTheRecordPrefs(this);
 }
 
 OffTheRecordProfileImpl::~OffTheRecordProfileImpl() {
@@ -226,6 +237,12 @@ OffTheRecordProfileImpl::~OffTheRecordProfileImpl() {
 
   BrowserContextDependencyManager::GetInstance()->DestroyBrowserContextServices(
       this);
+  // The SimpleDependencyManager should always be called after the
+  // BrowserContextDependencyManager. This is because the KeyedService instances
+  // in the BrowserContextDependencyManager's dependency graph can depend on the
+  // ones in the SimpleDependencyManager's graph.
+  SimpleDependencyManager::GetInstance()->DestroyKeyedServices(
+      GetSimpleFactoryKey());
 
 #if BUILDFLAG(ENABLE_EXTENSIONS)
   base::PostTaskWithTraits(
@@ -342,6 +359,10 @@ bool OffTheRecordProfileImpl::IsChild() const {
 
 bool OffTheRecordProfileImpl::IsLegacySupervised() const {
   return profile_->IsLegacySupervised();
+}
+
+bool OffTheRecordProfileImpl::AllowsBrowserWindows() const {
+  return profile_->AllowsBrowserWindows();
 }
 
 PrefService* OffTheRecordProfileImpl::GetPrefs() {
@@ -509,8 +530,9 @@ OffTheRecordProfileImpl::GetVideoDecodePerfHistory() {
 
     auto stats_db = std::make_unique<media::InMemoryVideoDecodeStatsDBImpl>(
         seed_db_provider);
-    auto new_decode_history =
-        std::make_unique<media::VideoDecodePerfHistory>(std::move(stats_db));
+    // TODO(liberato): Get the FeatureProviderFactoryCB from BrowserContext.
+    auto new_decode_history = std::make_unique<media::VideoDecodePerfHistory>(
+        std::move(stats_db), media::learning::FeatureProviderFactoryCB());
     decode_history = new_decode_history.get();
 
     SetUserData(kVideoDecodePerfHistoryId, std::move(new_decode_history));
@@ -539,6 +561,11 @@ bool OffTheRecordProfileImpl::IsSameProfile(Profile* profile) {
 
 base::Time OffTheRecordProfileImpl::GetStartTime() const {
   return start_time_;
+}
+
+SimpleFactoryKey* OffTheRecordProfileImpl::GetSimpleFactoryKey() const {
+  DCHECK(key_);
+  return key_.get();
 }
 
 void OffTheRecordProfileImpl::SetExitType(ExitType exit_type) {

@@ -19,6 +19,7 @@
 <translation id="1274977772557788323">Настройки на хранилището на плейър Flash на Adobe</translation>
 <translation id="1297175357211070620">Назначение</translation>
 <translation id="1303101771013849280">Файл HTML с отметки</translation>
+<translation id="1380436189840894976">Изход от частен режим?</translation>
 <translation id="1430915738399379752">Отпечатване</translation>
 <translation id="1433811987160647649">Питай преди достъп</translation>
 <translation id="1451375123200651445">Страницата в един файл</translation>
@@ -93,7 +94,6 @@
 <translation id="2662876636500006917">Магазин на Chrome</translation>
 <translation id="2678063897982469759">Разреши повторно</translation>
 <translation id="2721037002783622288">&amp;Потърси картината в <ph name="SEARCH_ENGINE" /></translation>
-<translation id="2766006623206032690">&amp;Постави и отвори</translation>
 <translation id="2785873697295365461">Файлови дескриптори</translation>
 <translation id="2809586584051668049">и още <ph name="NUMBER_ADDITIONAL_DISABLED" /></translation>
 <translation id="2812989263793994277">Не показвай картини</translation>
@@ -127,14 +127,12 @@
 <translation id="3222066309010235055">Предрендиран: <ph name="PRERENDER_CONTENTS_NAME" /></translation>
 <translation id="3227137524299004712">Микрофон</translation>
 <translation id="3241680850019875542">Изберете главната директория на разширението за пакетиране. Ако обновявате, изберете и файл с частен ключ.</translation>
-<translation id="3269093882174072735">Зареди картината</translation>
 <translation id="3280237271814976245">Запиши &amp;като…</translation>
 <translation id="3288047731229977326">Разширения, изпълнявани в развоен режим могат да затормозят компютъра. Ако не сте разработчик, трябва да забраните разширенията, изпълнявани в развоен режим за по-голяма безопасност.</translation>
 <translation id="329838636886466101">Поправи</translation>
 <translation id="3303818374450886607">Копия</translation>
 <translation id="3305661444342691068">Отвори PDF в Preview</translation>
 <translation id="3317459757438853210">двустранно</translation>
-<translation id="3319048459796106952">Създай &amp;частен прозорец</translation>
 <translation id="3341703758641437857">Позволи достъп до локалните файлове</translation>
 <translation id="3347086966102161372">Копирай &amp;адреса на картината</translation>
 <translation id="3360297538363969800">Провалено отпечатване. Моля, проверете принтера и опитайте отново.</translation>
@@ -149,6 +147,7 @@
 <translation id="3505030558724226696">Оттегли достъпа до устройства</translation>
 <translation id="3523642406908660543">Питай при опит на сайт да ползва приставка за достъп до компютъра (препоръчително)</translation>
 <translation id="354068948465830244">Може да чете и променя данните на сайта</translation>
+<translation id="3574917942258583917">Изход от частен режим?</translation>
 <translation id="357886715122934472">&lt;strong&gt;<ph name="SENDER" />&lt;/strong&gt; споделя принтер &lt;strong&gt;<ph name="PRINTER_NAME" />&lt;/strong&gt; с вашата група: &lt;strong&gt;<ph name="GROUP_NAME" />&lt;/strong&gt;. В случай че приемете, всички членове на групата ще могат да печатат на принтера.</translation>
 <translation id="3587482841069643663">всички</translation>
 <translation id="3627588569887975815">Отвори препратката в &amp;частен прозорец</translation>
@@ -241,11 +240,11 @@
 <translation id="52912272896845572">Файлът с частен ключ е недействителен.</translation>
 <translation id="5301954838959518834">ДА, ясно</translation>
 <translation id="5317780077021120954">Запиши</translation>
-<translation id="5329858601952122676">&amp;Изтрий</translation>
 <translation id="5355926466126177564">Разширение „<ph name="EXTENSION_NAME" />“ промени страницата, показвана при търсене от омнибокса.</translation>
 <translation id="5362741141255528695">Изберете файл с частен ключ.</translation>
 <translation id="5370819323174483825">Пре&amp;зареди</translation>
 <translation id="5398572795982417028">Страницата е извън границите, ограничени до <ph name="MAXIMUM_PAGE" /></translation>
+<translation id="5425042808445046667">Продължи изтеглянето</translation>
 <translation id="5431318178759467895">цветно</translation>
 <translation id="5483785310822538350">Оттегли достъпа до файлове и устройства</translation>
 <translation id="5485102783864353244">Добави приложението</translation>
@@ -266,6 +265,7 @@
 <translation id="5707185214361380026">Провалено зареждане на разширение от:</translation>
 <translation id="5715711091495208045">Приставков брокер: <ph name="PLUGIN_NAME" /></translation>
 <translation id="5746169159649715125">Запиши като PDF</translation>
+<translation id="5747809636523347288">Пост&amp;ави и отвори <ph name="URL" /></translation>
 <translation id="5759728514498647443">Изпратените за печат документи чрез <ph name="APP_NAME" /> могат да бъдат прочетени с <ph name="APP_NAME" />.</translation>
 <translation id="5764483294734785780">Запи&amp;ши звука като…</translation>
 <translation id="577624874850706961">Търсене в бисквитките</translation>
@@ -314,6 +314,7 @@
 <translation id="6498249116389603658">&amp;Всички ваши езици</translation>
 <translation id="6503077044568424649">Най-посещавани</translation>
 <translation id="6508261954199872201">Приложение: <ph name="APP_NAME" /></translation>
+<translation id="6516243500644829484">Създай &amp;частен прозорец</translation>
 <translation id="6518014396551869914">&amp;Копирай картината</translation>
 <translation id="6550675742724504774">Настройки</translation>
 <translation id="6612358246767739896">Защитено съдържание</translation>
@@ -398,6 +399,8 @@
 <translation id="8137559199583651773">Организирай разширенията</translation>
 <translation id="8180239481735238521">страница</translation>
 <translation id="8188120771410500975">&amp;Проверявай текстовите полета</translation>
+<translation id="8212008074015601248">{NUM_DOWNLOAD, plural,
+        =1 {изтегляне в ход} one {изтегляне в ход} few {изтегляния в ход} many {изтегляния в ход} other {изтегляния в ход}}</translation>
 <translation id="8230134520748321204">Записване на паролата за <ph name="ORIGIN" />?</translation>
 <translation id="8261378640211443080">Разширението не е в списъка на <ph name="IDS_EXTENSION_WEB_STORE_TITLE" /> и може да е било добавено без ваше знание.</translation>
 <translation id="8270242299912238708">Документи PDF</translation>

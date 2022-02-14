@@ -73,7 +73,6 @@
 <translation id="3630155396527302611">Ha már megjelenik a hálózat elérésére engedélyezett programként, próbálkozzon
       az eltávolításával, majd a listára való ismételt felvételével.</translation>
 <translation id="3658742229777143148">Ellenőrzés</translation>
-<translation id="366094926047009040">Elveszítheted a hozzáférést a Vivaldi fiókodhoz, vagy visszaélhetnek személyes adataiddal. A Vivaldi azt javasolja, hogy azonnal módosítsd a jelszavad.</translation>
 <translation id="3681007416295224113">Tanúsítvány adatai</translation>
 <translation id="3717027428350673159"><ph name="BEGIN_LINK" />A proxy, a tűzfal és a DNS-konfiguráció ellenőrzése<ph name="END_LINK" /></translation>
 <translation id="382518646247711829">Ha proxyszervert használ...</translation>
@@ -137,6 +136,7 @@
 <translation id="5838278095973806738">Ne írj be semmilyen bizalmas adatot (például jelszót vagy hitelkártyaadatot) a webhelyen, mivel a támadók ellophatják.</translation>
 <translation id="5869405914158311789">A webhely nem érhető el</translation>
 <translation id="5920262536204764679">{NUM_COOKIES,plural, =1{1 van használatban}other{# van használatban}}</translation>
+<translation id="5932224571077948991">A webhely tolakodó vagy félrevezető hirdetéseket jelenít meg</translation>
 <translation id="5990559369517809815">A szerver felé irányuló kéréseket egy bővítmény blokkolja.</translation>
 <translation id="6051221802930200923">Pillanatnyilag nem tudod felkeresni a(z) <ph name="SITE" /> webhelyet, mivel a webhely tanúsítványrögzítést használ. A hálózati hibák és támadások rendszerint átmenetiek, ezért az említett oldal működése később valószínűleg helyreáll.</translation>
 <translation id="6146055958333702838">Ellenőrizze a kábeleket, majd indítsa újra a routert, modemet vagy más
@@ -192,11 +192,11 @@
 <translation id="8025119109950072390">A webhely támadói megpróbálhatnak csellel rávenni, hogy például telepíts egy veszélyes szoftvert, vagy felfedd személyes adatait (jelszó, telefonszám, hitelkártyaszám stb.).</translation>
 <translation id="8037357227543935929">Kérdezzen rá (alapértelmezett)</translation>
 <translation id="8041940743680923270">Globális alapértelmezés használata (Megkérdezés)</translation>
+<translation id="808894953321890993">Jelszó módosítása</translation>
 <translation id="8142868475871995937">Látogasson el a &lt;strong&gt;vivaldi://policy&lt;/strong&gt; oldalra a feketelistán lévő URL-ek és egyéb, a rendszergazda által előírt szabályok megtekintéséhez.</translation>
 <translation id="8149426793427495338">Számítógépe alvó üzemmódba váltott.</translation>
 <translation id="8150722005171944719">A fájl (<ph name="URL" />) nem olvasható. Lehet, hogy eltávolították, áthelyezték, vagy a fájlengedélyek megakadályozzák a hozzáférést.</translation>
 <translation id="8184538546369750125">Globális alapértelmezés használata (Engedélyezés)</translation>
-<translation id="8205463626947051446">A webhely jellemzően tolakodó hirdetéseket jelenít meg</translation>
 <translation id="8211406090763984747">A kapcsolat biztonságos</translation>
 <translation id="8225771182978767009">A számítógépet beállító személy a webhely letiltása mellett döntött.</translation>
 <translation id="8241712895048303527">Letiltás ezen a webhelyen</translation>
@@ -214,10 +214,10 @@
 <translation id="9025348182339809926">(Érvénytelen)</translation>
 <translation id="9039213469156557790">Emellett az oldal más forrásokat is tartalmaz, amelyek nem biztonságosak. Ezeket a forrásokat mások is megtekinthetik átvitel közben, és megváltoztatásukkal a támadók módosíthatják az oldal viselkedését.</translation>
 <translation id="9069693763241529744">Bővítmény által letiltva</translation>
-<translation id="910908805481542201">Segítséget kérek a probléma megoldásához</translation>
 <translation id="9169664750068251925">Mindig tiltsa ezen az oldalon</translation>
 <translation id="9183425211371246419">A(z) <ph name="HOST_NAME" /> egy nem támogatott protokollt használ.</translation>
 <translation id="9219103736887031265">Képek</translation>
+<translation id="936602727769022409">Elveszítheted a hozzáférést Google-fiókodhoz. A Chromium azt javasolja, hogy azonnal módosítsd a jelszavad. Be kell majd jelentkezned.</translation>
 <translation id="969892804517981540">Hivatalos verzió</translation>
 <translation id="988159990683914416">Fejlesztői változat</translation>
 </translationbundle>

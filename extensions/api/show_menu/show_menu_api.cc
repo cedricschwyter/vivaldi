@@ -8,11 +8,9 @@
 #include <memory>
 #include <string>
 #include <utility>
-#include <vector>
 
 #include "app/vivaldi_resources.h"
 #include "base/base64.h"
-#include "base/i18n/string_compare.h"
 #include "base/lazy_instance.h"
 #include "base/memory/ptr_util.h"
 #include "base/strings/string_number_conversions.h"
@@ -20,6 +18,7 @@
 #include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
+#include "browser/menus/bookmark_sorter.h"
 #include "chrome/app/chrome_command_ids.h"
 #include "chrome/browser/apps/platform_apps/app_load_service.h"
 #include "chrome/browser/bookmarks/bookmark_model_factory.h"
@@ -46,6 +45,7 @@
 #include "ui/devtools/devtools_connector.h"
 #include "ui/vivaldi_context_menu.h"
 #include "ui/vivaldi_main_menu.h"
+#include "vivaldi/prefs/vivaldi_gen_prefs.h"
 
 #define BOOKMARK_ID_BASE 100000
 
@@ -219,278 +219,58 @@ ui::Accelerator ParseShortcut(const std::string& accelerator,
 
 }  // namespace
 
-BookmarkSorter::BookmarkSorter(show_menu::SortField sort_field,
-                               show_menu::SortOrder sort_order,
-                               bool group_folders)
-  :sort_field_(sort_field)
-  ,sort_order_(sort_order)
-  ,group_folders_(group_folders) {
-
-  if (sort_order_ == show_menu::SORT_ORDER_NONE)
-    sort_field_ = show_menu::SORT_FIELD_NONE;
-
-  UErrorCode error = U_ZERO_ERROR;
-  collator_.reset(icu::Collator::createInstance(error));
-  if (U_FAILURE(error)) {
-    collator_.reset(nullptr);
-  }
-};
-
-BookmarkSorter::~BookmarkSorter() {
+// static
+void ShowMenuAPI::SendCommandExecuted(Profile* profile,
+                                      int window_id,
+                                      int command_id,
+                                      const std::string& parameter) {
+  ::vivaldi::BroadcastEvent(
+      show_menu::OnMainMenuCommand::kEventName,
+      show_menu::OnMainMenuCommand::Create(window_id, command_id, parameter),
+      profile);
 }
-
-void BookmarkSorter::sort(std::vector<bookmarks::BookmarkNode*>& vector) {
-  switch (sort_field_) {
-    case show_menu::SORT_FIELD_TITLE:
-      std::sort(vector.begin(), vector.end(),
-          [this](bookmarks::BookmarkNode *b1, bookmarks::BookmarkNode *b2) {
-        if ((b1->type() == b2->type()) || !group_folders_) {
-          const icu::Collator* collator = collator_.get();
-
-          int l1 = b1->GetTitle().length();
-          int l2 = b2->GetTitle().length();
-          if (l1 == 0 || l2 == 0) {
-            return fallbackToTitleSort(collator, b1, b2, l1, l2);
-          }
-
-          if (sort_order_ == show_menu::SORT_ORDER_ASCENDING) {
-            return base::i18n::CompareString16WithCollator(
-                *collator, b1->GetTitle(), b2->GetTitle()) == UCOL_LESS;
-          } else {
-            return base::i18n::CompareString16WithCollator(
-                *collator, b2->GetTitle(), b1->GetTitle()) == UCOL_LESS;
-          }
-        }
-        return b1->is_folder();
-      });
-      break;
-    case show_menu::SORT_FIELD_URL:
-      std::sort(vector.begin(), vector.end(),
-          [this](bookmarks::BookmarkNode *b1, bookmarks::BookmarkNode *b2) {
-        if ((b1->type() == b2->type()) || !group_folders_) {
-
-          int l1 = b1->url().spec().length();
-          int l2 = b2->url().spec().length();
-          if (l1 == 0 || l2 == 0) {
-            return fallbackToTitleSort(collator_.get(), b1, b2, l1, l2);
-          }
-
-          if (sort_order_ == show_menu::SORT_ORDER_ASCENDING) {
-            return b1->url().spec() < b2->url().spec();
-          } else {
-            return b2->url().spec() < b1->url().spec();
-          }
-        }
-        return b1->is_folder();
-      });
-      break;
-    case show_menu::SORT_FIELD_NICKNAME:
-      std::sort(vector.begin(), vector.end(),
-          [this](bookmarks::BookmarkNode *b1, bookmarks::BookmarkNode *b2) {
-        if ((b1->type() == b2->type()) || !group_folders_) {
-          const icu::Collator* collator = collator_.get();
-
-          int l1 = b1->GetNickName().length();
-          int l2 = b2->GetNickName().length();
-          if (l1 == 0 || l2 == 0) {
-            return fallbackToTitleSort(collator, b1, b2, l1, l2);
-          }
-
-          if (sort_order_ == show_menu::SORT_ORDER_ASCENDING) {
-            return base::i18n::CompareString16WithCollator(
-                *collator, b1->GetNickName(), b2->GetNickName()) == UCOL_LESS;
-          } else {
-            return base::i18n::CompareString16WithCollator(
-                *collator, b2->GetNickName(), b1->GetNickName()) == UCOL_LESS;
-          }
-        }
-        return b1->is_folder();
-      });
-      break;
-    case show_menu::SORT_FIELD_DESCRIPTION:
-      std::sort(vector.begin(), vector.end(),
-          [this](bookmarks::BookmarkNode *b1, bookmarks::BookmarkNode *b2) {
-        if ((b1->type() == b2->type()) || !group_folders_) {
-          const icu::Collator* collator = collator_.get();
-
-          int l1 = b1->GetDescription().length();
-          int l2 = b2->GetDescription().length();
-          if (l1 == 0 || l2 == 0) {
-            return fallbackToTitleSort(collator, b1, b2, l1, l2);
-          }
-
-          if (sort_order_ == show_menu::SORT_ORDER_ASCENDING) {
-            return base::i18n::CompareString16WithCollator(
-                *collator, b1->GetDescription(), b2->GetDescription())
-                    == UCOL_LESS;
-          } else {
-            return base::i18n::CompareString16WithCollator(
-                *collator, b2->GetDescription(), b1->GetDescription())
-                    == UCOL_LESS;
-          }
-        }
-        return b1->is_folder();
-      });
-      break;
-    case show_menu::SORT_FIELD_DATEADDED:
-      std::sort(vector.begin(), vector.end(),
-          [this](bookmarks::BookmarkNode *b1, bookmarks::BookmarkNode *b2) {
-        if ((b1->type() == b2->type()) || !group_folders_) {
-          if (sort_order_ == show_menu::SORT_ORDER_ASCENDING) {
-            return b1->date_added() < b2->date_added();
-          } else {
-            return b2->date_added() < b1->date_added();
-          }
-        }
-        return b1->is_folder();
-      });
-      break;
-    // Keep compiler happy.
-    case show_menu::SORT_FIELD_NONE:
-      break;
-  }
-}
-
-bool BookmarkSorter::fallbackToTitleSort(const icu::Collator* collator,
-                                         bookmarks::BookmarkNode *b1,
-                                         bookmarks::BookmarkNode *b2,
-                                         int l1,
-                                         int l2) {
-  if (l1 == 0 && l2 == 0) {
-    l1 = b1->GetTitle().length();
-    l2 = b2->GetTitle().length();
-    if (l1 == 0 || l2 == 0) {
-      // Sort by date if there is missing title information
-      return fallbackToDateSort(b1, b2, l1, l2);
-    }
-    if (sort_order_ == show_menu::SORT_ORDER_ASCENDING) {
-      return base::i18n::CompareString16WithCollator(
-          *collator, b1->GetTitle(), b2->GetTitle()) == UCOL_LESS;
-    } else {
-      return base::i18n::CompareString16WithCollator(
-          *collator, b2->GetTitle(), b1->GetTitle()) == UCOL_LESS;
-    }
-  } else if (l1 == 0) {
-    return sort_order_ == show_menu::SORT_ORDER_ASCENDING ? false : true;
-  } else {
-    return sort_order_ == show_menu::SORT_ORDER_ASCENDING ? true : false;
-  }
-}
-
-bool BookmarkSorter::fallbackToDateSort(bookmarks::BookmarkNode *b1,
-                                        bookmarks::BookmarkNode *b2,
-                                        int l1,
-                                        int l2) {
-  if (l1 == 0 && l2 == 0) {
-    if (sort_order_ == show_menu::SORT_ORDER_ASCENDING) {
-      return b1->date_added() < b2->date_added();
-    } else {
-      return b2->date_added() < b1->date_added();
-    }
-  } else if (l1 == 0) {
-    return sort_order_ == show_menu::SORT_ORDER_ASCENDING ? false : true;
-  } else {
-    return sort_order_ == show_menu::SORT_ORDER_ASCENDING ? true : false;
-  }
-}
-
-CommandEventRouter::CommandEventRouter(Profile* profile)
-    : browser_context_(profile) {}
-
-CommandEventRouter::~CommandEventRouter() {}
-
-void CommandEventRouter::DispatchEvent(
-    const std::string& event_name,
-    std::unique_ptr<base::ListValue> event_args) {
-  EventRouter* event_router = EventRouter::Get(browser_context_);
-  if (event_router) {
-    event_router->BroadcastEvent(base::WrapUnique(
-        new extensions::Event(extensions::events::VIVALDI_EXTENSION_EVENT,
-                              event_name, std::move(event_args))));
-  }
-}
-
-ShowMenuAPI::ShowMenuAPI(BrowserContext* context) : browser_context_(context) {
-  EventRouter* event_router = EventRouter::Get(browser_context_);
-  event_router->RegisterObserver(this,
-                                 show_menu::OnMainMenuCommand::kEventName);
-  event_router->RegisterObserver(this, show_menu::OnOpen::kEventName);
-  event_router->RegisterObserver(this, show_menu::OnUrlHighlighted::kEventName);
-  event_router->RegisterObserver(this,
-                                 show_menu::OnBookmarkActivated::kEventName);
-  event_router->RegisterObserver(this,
-                                 show_menu::OnAddBookmark::kEventName);
-}
-
-ShowMenuAPI::~ShowMenuAPI() {}
-
-void ShowMenuAPI::Shutdown() {
-  EventRouter::Get(browser_context_)->UnregisterObserver(this);
-}
-
-void ShowMenuAPI::CommandExecuted(int command_id,
-                                  const std::string& parameter) {
-  if (command_event_router_) {
-    command_event_router_->DispatchEvent(
-        show_menu::OnMainMenuCommand::kEventName,
-        show_menu::OnMainMenuCommand::Create(command_id, parameter));
-  }
-}
-
-void ShowMenuAPI::OnOpen() {
-  if (command_event_router_) {
-    command_event_router_->DispatchEvent(show_menu::OnOpen::kEventName,
-                                         show_menu::OnOpen::Create());
-  }
-}
-
-void ShowMenuAPI::OnUrlHighlighted(const std::string& url) {
-  if (command_event_router_) {
-    command_event_router_->DispatchEvent(
-        show_menu::OnUrlHighlighted::kEventName,
-        show_menu::OnUrlHighlighted::Create(url));
-  }
-}
-
-void ShowMenuAPI::OnBookmarkActivated(int id, int event_flags) {
-  if (command_event_router_) {
-
-    show_menu::Response response;
-    response.id = id;
-    response.ctrl = event_flags & ui::EF_CONTROL_DOWN ? true : false;
-    response.shift = event_flags & ui::EF_SHIFT_DOWN ? true : false;
-    response.alt = event_flags & ui::EF_ALT_DOWN ? true : false;
-    response.command = event_flags & ui::EF_COMMAND_DOWN ? true : false;
-    response.left = event_flags & ui::EF_LEFT_MOUSE_BUTTON ? true : false;
-    response.right = event_flags & ui::EF_RIGHT_MOUSE_BUTTON ? true : false;
-    response.center = event_flags & ui::EF_MIDDLE_MOUSE_BUTTON ? true : false;
-
-    command_event_router_->DispatchEvent(
-        show_menu::OnBookmarkActivated::kEventName,
-        show_menu::OnBookmarkActivated::Create(response));
-  }
-}
-
-void ShowMenuAPI::OnAddBookmark(int id) {
-  if (command_event_router_) {
-    command_event_router_->DispatchEvent(
-        show_menu::OnAddBookmark::kEventName,
-        show_menu::OnAddBookmark::Create(id));
-  }
-}
-
-static base::LazyInstance<BrowserContextKeyedAPIFactory<ShowMenuAPI>>::
-    DestructorAtExit g_factory_menu = LAZY_INSTANCE_INITIALIZER;
 
 // static
-BrowserContextKeyedAPIFactory<ShowMenuAPI>* ShowMenuAPI::GetFactoryInstance() {
-  return g_factory_menu.Pointer();
+void ShowMenuAPI::SendOpen(Profile* profile) {
+  ::vivaldi::BroadcastEvent(show_menu::OnOpen::kEventName,
+                            show_menu::OnOpen::Create(), profile);
 }
 
-void ShowMenuAPI::OnListenerAdded(const EventListenerInfo& details) {
-  command_event_router_.reset(
-      new CommandEventRouter(Profile::FromBrowserContext(browser_context_)));
-  EventRouter::Get(browser_context_)->UnregisterObserver(this);
+// static
+void ShowMenuAPI::SendClose(Profile* profile) {
+  ::vivaldi::BroadcastEvent(show_menu::OnClose::kEventName,
+                            show_menu::OnClose::Create(), profile);
+}
+
+// static
+void ShowMenuAPI::SendUrlHighlighted(Profile* profile, const std::string& url) {
+  ::vivaldi::BroadcastEvent(show_menu::OnUrlHighlighted::kEventName,
+                            show_menu::OnUrlHighlighted::Create(url), profile);
+}
+
+// static
+void ShowMenuAPI::SendBookmarkActivated(Profile* profile,
+                                        int id,
+                                        int event_flags) {
+  show_menu::Response response;
+  response.id = id;
+  response.ctrl = event_flags & ui::EF_CONTROL_DOWN ? true : false;
+  response.shift = event_flags & ui::EF_SHIFT_DOWN ? true : false;
+  response.alt = event_flags & ui::EF_ALT_DOWN ? true : false;
+  response.command = event_flags & ui::EF_COMMAND_DOWN ? true : false;
+  response.left = event_flags & ui::EF_LEFT_MOUSE_BUTTON ? true : false;
+  response.right = event_flags & ui::EF_RIGHT_MOUSE_BUTTON ? true : false;
+  response.center = event_flags & ui::EF_MIDDLE_MOUSE_BUTTON ? true : false;
+
+  ::vivaldi::BroadcastEvent(show_menu::OnBookmarkActivated::kEventName,
+                            show_menu::OnBookmarkActivated::Create(response),
+                            profile);
+}
+
+// static
+void ShowMenuAPI::SendAddBookmark(Profile* profile, int id) {
+  ::vivaldi::BroadcastEvent(show_menu::OnAddBookmark::kEventName,
+                            show_menu::OnAddBookmark::Create(id), profile);
 }
 
 VivaldiMenuController::BookmarkSupport::BookmarkSupport()
@@ -559,7 +339,7 @@ void VivaldiMenuController::Show(
 
   menu_.reset(::vivaldi::CreateVivaldiContextMenu(
       web_contents, &menu_model_, menu_params));
-  ShowMenuAPI::GetFactoryInstance()->Get(profile_)->OnOpen();
+  ShowMenuAPI::SendOpen(profile_);
   menu_->Show();
 }
 
@@ -592,7 +372,9 @@ void VivaldiMenuController::MenuClosed(ui::SimpleMenuModel* source) {
   if (source == &menu_model_) {
     if (delegate_) {
       delegate_->OnMenuCanceled();
+      delegate_ = nullptr;
     }
+    ShowMenuAPI::SendClose(profile_);
     delete this;
   }
 }
@@ -704,9 +486,43 @@ void VivaldiMenuController::PopulateModel(const show_menu::MenuItem* item,
     bool group_folders = item->container_group_folders ?
       *item->container_group_folders : true;
 
-    bookmark_sorter_.reset(new BookmarkSorter(item->container_sort_field,
-                                              item->container_sort_order,
-                                              group_folders));
+    ::vivaldi::BookmarkSorter::SortField sortField;
+    switch (item->container_sort_field) {
+      case show_menu::SORT_FIELD_NONE:
+        sortField = ::vivaldi::BookmarkSorter::FIELD_NONE;
+        break;
+      case show_menu::SORT_FIELD_TITLE:
+        sortField = ::vivaldi::BookmarkSorter::FIELD_TITLE;
+        break;
+      case show_menu::SORT_FIELD_URL:
+        sortField = ::vivaldi::BookmarkSorter::FIELD_URL;
+        break;
+      case show_menu::SORT_FIELD_NICKNAME:
+        sortField = ::vivaldi::BookmarkSorter::FIELD_NICKNAME;
+        break;
+      case show_menu::SORT_FIELD_DESCRIPTION:
+        sortField = ::vivaldi::BookmarkSorter::FIELD_DESCRIPTION;
+        break;
+      case show_menu::SORT_FIELD_DATEADDED:
+        sortField = ::vivaldi::BookmarkSorter::FIELD_DATEADDED;
+        break;
+    }
+
+    ::vivaldi::BookmarkSorter::SortOrder sortOrder;
+    switch (item->container_sort_order) {
+      case show_menu::SORT_ORDER_NONE:
+        sortOrder = ::vivaldi::BookmarkSorter::ORDER_NONE;
+        break;
+      case show_menu::SORT_ORDER_ASCENDING:
+        sortOrder = ::vivaldi::BookmarkSorter::ORDER_ASCENDING;
+        break;
+      case show_menu::SORT_ORDER_DESCENDING:
+        sortOrder = ::vivaldi::BookmarkSorter::ORDER_DESCENDING;
+        break;
+    }
+
+    bookmark_sorter_.reset(new ::vivaldi::BookmarkSorter(sortField, sortOrder,
+        group_folders));
 
     // Select root node
     int id = 0;
@@ -829,7 +645,13 @@ void VivaldiMenuController::PopulateBookmarks(
       menu_model->AddSeparator(ui::NORMAL_SEPARATOR);
     }
   } else if (node->is_url()) {
-    menu_model->AddItem(id, node->GetTitle());
+    // Strings for escaping a single '&' to prevent it from being removed. Mac
+    // does not not underline letters, but shares code with Win/Lin that do.
+    const base::char16 s1[2] = {'&', 0};
+    const base::string16 s2 = base::UTF8ToUTF16("&&");
+    base::string16 title(node->GetTitle());
+    base::ReplaceChars(title, s1, s2, &title);
+    menu_model->AddItem(id, title);
     const gfx::Image& image = model->GetFavicon(node);
     menu_model->SetIcon(menu_model->GetIndexOfCommandId(id),
         image.IsEmpty() ? bookmark_support_.iconForNode(node) : image);
@@ -862,8 +684,12 @@ void VivaldiMenuController::PopulateBookmarks(
       PopulateBookmarks(nodes[i], model, id, false, -1, child_menu_model);
     }
     if (!is_top_folder) {
-      const base::string16 label = node->GetTitle().length() == 0
-        ? l10n_util::GetStringUTF16(IDS_VIV_NO_TITLE) : node->GetTitle();
+      const base::char16 s1[2] = {'&', 0};
+      const base::string16 s2 = base::UTF8ToUTF16("&&");
+      base::string16 title(node->GetTitle());
+      base::ReplaceChars(title, s1, s2, &title);
+      const base::string16 label = title.length() == 0
+        ? l10n_util::GetStringUTF16(IDS_VIV_NO_TITLE) : title;
       menu_model->AddSubMenu(id, label, child_menu_model);
       menu_model->SetIcon(menu_model->GetIndexOfCommandId(id),
           bookmark_support_.iconForNode(node));
@@ -879,6 +705,16 @@ void VivaldiMenuController::PopulateBookmarkFolder(
           web_contents_->GetBrowserContext());
   const bookmarks::BookmarkNode* node = bookmarks::GetBookmarkNodeByID(
       model, node_id);
+  // Strings for escaping of '&' to prevent it from underlining.
+  const base::char16 s1[2] = {'&', 0};
+  const base::string16 s2 = base::UTF8ToUTF16("&&");
+#if defined(OS_MACOSX)
+  bool underline_letter = false;
+#else
+  bool underline_letter = profile_->GetPrefs()->GetBoolean(
+        vivaldiprefs::kBookmarksUnderlineMenuLetter);
+#endif
+
   if (node && node->is_folder()) {
 
     // Never a label in an extender menu (which sets the offset)
@@ -904,7 +740,12 @@ void VivaldiMenuController::PopulateBookmarkFolder(
         }
       } else if (child->is_url()) {
         int id = BOOKMARK_ID_BASE + child->id();
-        menu_model->AddItem(id, child->GetTitle());
+
+        base::string16 title(child->GetTitle());
+        if (!underline_letter) {
+          base::ReplaceChars(title, s1, s2, &title);
+        }
+        menu_model->AddItem(id, title);
         const gfx::Image& image = model->GetFavicon(child);
         menu_model->SetIcon(menu_model->GetIndexOfCommandId(id),
             image.IsEmpty() ? bookmark_support_.iconForNode(child) : image);
@@ -918,8 +759,12 @@ void VivaldiMenuController::PopulateBookmarkFolder(
         folder.complete = false;
         bookmark_menu_model_map_[child_menu_model] = folder;
         models_.push_back(base::WrapUnique(child_menu_model));
-        const base::string16 label = child->GetTitle().length() == 0
-          ? l10n_util::GetStringUTF16(IDS_VIV_NO_TITLE) : child->GetTitle();
+        base::string16 title(child->GetTitle());
+        if (!underline_letter) {
+          base::ReplaceChars(title, s1, s2, &title);
+        }
+        const base::string16 label = title.length() == 0
+          ? l10n_util::GetStringUTF16(IDS_VIV_NO_TITLE) : title;
         menu_model->AddSubMenu(folder.menu_id, label, child_menu_model);
         menu_model->SetIcon(menu_model->GetIndexOfCommandId(folder.menu_id),
             bookmark_support_.iconForNode(child));
@@ -1034,7 +879,7 @@ bool VivaldiMenuController::GetIconForCommandId(int command_id,
   return false;
 }
 
-void VivaldiMenuController::CommandIdHighlighted(int command_id) {
+void VivaldiMenuController::VivaldiCommandIdHighlighted(int command_id) {
   if (current_highlighted_id_ != command_id) {
     current_highlighted_id_ = command_id;
     bool was_highlighted = is_url_highlighted_;
@@ -1045,20 +890,18 @@ void VivaldiMenuController::CommandIdHighlighted(int command_id) {
       const bookmarks::BookmarkNode* node = bookmarks::GetBookmarkNodeByID(
           model, id);
       if (node) {
-        ShowMenuAPI::GetFactoryInstance()->Get(profile_)->OnUrlHighlighted(
-          node->url().spec());
+        ShowMenuAPI::SendUrlHighlighted(profile_, node->url().spec());
       }
       is_url_highlighted_ = true;
     } else {
       std::map<int, std::string*>::iterator it = url_map_.find(command_id);
       if (it != url_map_.end()) {
-        ShowMenuAPI::GetFactoryInstance()->Get(profile_)->OnUrlHighlighted(
-            *it->second);
+        ShowMenuAPI::SendUrlHighlighted(profile_, *it->second);
         is_url_highlighted_ = true;
       }
     }
     if (was_highlighted && !is_url_highlighted_) {
-      ShowMenuAPI::GetFactoryInstance()->Get(profile_)->OnUrlHighlighted("");
+      ShowMenuAPI::SendUrlHighlighted(profile_, "");
     }
   }
 }
@@ -1068,7 +911,10 @@ void VivaldiMenuController::ExecuteCommand(int command_id, int event_flags) {
     // These are the commands we only get when running with npm.
     // For JS, this menu has been canceled since we handle the actions here.
     HandleDeveloperToolsCommand(command_id);
-    delegate_->OnMenuCanceled();
+    if (delegate_) {
+      delegate_->OnMenuCanceled();
+      delegate_ = nullptr;
+    }
   } else if (command_id >= BOOKMARK_ID_BASE) {
     int id = command_id - BOOKMARK_ID_BASE;
 
@@ -1078,17 +924,21 @@ void VivaldiMenuController::ExecuteCommand(int command_id, int event_flags) {
     const bookmarks::BookmarkNode* node = bookmarks::GetBookmarkNodeByID(
           model, id);
     if (node && node->is_folder()) {
-      ShowMenuAPI::GetFactoryInstance()->Get(profile_)->OnAddBookmark(id);
+      ShowMenuAPI::SendAddBookmark(profile_, id);
     } else {
-      ShowMenuAPI::GetFactoryInstance()->Get(profile_)->OnBookmarkActivated(id,
-          event_flags);
+      ShowMenuAPI::SendBookmarkActivated(profile_, id, event_flags);
     }
-    delegate_->OnMenuCanceled();
+    if (delegate_) {
+      delegate_->OnMenuCanceled();
+      delegate_ = nullptr;
+    }
   } else {
-    delegate_->OnMenuActivated(command_id, event_flags);
+    if (delegate_) {
+      delegate_->OnMenuActivated(command_id, event_flags);
+      delegate_ = nullptr;
+    }
   }
   EnableBookmarkObserver(false);
-  delegate_ = nullptr;
 }
 
 const show_menu::MenuItem* VivaldiMenuController::getItemByCommandId(
@@ -1127,7 +977,6 @@ bool ShowMenuCreateFunction::RunAsync() {
                                      params_->create_properties.mode);
 #endif
   }
-  AddRef();
   return true;
 }
 

@@ -27,9 +27,6 @@ struct PasswordForm;
 }
 
 namespace importer {
-#if defined(OS_WIN)
-struct ImporterIE7PasswordInfo;
-#endif
 struct SearchEngineInfo;
 }
 
@@ -49,11 +46,6 @@ class ImporterBridge : public base::RefCountedThreadSafe<ImporterBridge> {
       const std::vector<ImportedSpeedDialEntry>& speeddials) {}
 
   virtual void AddHomePage(const GURL& home_page) = 0;
-
-#if defined(OS_WIN)
-  virtual void AddIE7PasswordInfo(
-      const importer::ImporterIE7PasswordInfo& password_info) = 0;
-#endif
 
   virtual void SetFavicons(
       const favicon_base::FaviconUsageDataList& favicons) = 0;

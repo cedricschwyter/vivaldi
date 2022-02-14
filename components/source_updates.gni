@@ -54,7 +54,6 @@ update_target("//components/sessions:sessions") {
 
 update_target("//content/browser:browser") {
   sources += [
-    "//vivaldi/components/content/vivaldi_browser_plugin_embedder.cc",
     "//vivaldi/components/content/vivaldi_render_view_host_impl.cc",
     "//vivaldi/components/content/vivaldi_renderers.cc",
     "//vivaldi/components/content/vivaldi_resources.cc",

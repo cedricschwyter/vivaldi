@@ -47,12 +47,17 @@ constexpr char kSourceId[] = "SourceId";
 MockMediaSource::MockMediaSource(const std::string& filename,
                                  const std::string& mimetype,
                                  size_t initial_append_size,
-                                 bool initial_sequence_mode)
+                                 bool initial_sequence_mode
+#if defined(USE_SYSTEM_PROPRIETARY_CODECS)
+                                 , const base::FilePath& full_filename
+#endif
+                                 )
     : current_position_(0),
       initial_append_size_(initial_append_size),
       initial_sequence_mode_(initial_sequence_mode),
 #if defined(USE_SYSTEM_PROPRIETARY_CODECS)
-      file_path_(GetTestDataFilePath(filename)),
+      file_path_(full_filename.empty() ? GetTestDataFilePath(filename)
+                                       : full_filename),
 #endif
       mimetype_(mimetype),
       chunk_demuxer_(new ChunkDemuxer(
@@ -62,7 +67,11 @@ MockMediaSource::MockMediaSource(const std::string& filename,
                               base::Unretained(this)),
           &media_log_)),
       owned_chunk_demuxer_(chunk_demuxer_) {
-  file_data_ = ReadTestDataFile(filename);
+  file_data_ = ReadTestDataFile(filename
+#if defined(USE_SYSTEM_PROPRIETARY_CODECS)
+                                , file_path_
+#endif
+  );
 
   if (initial_append_size_ == kAppendWholeFile)
     initial_append_size_ = file_data_->data_size();
@@ -70,6 +79,14 @@ MockMediaSource::MockMediaSource(const std::string& filename,
   CHECK_GT(initial_append_size_, 0u);
   CHECK_LE(initial_append_size_, file_data_->data_size());
 }
+
+MockMediaSource::MockMediaSource(const std::string& filename,
+                                 size_t initial_append_size,
+                                 bool initial_sequence_mode)
+    : MockMediaSource(filename,
+                      GetMimeTypeForFile(filename),
+                      initial_append_size,
+                      initial_sequence_mode) {}
 
 MockMediaSource::MockMediaSource(scoped_refptr<DecoderBuffer> data,
                                  const std::string& mimetype,
@@ -141,7 +158,7 @@ void MockMediaSource::AppendData(size_t size) {
       append_window_start_, append_window_end_, &last_timestamp_offset_);
   current_position_ += size;
 
-  ASSERT_EQ(expect_append_success_, success);
+  VerifyExpectedAppendResult(success);
 
   if (do_eos_after_next_append_) {
     do_eos_after_next_append_ = false;
@@ -168,8 +185,7 @@ void MockMediaSource::AppendAtTimeWithWindow(
     const uint8_t* pData,
     int size) {
   CHECK(!chunk_demuxer_->IsParsingMediaSegment(kSourceId));
-  ASSERT_EQ(
-      expect_append_success_,
+  VerifyExpectedAppendResult(
       chunk_demuxer_->AppendData(kSourceId, pData, size, append_window_start,
                                  append_window_end, &timestamp_offset));
   last_timestamp_offset_ = timestamp_offset;
@@ -216,7 +232,7 @@ void MockMediaSource::DemuxerOpened() {
 void MockMediaSource::DemuxerOpenedTask() {
   ChunkDemuxer::Status status = AddId();
   if (status != ChunkDemuxer::kOk) {
-    CHECK(!demuxer_failure_cb_.is_null());
+    CHECK(demuxer_failure_cb_);
     demuxer_failure_cb_.Run(DEMUXER_ERROR_COULD_NOT_OPEN);
     return;
   }
@@ -253,7 +269,7 @@ void MockMediaSource::OnEncryptedMediaInitData(
     EmeInitDataType init_data_type,
     const std::vector<uint8_t>& init_data) {
   CHECK(!init_data.empty());
-  CHECK(!encrypted_media_init_data_cb_.is_null());
+  CHECK(encrypted_media_init_data_cb_);
   encrypted_media_init_data_cb_.Run(init_data_type, init_data);
 }
 
@@ -268,6 +284,14 @@ void MockMediaSource::InitSegmentReceived(std::unique_ptr<MediaTracks> tracks) {
     track_ids.insert(track->id());
   }
   InitSegmentReceivedMock(tracks);
+}
+
+void MockMediaSource::VerifyExpectedAppendResult(bool append_result) {
+  if (expected_append_result_ == ExpectedAppendResult::kSuccessOrFailure)
+    return;  // |append_result| is ignored in this case.
+
+  ASSERT_EQ(expected_append_result_ == ExpectedAppendResult::kSuccess,
+            append_result);
 }
 
 }  // namespace media

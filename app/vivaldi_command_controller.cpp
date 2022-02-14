@@ -194,12 +194,13 @@ bool ExecuteVivaldiCommands(Browser* browser, int id) {
     case IDC_VIV_TOGGLE_IMAGES:
     case IDC_VIV_WINDOW_PANEL:
     case IDC_VIV_WINDOW_MINIMIZE:
-    case IDC_VIV_ALLOW_APPLE_EVENTS:
+    case IDC_VIV_ALLOW_APPLE_EVENTS: {
       // The API is registered with a regular profile.
-      extensions::ShowMenuAPI::GetFactoryInstance()
-          ->Get(browser->profile()->GetOriginalProfile())
-          ->CommandExecuted(id);
+      Profile* profile = browser->profile()->GetOriginalProfile();
+      extensions::ShowMenuAPI::SendCommandExecuted(
+          profile, browser->session_id().id(), id);
       break;
+    }
 #endif
 
     default:

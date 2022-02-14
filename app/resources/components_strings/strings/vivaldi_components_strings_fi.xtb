@@ -76,7 +76,6 @@
 <translation id="3630155396527302611">Jos sillä on jo verkon käyttöoikeus, kokeile sen poistamista
       sallittujen ohjelmien luettelosta ja lisäämistä sitten uudelleen.</translation>
 <translation id="3658742229777143148">Päivitetty versio</translation>
-<translation id="366094926047009040">Voit menettää pääsyn Vivaldi-tiliisi tai identiteettisi voidaan varastaa. Vivaldi suosittelee vaihtamaan salasanan nyt.</translation>
 <translation id="3681007416295224113">Varmenteen tiedot</translation>
 <translation id="3717027428350673159"><ph name="BEGIN_LINK" />tarkistaa välityspalvelin-, palomuuri- ja nimipalveluasetukset<ph name="END_LINK" /></translation>
 <translation id="382518646247711829">Jos käytät välityspalvelinta…</translation>
@@ -140,6 +139,7 @@
 <translation id="5838278095973806738">Älä anna sivustolle salasanoja, luottokorttinumeroita tai muita arkaluonteisia tietoja, sillä hyökkääjät saattavat varastaa ne.</translation>
 <translation id="5869405914158311789">Sivustoon ei saada yhteyttä</translation>
 <translation id="5920262536204764679">{NUM_COOKIES,plural, =1{1 käytössä}other{# käytössä}}</translation>
+<translation id="5932224571077948991">Sivustolla on häiritseviä tai harhaanjohtavia mainoksia</translation>
 <translation id="5990559369517809815">Laajennus esti palvelinpyynnöt.</translation>
 <translation id="6051221802930200923"><ph name="SITE" /> ei juuri nyt ole käytettävissä, koska se käyttää varmenteiden kiinnittämistä. Verkkovirheet ja hyökkäykset ovat yleensä väliaikaisia, joten sivu luultavasti toimii myöhemmin.</translation>
 <translation id="6146055958333702838">Tarkista kaikki kaapelit ja käynnistä uudelleen reitittimet, modeemit ja muut
@@ -195,11 +195,11 @@
 <translation id="8025119109950072390">Sivustolle hyökännyt taho voi yrittää huijata sinua tekemään jotain vaarallista kuten asentamaan ohjelmia tai paljastamaan henkilötietojasi (esimerkiksi salasanasi, puhelinnumerosi tai luottokorttitietosi).</translation>
 <translation id="8037357227543935929">Kysy (oletus)</translation>
 <translation id="8041940743680923270">Käytä yleistä oletusasetusta (kysy)</translation>
+<translation id="808894953321890993">Vaihda salasana</translation>
 <translation id="8142868475871995937">Voit lukea listan kielletyistä URL-osoitteista ja muut järjestelmänvalvojasi määräämät käytännöt osoitteessa &lt;strong&gt;vivaldi://policy&lt;/strong&gt;.</translation>
 <translation id="8149426793427495338">Tietokoneesi siirtyi virransäästötilaan.</translation>
 <translation id="8150722005171944719">Tiedosto osoitteessa <ph name="URL" /> ei ole luettavissa. Se on voitu poistaa tai siirtää, tai tiedoston käyttöluvat voivat estää sen käytön.</translation>
 <translation id="8184538546369750125">Käytä yleistä oletusasetusta (salli)</translation>
-<translation id="8205463626947051446">Sivusto näyttää häiritseviä mainoksia</translation>
 <translation id="8211406090763984747">Yhteys on salattu</translation>
 <translation id="8225771182978767009">Tämän tietokoneen määrittänyt henkilö on estänyt tämän sivuston.</translation>
 <translation id="8241712895048303527">Estä tällä sivustolla</translation>
@@ -217,10 +217,10 @@
 <translation id="9025348182339809926">(Virheellinen)</translation>
 <translation id="9039213469156557790">Sivulla on kuitenkin osia, joita ei ole suojattu. Muut voivat tarkastella näitä osia siirrettäessä, ja hyökkääjä voi muuttaa sivun käyttäytymistä muokkaamalla niitä.</translation>
 <translation id="9069693763241529744">Laajennuksen estämä</translation>
-<translation id="910908805481542201">Auta minua korjaamaan tämä</translation>
 <translation id="9169664750068251925">Estä aina tällä sivustolla</translation>
 <translation id="9183425211371246419"><ph name="HOST_NAME" /> käyttää protokollaa, jota ei tueta.</translation>
 <translation id="9219103736887031265">Kuvat</translation>
+<translation id="936602727769022409">Saatat menettää pääsyn Google-tiliisi. Chromium suosittelee vaihtamaan salasanan nyt. Sinua pyydetään kirjautumaan sisään.</translation>
 <translation id="969892804517981540">Virallinen koontiversio</translation>
 <translation id="988159990683914416">Kehittäjän koontiversio</translation>
 </translationbundle>

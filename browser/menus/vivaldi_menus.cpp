@@ -21,6 +21,7 @@
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
+#include "extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest.h"
 #include "extensions/browser/guest_view/web_view/web_view_guest.h"
 #include "net/base/escape.h"
 #include "third_party/blink/public/web/web_context_menu_data.h"
@@ -67,7 +68,15 @@ void SendSimpleAction(WebContents* web_contents,
                       const std::string& command,
                       const base::string16& text = base::ASCIIToUTF16(""),
                       const std::string& url = "") {
-  WebViewGuest* guestView = WebViewGuest::FromWebContents(web_contents);
+  WebContents* wc = web_contents;
+  // NOTE(david@vivaldi): If we're viewing a MimeHandlerViewGuest, use its
+  // embedder WebContents.
+#if BUILDFLAG(ENABLE_EXTENSIONS)
+  auto* guest_view = extensions::MimeHandlerViewGuest::FromWebContents(wc);
+  if (guest_view)
+    wc = guest_view->embedder_web_contents();
+#endif
+  WebViewGuest* guestView = WebViewGuest::FromWebContents(wc);
   DCHECK(guestView);
   base::ListValue* args = new base::ListValue;
   args->Append(std::make_unique<base::Value>(command));
@@ -192,8 +201,10 @@ void VivaldiAddImageItems(SimpleMenuModel* menu,
 void VivaldiAddCopyItems(SimpleMenuModel* menu,
                          WebContents* web_contents,
                          const ContextMenuParams& params) {
+  Profile* profile =
+      Profile::FromBrowserContext(web_contents->GetBrowserContext());
   if (IsVivaldiRunning() && WebViewGuest::FromWebContents(web_contents) &&
-      !IsVivaldiWebPanel(web_contents)) {
+      !IsVivaldiWebPanel(web_contents) && !profile->IsGuestSession()) {
     menu->AddItemWithStringId(IDC_VIV_COPY_TO_NOTE, IDS_VIV_COPY_TO_NOTE);
 #if !defined(OFFICIAL_BUILD)
     menu->AddItemWithStringId(IDC_VIV_SEND_SELECTION_BY_MAIL,
@@ -226,6 +237,7 @@ void VivaldiAddPageItems(SimpleMenuModel* menu,
 }
 
 void VivaldiAddEditableItems(SimpleMenuModel* menu,
+                             WebContents* web_contents,
                              const ContextMenuParams& params) {
   if (IsVivaldiRunning()) {
     const bool use_paste_and_match_style =
@@ -262,10 +274,15 @@ void VivaldiAddEditableItems(SimpleMenuModel* menu,
       }
 
       DCHECK_GE(index, 0);
-      menu->InsertSeparatorAt(++index, ui::NORMAL_SEPARATOR);
-      menu->InsertItemWithStringIdAt(++index,
-                                     IDC_VIV_CONTENT_CONTEXT_ADDSEARCHENGINE,
-                                     IDS_VIV_CONTENT_CONTEXT_ADDSEARCHENGINE);
+
+      Profile* profile =
+        Profile::FromBrowserContext(web_contents->GetBrowserContext());
+      if (!profile->IsGuestSession()) {
+        menu->InsertSeparatorAt(++index, ui::NORMAL_SEPARATOR);
+        menu->InsertItemWithStringIdAt(++index,
+          IDC_VIV_CONTENT_CONTEXT_ADDSEARCHENGINE,
+          IDS_VIV_CONTENT_CONTEXT_ADDSEARCHENGINE);
+      }
     }
   }
 }

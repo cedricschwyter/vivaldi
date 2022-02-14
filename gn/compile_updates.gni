@@ -51,4 +51,18 @@ if (is_linux) {
   update_target("//chrome:chrome_initial") {
     configs -= [ "//vivaldi/gn/config:disable_new_dtags" ]
   }
+  if (target_cpu == "arm64") {
+    update_template_instance("//third_party/swiftshader/third_party/llvm-7.0:swiftshader_llvm") {
+      if (!defined(cflags)) {
+        cflags = []
+      }
+      cflags += [ "-Wno-defaulted-function-deleted" ]
+    }
+    update_template_instance("//third_party/swiftshader/src/Reactor:swiftshader_reactor") {
+      if (!defined(cflags)) {
+        cflags = []
+      }
+      cflags += [ "-Wno-defaulted-function-deleted" ]
+    }
+  }
 }

@@ -59,6 +59,7 @@ class PrinterSpecifics;
 class PriorityPreferenceSpecifics;
 class ReadingListSpecifics;
 class SearchEngineSpecifics;
+class SendTabToSelfSpecifics;
 class SessionHeader;
 class SessionSpecifics;
 class SessionTab;
@@ -225,6 +226,9 @@ std::unique_ptr<base::DictionaryValue> ReadingListSpecificsToValue(
 
 std::unique_ptr<base::DictionaryValue> SearchEngineSpecificsToValue(
     const sync_pb::SearchEngineSpecifics& search_engine_specifics);
+
+std::unique_ptr<base::DictionaryValue> SendTabToSelfSpecificsToValue(
+    const sync_pb::SendTabToSelfSpecifics& send_tab_specifics);
 
 std::unique_ptr<base::DictionaryValue> SessionHeaderToValue(
     const sync_pb::SessionHeader& session_header);

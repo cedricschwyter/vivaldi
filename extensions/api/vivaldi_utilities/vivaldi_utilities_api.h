@@ -12,7 +12,11 @@
 #include "base/lazy_instance.h"
 #include "base/power_monitor/power_observer.h"
 #include "chrome/browser/extensions/chrome_extension_function.h"
+#include "chrome/browser/external_protocol/external_protocol_handler.h"
+#include "chrome/browser/password_manager/reauth_purpose.h"
 #include "chrome/browser/shell_integration.h"
+#include "chrome/browser/ui/passwords/settings/password_access_authenticator.h"
+#include "content/public/browser/download_manager.h"
 #include "extensions/browser/api/file_system/file_system_api.h"
 #include "extensions/browser/app_window/app_window.h"
 #include "extensions/browser/app_window/app_window_registry.h"
@@ -21,6 +25,7 @@
 #include "extensions/schema/vivaldi_utilities.h"
 #include "ui/gfx/geometry/rect.h"
 #include "ui/shell_dialogs/select_file_dialog.h"
+#include "ui/lights/razer_chroma_handler.h"
 
 class Browser;
 
@@ -42,7 +47,8 @@ class VivaldiUtilitiesEventRouter {
 
 class VivaldiUtilitiesAPI : public BrowserContextKeyedAPI,
                             public EventRouter::Observer,
-                            public base::PowerObserver {
+                            public base::PowerObserver,
+                            public content::DownloadManager::Observer {
  public:
   explicit VivaldiUtilitiesAPI(content::BrowserContext* context);
   ~VivaldiUtilitiesAPI() override;
@@ -86,10 +92,22 @@ class VivaldiUtilitiesAPI : public BrowserContextKeyedAPI,
   void OnSuspend() override;
   void OnResume() override;
 
+  // DownloadManager::Observer implementation
+  void OnManagerInitialized() override;
+
   void OnPasswordIconStatusChanged(bool show);
 
   // Close all app windows generating thumbnails.
   void CloseAllThumbnailWindows();
+
+  // Trigger the OS authentication dialog, if needed.
+  bool AuthenticateUser(gfx::NativeWindow window);
+
+  // Is the Razer Chroma API available on this machine
+  bool IsRazerChromaAvailable();
+
+  // Set RGB color of the configured Razer Chroma devices.
+  bool SetRazerChromaColors(RazerChromaColors& colors);
 
   class DialogPosition {
    public:
@@ -111,6 +129,8 @@ class VivaldiUtilitiesAPI : public BrowserContextKeyedAPI,
     gfx::Rect rect_;
     std::string flow_direction_;
   };
+ protected:
+  bool OsReauthCall(password_manager::ReauthPurpose purpose);
 
  private:
   friend class BrowserContextKeyedAPIFactory<VivaldiUtilitiesAPI>;
@@ -129,20 +149,31 @@ class VivaldiUtilitiesAPI : public BrowserContextKeyedAPI,
 
   // List used for the dialog position apis.
   std::vector<std::unique_ptr<DialogPosition> > dialog_to_point_list_;
+
+  // Persistent class used for re-authentication of the user when viewing
+  // saved passwords. It cannot be instanciated per call as it keeps state
+  // of previous authentiations.
+  PasswordAccessAuthenticator password_access_authenticator_;
+
+  // Used to anchor the auth dialog.
+  gfx::NativeWindow native_window_ = nullptr;
+
+  // Razer Chroma integration, if available.
+  std::unique_ptr<RazerChromaHandler> razer_chroma_handler_;
 };
 
-class UtilitiesBasicPrintFunction : public ChromeAsyncExtensionFunction {
+class UtilitiesPrintFunction : public ChromeAsyncExtensionFunction {
  public:
-  DECLARE_EXTENSION_FUNCTION("utilities.basicPrint", UTILITIES_BASICPRINT)
-  UtilitiesBasicPrintFunction();
+  DECLARE_EXTENSION_FUNCTION("utilities.print", UTILITIES_PRINT)
+  UtilitiesPrintFunction() = default;
 
   bool RunAsync() override;
 
  protected:
-  ~UtilitiesBasicPrintFunction() override;
+  ~UtilitiesPrintFunction() override = default;
 
  private:
-  DISALLOW_COPY_AND_ASSIGN(UtilitiesBasicPrintFunction);
+  DISALLOW_COPY_AND_ASSIGN(UtilitiesPrintFunction);
 };
 
 class UtilitiesClearAllRecentlyClosedSessionsFunction
@@ -161,7 +192,7 @@ class UtilitiesClearAllRecentlyClosedSessionsFunction
   DISALLOW_COPY_AND_ASSIGN(UtilitiesClearAllRecentlyClosedSessionsFunction);
 };
 
-// Obtains a 64-bit inbteger, encoded as 16 hex characters to be used by piwik
+// Obtains a 64-bit integer, encoded as 16 hex characters to be used by piwik
 // as a unique user id. The user id is stored in the vivaldi user profile
 // with a backup copy stored in the OS user profile (registry on Windows).
 // If no stored user id is found, a new one is generated.
@@ -179,7 +210,7 @@ class UtilitiesGetUniqueUserIdFunction : public ChromeAsyncExtensionFunction {
   bool ReadUserIdFromOSProfile(std::string* user_id);
   void WriteUserIdToOSProfile(const std::string& user_id);
 
-  void GetUniqueUserIdOnFileThread(const std::string& legacy_user_id);
+  void GetUniqueUserIdTask(const std::string& legacy_user_id);
   void RespondOnUIThread(const std::string& user_id, bool is_new_user);
 
  private:
@@ -211,10 +242,25 @@ class UtilitiesIsUrlValidFunction : public ChromeAsyncExtensionFunction {
  protected:
   ~UtilitiesIsUrlValidFunction() override;
 
+  void OnDefaultProtocolClientWorkerFinished(
+    const GURL& url,
+    bool prompt_user,
+    ui::PageTransition page_transition,
+    ExternalProtocolHandler::BlockState block,
+    shell_integration::DefaultWebClientState state);
+
   // ExtensionFunction:
   bool RunAsync() override;
 
  private:
+  vivaldi::utilities::UrlValidResults result_;
+
+  scoped_refptr<shell_integration::DefaultProtocolClientWorker>
+      default_protocol_worker_;
+
+  // Used to get WeakPtr to self for use on the UI thread.
+  base::WeakPtrFactory<UtilitiesIsUrlValidFunction> weak_ptr_factory_;
+
   DISALLOW_COPY_AND_ASSIGN(UtilitiesIsUrlValidFunction);
 };
 
@@ -605,6 +651,22 @@ class UtilitiesCanShowWelcomePageFunction
   DISALLOW_COPY_AND_ASSIGN(UtilitiesCanShowWelcomePageFunction);
 };
 
+class UtilitiesCanShowWhatsNewPageFunction
+    : public ChromeAsyncExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("utilities.canShowWhatsNewPage",
+                             UTILITIES_CANSHOWWHATSNEWPAGE)
+  UtilitiesCanShowWhatsNewPageFunction() = default;
+
+  bool RunAsync() override;
+
+ protected:
+  ~UtilitiesCanShowWhatsNewPageFunction() override = default;
+
+ private:
+  DISALLOW_COPY_AND_ASSIGN(UtilitiesCanShowWhatsNewPageFunction);
+};
+
 class UtilitiesShowPasswordDialogFunction
     : public ChromeAsyncExtensionFunction {
  public:
@@ -630,6 +692,48 @@ class UtilitiesSetDialogPositionFunction : public ChromeAsyncExtensionFunction {
   bool RunAsync() override;
 
   DISALLOW_COPY_AND_ASSIGN(UtilitiesSetDialogPositionFunction);
+};
+
+class UtilitiesIsRazerChromaAvailableFunction
+    : public ChromeAsyncExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("utilities.isRazerChromaAvailable",
+                             UTILITIES_IS_RAZER_CHROMA_AVAILABLE);
+  UtilitiesIsRazerChromaAvailableFunction() = default;
+
+ private:
+  ~UtilitiesIsRazerChromaAvailableFunction() override = default;
+  bool RunAsync() override;
+
+  DISALLOW_COPY_AND_ASSIGN(UtilitiesIsRazerChromaAvailableFunction);
+};
+
+class UtilitiesSetRazerChromaColorFunction
+    : public ChromeAsyncExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("utilities.setRazerChromaColor",
+                             UTILITIES_SET_RAZER_CHROMA_COLOR);
+  UtilitiesSetRazerChromaColorFunction() = default;
+
+ private:
+  ~UtilitiesSetRazerChromaColorFunction() override = default;
+  bool RunAsync() override;
+
+  DISALLOW_COPY_AND_ASSIGN(UtilitiesSetRazerChromaColorFunction);
+};
+
+class UtilitiesIsDownloadManagerReadyFunction
+    : public ChromeAsyncExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("utilities.isDownloadManagerReady",
+                             UTILITIES_IS_DOWNLOAD_MANAGER_READY);
+  UtilitiesIsDownloadManagerReadyFunction() = default;
+
+ private:
+  ~UtilitiesIsDownloadManagerReadyFunction() override = default;
+  bool RunAsync() override;
+
+  DISALLOW_COPY_AND_ASSIGN(UtilitiesIsDownloadManagerReadyFunction);
 };
 
 }  // namespace extensions

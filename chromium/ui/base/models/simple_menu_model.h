@@ -48,7 +48,7 @@ class UI_BASE_EXPORT SimpleMenuModel : public MenuModel {
 
     // Notifies the delegate that the item with the specified command id was
     // visually highlighted within the menu.
-    virtual void CommandIdHighlighted(int command_id);
+    virtual void VivaldiCommandIdHighlighted(int command_id);
 
     // Performs the action associates with the specified command id.
     // The passed |event_flags| are the flags from the event which issued this
@@ -89,6 +89,9 @@ class UI_BASE_EXPORT SimpleMenuModel : public MenuModel {
   void AddCheckItemWithStringId(int command_id, int string_id);
   void AddRadioItem(int command_id, const base::string16& label, int group_id);
   void AddRadioItemWithStringId(int command_id, int string_id, int group_id);
+  void AddHighlightedItemWithStringIdAndIcon(int command_id,
+                                             int string_id,
+                                             const gfx::ImageSkia& icon);
 
   // Adds a separator of the specified type to the model.
   // - Adding a separator after another separator is always invalid if they
@@ -182,7 +185,7 @@ class UI_BASE_EXPORT SimpleMenuModel : public MenuModel {
   ui::ButtonMenuItemModel* GetButtonMenuItemAt(int index) const override;
   bool IsEnabledAt(int index) const override;
   bool IsVisibleAt(int index) const override;
-  void HighlightChangedTo(int index) override;
+  void VivaldiHighlightChangedTo(int index) override;
   void ActivatedAt(int index) override;
   void ActivatedAt(int index, int event_flags) override;
   MenuModel* GetSubmenuModelAt(int index) const override;

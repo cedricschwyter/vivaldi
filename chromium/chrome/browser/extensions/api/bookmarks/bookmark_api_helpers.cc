@@ -100,6 +100,13 @@ void PopulateBookmarkTreeNode(
     bool speeddial = (temp == "true") ? true : false;
     out_bookmark_tree_node->speeddial = speeddial;
   }
+  if (node->GetMetaInfo("Bookmarkbar", &temp)) {
+    bool bookmarkbar = (temp == "true") ? true : false;
+    out_bookmark_tree_node->bookmarkbar = bookmarkbar;
+  }
+  if (node->GetMetaInfo("Partner", &temp)) {
+    out_bookmark_tree_node->partner = temp;
+  }
 
   out_bookmark_tree_node->trash = (node->type() ==
                                bookmarks::BookmarkNode::TRASH);

@@ -71,7 +71,6 @@
 <translation id="3586931643579894722">隱藏詳細資訊</translation>
 <translation id="3630155396527302611">如果程式已列在允許存取網路的清單中，建議您從清單中將其移除，然後再重新加入。</translation>
 <translation id="3658742229777143148">修訂版本</translation>
-<translation id="366094926047009040">你可能失去了 Vivaldi 帳戶存取權，或身分遭到冒用。Vivaldi 建議你立即變更密碼。</translation>
 <translation id="3681007416295224113">憑證資訊</translation>
 <translation id="3717027428350673159"><ph name="BEGIN_LINK" />檢查代理、防火牆和 DNS 設定<ph name="END_LINK" /></translation>
 <translation id="382518646247711829">如果您使用代理伺服器...</translation>
@@ -135,6 +134,7 @@
 <translation id="5838278095973806738">請勿在這個網站上輸入任何機密資訊 (例如密碼或信用卡號碼)，以免遭到攻擊者竊取。</translation>
 <translation id="5869405914158311789">無法訪問這個網站</translation>
 <translation id="5920262536204764679">{NUM_COOKIES,plural, =1{目前使用 1 個 Cookie}other{目前使用 # 個 Cookie}}</translation>
+<translation id="5932224571077948991">網站顯示干擾性或誤導性廣告</translation>
 <translation id="5990559369517809815">延伸套件已封鎖要傳送至伺服器的要求。</translation>
 <translation id="6051221802930200923">目前無法造訪 <ph name="SITE" />，因為這個網站使用憑證鎖定功能。網路錯誤和攻擊行為通常是暫時性的，因此這個網頁可能稍後就會恢復正常狀態。</translation>
 <translation id="6146055958333702838">檢查您的網路線是否穩固連接。重新啟動您可能正在使用的任何路由器、數據機或其他網路裝置。</translation>
@@ -189,11 +189,11 @@
 <translation id="8025119109950072390">攻擊者可能會試圖透過這個網站誘使你做一些危險的行為，例如安裝軟體或提供個人資訊 (包括密碼、電話號碼或信用卡資料)。</translation>
 <translation id="8037357227543935929">詢問 (預設)</translation>
 <translation id="8041940743680923270">使用全域預設值 (要求確認)</translation>
+<translation id="808894953321890993">更改密碼</translation>
 <translation id="8142868475871995937">請前往 &lt;strong&gt;vivaldi://policy&lt;/strong&gt; 查看列入黑名單的網址清單，以及其他系統管理員強制執行的策略。</translation>
 <translation id="8149426793427495338">您的電腦已進入睡眠模式。</translation>
 <translation id="8150722005171944719">無法讀取位於 <ph name="URL" /> 的檔案。這個檔案可能已遭移除或移動位置，或者檔案權限為禁止存取。</translation>
 <translation id="8184538546369750125">使用全域預設值 (允許)</translation>
-<translation id="8205463626947051446">網站經常顯示侵入式廣告</translation>
 <translation id="8211406090763984747">已建立安全連線</translation>
 <translation id="8225771182978767009">設定這部電腦的使用者選擇封鎖這個網站。</translation>
 <translation id="8241712895048303527">禁止這個網站顯示廣告</translation>
@@ -211,10 +211,10 @@
 <translation id="9025348182339809926">(無效)</translation>
 <translation id="9039213469156557790">此外，這個網頁含有其他不安全的資源。其他人可能會在資源傳輸期間檢視這些資源，攻擊者也可能會修改這些資源，進而變更網頁行為。</translation>
 <translation id="9069693763241529744">依據延伸套件設定封鎖</translation>
-<translation id="910908805481542201">請協助我解決這個問題</translation>
 <translation id="9169664750068251925">永遠禁止在這個網站執行</translation>
 <translation id="9183425211371246419"><ph name="HOST_NAME" /> 使用了不支援的通訊協定。</translation>
 <translation id="9219103736887031265">圖片</translation>
+<translation id="936602727769022409">為避免失去 Google 帳戶存取權，Chromium 建議你立即變更密碼。系統會要求你登入帳戶。</translation>
 <translation id="969892804517981540">正式版本</translation>
 <translation id="988159990683914416">開發者版本</translation>
 </translationbundle>

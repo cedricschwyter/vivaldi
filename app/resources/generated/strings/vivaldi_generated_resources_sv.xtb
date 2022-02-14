@@ -30,13 +30,13 @@
 <translation id="1603914832182249871">(Privat fönster)</translation>
 <translation id="1620510694547887537">Kamera</translation>
 <translation id="1635033183663317347">Har installerats av din vårdnadshavare.</translation>
+<translation id="1682548588986054654">Nytt inkognitofönster</translation>
 <translation id="1698122934742150150">Endast nuvarande inkognitosession</translation>
 <translation id="1706625117072057435">Zoomnivåer</translation>
 <translation id="1708338024780164500">(Inaktiv)</translation>
 <translation id="1708713382908678956"><ph name="NAME_PH" /> (ID: <ph name="ID_PH" />)</translation>
 <translation id="1723824996674794290">&amp;Nytt fönster</translation>
 <translation id="1729533290416704613">Det styr också vilken sida som visas när du söker i adressfältet.</translation>
-<translation id="1731589410171062430">Totalt: <ph name="NUMBER_OF_SHEETS" /> <ph name="SHEETS_LABEL" /> (<ph name="NUMBER_OF_PAGES" /> <ph name="PAGE_OR_PAGES_LABEL" />)</translation>
 <translation id="1744108098763830590">bakgrundssida</translation>
 <translation id="1805822111539868586">Inspektera vyer</translation>
 <translation id="1828901632669367785">Skriv ut via systemdialog...</translation>
@@ -46,7 +46,6 @@
 <translation id="1901303067676059328">Välj &amp;alla</translation>
 <translation id="1921584744613111023"><ph name="DPI" /> dpi</translation>
 <translation id="1963227389609234879">Ta bort alla</translation>
-<translation id="1974060860693918893">Avancerat</translation>
 <translation id="1989112275319619282">Bläddra</translation>
 <translation id="1992397118740194946">Inte angett</translation>
 <translation id="1994173015038366702">Webbadress</translation>
@@ -72,7 +71,7 @@
 <translation id="2322193970951063277">Sidhuvuden och sidfötter</translation>
 <translation id="2326931316514688470">&amp;Läs in appen igen</translation>
 <translation id="2327492829706409234">Aktivera app</translation>
-<translation id="2344028582131185878">Automatiska nedladdningar</translation>
+<translation id="2344028582131185878">Automatiska hämtningar</translation>
 <translation id="2348176352564285430">App: <ph name="ARC_PROCESS_NAME" /></translation>
 <translation id="2378982052244864789">Välj tilläggets katalog.</translation>
 <translation id="2379281330731083556">Skriv ut via systemets dialogruta ... <ph name="SHORTCUT_KEY" /></translation>
@@ -93,9 +92,8 @@
 <translation id="26224892172169984">Tillåt inte att någon webbplats hanterar protokoll</translation>
 <translation id="2662876636500006917">Vivaldi webbshop</translation>
 <translation id="2678063897982469759">Aktivera igen</translation>
-<translation id="2679385451463308372">Skriv ut via systemets dialogruta …</translation>
 <translation id="2721037002783622288">&amp;Sök på <ph name="SEARCH_ENGINE" /> efter bild</translation>
-<translation id="2726934403674109201">(<ph name="COUNT" /> totalt)</translation>
+<translation id="2766006623206032690">Kl&amp;istra in och öppna</translation>
 <translation id="2785873697295365461">Filbeskrivningar</translation>
 <translation id="2809586584051668049">och ytterligare <ph name="NUMBER_ADDITIONAL_DISABLED" /></translation>
 <translation id="2812989263793994277">Visa inga bilder</translation>
@@ -103,7 +101,6 @@
 <translation id="2850541429955027218">Lägg till tema</translation>
 <translation id="2861941300086904918">Native Client säkerhetshanterare</translation>
 <translation id="2889064240420137087">Öppna länk med ...</translation>
-<translation id="2890678560483811744">Sidreferensen faller utanför intervallet</translation>
 <translation id="2902127500170292085"><ph name="EXTENSION_NAME" /> kunde inte kommunicera med den här skrivaren. Kontrollera att skrivaren är ansluten och försök igen.</translation>
 <translation id="2904456025988372123">Fråga när en webbplats försöker hämta filer till datorn automatiskt efter den första filen</translation>
 <translation id="2913331724188855103">Tillåt att webbplatser sparar och läser data i kakor (rekommenderas)</translation>
@@ -143,7 +140,6 @@
 <translation id="3360297538363969800">Utskriften misslyckades. Kontrollera skrivaren och försök igen.</translation>
 <translation id="3378503599595235699">Behåll bara lokala data tills du stänger webbläsaren</translation>
 <translation id="3378572629723696641">Det här tillägget kan vara skadat.</translation>
-<translation id="3396331542604645348">Den valda skrivaren är inte tillgänglig eller har inte installerats korrekt. Kontrollera skrivaren eller välj en annan.</translation>
 <translation id="3432227430032737297">Ta bort alla som visas</translation>
 <translation id="3435896845095436175">Aktivera</translation>
 <translation id="3440761377721825626">Fråga om en webbplats försöker använda ett insticksprogram för att få åtkomst till datorn</translation>
@@ -165,6 +161,7 @@
 <translation id="3797900183766075808">&amp;Sök på <ph name="SEARCH_ENGINE" /> efter ”<ph name="SEARCH_TERMS" />”</translation>
 <translation id="3798449238516105146">Version</translation>
 <translation id="3800806661949714323">Visa alla (rekommenderas)</translation>
+<translation id="3810973564298564668">Hantera</translation>
 <translation id="383891835335927981">Inga webbplatser har zoomats in eller ut</translation>
 <translation id="385051799172605136">Tillbaka</translation>
 <translation id="3855441664322950881">Packa tillägg</translation>
@@ -210,7 +207,6 @@
 <translation id="4593021220803146968">&amp;Öppna <ph name="URL" /></translation>
 <translation id="4595560905247879544">Appar och tillägg kan bara ändras av den ansvariga (<ph name="CUSTODIAN_NAME" />).</translation>
 <translation id="4613271546271159013">Vilken sida som visas när du öppnar en ny flik har ändrats av ett tillägg.</translation>
-<translation id="4628314759732363424">Ändra...</translation>
 <translation id="4677772697204437347">GPU-minne</translation>
 <translation id="4681930562518940301">Öppna original&amp;bilden i en ny flik</translation>
 <translation id="4688541352655220763">Du kan använda funktionen för att visa innehåll från Vivaldi på TV:n eller andra enheter.</translation>
@@ -242,7 +238,6 @@
 <translation id="5233736638227740678">Klistra &amp;in</translation>
 <translation id="5265562206369321422">Offline i mer än en vecka</translation>
 <translation id="5269977353971873915">Utskrift misslyckades</translation>
-<translation id="5271549068863921519">Spara lösenord</translation>
 <translation id="52912272896845572">Den privata nyckelfilen är ogiltig.</translation>
 <translation id="5301954838959518834">OK, jag fattar</translation>
 <translation id="5317780077021120954">Spara</translation>
@@ -252,7 +247,6 @@
 <translation id="5370819323174483825">&amp;Läs in igen</translation>
 <translation id="5398572795982417028">Sidreferensen faller utanför intervallet, gränsen är <ph name="MAXIMUM_PAGE" /></translation>
 <translation id="5431318178759467895">Färg</translation>
-<translation id="5451285724299252438">textruta för sidintervall</translation>
 <translation id="5483785310822538350">Återkalla åtkomst till enheten och filer</translation>
 <translation id="5485102783864353244">Lägg till app</translation>
 <translation id="5487521232677179737">Rensa data</translation>
@@ -262,7 +256,6 @@
 <translation id="5542132724887566711">Profil</translation>
 <translation id="5556459405103347317">Hämta om</translation>
 <translation id="5575473780076478375">Inkognitotilläggsprogram: <ph name="EXTENSION_NAME" /></translation>
-<translation id="5581700288664681403">Läser in <ph name="CLOUD_PRINT_NAME" /></translation>
 <translation id="5614553682702429503">Vill du spara lösenordet?</translation>
 <translation id="5623842676595125836">Logg</translation>
 <translation id="5627086634964711283">Det styr också vilken sida som visas när du klickar på knappen Startsida.</translation>
@@ -279,9 +272,9 @@
 <translation id="5780973441651030252">Prioriteringsprocess</translation>
 <translation id="5804241973901381774">Behörigheter</translation>
 <translation id="5828633471261496623">Skriver ut...</translation>
-<translation id="5829401023154985950">Hantera ...</translation>
 <translation id="583281660410589416">Okänd</translation>
 <translation id="5838456317242088717">Nuvarande inkognitosession</translation>
+<translation id="5877584842898320529">Den valda skrivaren är inte tillgänglig eller har inte installerats korrekt. <ph name="BR" /> Kontrollera skrivaren eller välj en annan.</translation>
 <translation id="5908769186679515905">Förhindra att webbplatser kör Flash</translation>
 <translation id="5956585768868398362">Är det här den söksida du väntade dig?</translation>
 <translation id="5963453369025043595"><ph name="NUM_HANDLES" /> (<ph name="NUM_KILOBYTES_LIVE" /> som mest)</translation>
@@ -334,7 +327,6 @@
 <translation id="6787839852456839824">Kortkommandon</translation>
 <translation id="6788210894632713004">Uppackat tillägg</translation>
 <translation id="6798954102094737107">Insticksprogram: <ph name="PLUGIN_NAME" /></translation>
-<translation id="6807889908376551050">Visa alla ...</translation>
 <translation id="6812841287760418429">Behåll ändringarna</translation>
 <translation id="6817174620439930047">Fråga när en webbplats vill använda systemexklusiva meddelanden för att komma åt MIDI-enheter (rekommenderas)</translation>
 <translation id="682123305478866682">Casta skrivbordet</translation>
@@ -374,6 +366,7 @@
 <translation id="7701040980221191251">Inga</translation>
 <translation id="7704305437604973648">Åtgärd</translation>
 <translation id="7710568461918838723">&amp;Casta...</translation>
+<translation id="7750228210027921155">Bild-i-bild</translation>
 <translation id="7751260505918304024">Visa alla</translation>
 <translation id="7760004034676677601">Är det här den startsida du väntade dig?</translation>
 <translation id="7771452384635174008">Layout</translation>
@@ -412,7 +405,6 @@ Spara nyckelfilen på ett säkert ställe. Den behövs om du ska skapa nya versi
 <translation id="8339059274628563283">Lokalt lagrade data för <ph name="SITE" /></translation>
 <translation id="8351419472474436977">Detta tillägg har tagit kontroll över dina proxyinställningar, vilket innebär att det kan ändra, knäcka eller tjuvlyssna på allt du gör på webben. Om du inte vet varför den här ändringen inträffade är den troligen inte önskvärd.</translation>
 <translation id="8382913212082956454">Kopiera &amp;e-postadress</translation>
-<translation id="839736845446313156">Registrera</translation>
 <translation id="8413385045638830869">Fråga först (rekommenderas)</translation>
 <translation id="8523849605371521713">Tillagd av policy</translation>
 <translation id="8546306075665861288">Cacheminne för bilder</translation>
@@ -422,8 +414,6 @@ Spara nyckelfilen på ett säkert ställe. Den behövs om du ska skapa nya versi
 <translation id="8615618338313291042">Inkognitoprogram: <ph name="APP_NAME" /></translation>
 <translation id="8627151598708688654">Välj källa</translation>
 <translation id="862750493060684461">CSS-cacheminne</translation>
-<translation id="8652487083013326477">alternativknapp för sidintervall</translation>
-<translation id="8658595122208653918">Ändra skrivaralternativ …</translation>
 <translation id="8664389313780386848">Visa &amp;sidkälla</translation>
 <translation id="8708000541097332489">Töm vid avslut</translation>
 <translation id="8714838604780058252">Bakgrundsgrafik</translation>
@@ -437,8 +427,8 @@ Spara nyckelfilen på ett säkert ställe. Den behövs om du ska skapa nya versi
 <translation id="8808478386290700967">Web Store</translation>
 <translation id="8813811964357448561">pappersark</translation>
 <translation id="8823514049557262177">Kopiera länkte&amp;xt</translation>
+<translation id="8823704566850948458">Föreslå lösenord…</translation>
 <translation id="8859174528519900719">Underram: <ph name="SUBFRAME_SITE" /></translation>
-<translation id="8876309039915144086">Generera lösenord …</translation>
 <translation id="8899851313684471736">Öppna länk i nytt f&amp;önster</translation>
 <translation id="8910146161325739742">Dela skärmen</translation>
 <translation id="8915370057835397490">Läser in förslag</translation>

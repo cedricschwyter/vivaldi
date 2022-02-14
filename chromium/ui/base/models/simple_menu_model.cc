@@ -50,7 +50,7 @@ bool SimpleMenuModel::Delegate::GetIconForCommandId(
   return false;
 }
 
-void SimpleMenuModel::Delegate::CommandIdHighlighted(int command_id) {
+void SimpleMenuModel::Delegate::VivaldiCommandIdHighlighted(int command_id) {
 }
 
 void SimpleMenuModel::Delegate::OnMenuWillShow(SimpleMenuModel* /*source*/) {}
@@ -117,6 +117,15 @@ void SimpleMenuModel::AddRadioItem(int command_id,
 void SimpleMenuModel::AddRadioItemWithStringId(int command_id, int string_id,
                                                int group_id) {
   AddRadioItem(command_id, l10n_util::GetStringUTF16(string_id), group_id);
+}
+
+void SimpleMenuModel::AddHighlightedItemWithStringIdAndIcon(
+    int command_id,
+    int string_id,
+    const gfx::ImageSkia& icon) {
+  Item item(command_id, TYPE_HIGHLIGHTED, l10n_util::GetStringUTF16(string_id));
+  item.icon = gfx::Image(icon);
+  AppendItem(std::move(item));
 }
 
 void SimpleMenuModel::AddSeparator(MenuSeparatorType separator_type) {
@@ -295,7 +304,7 @@ void SimpleMenuModel::Clear() {
 }
 
 int SimpleMenuModel::GetIndexOfCommandId(int command_id) const {
-  for (ItemVector::const_iterator i = items_.begin(); i != items_.end(); ++i) {
+  for (auto i = items_.begin(); i != items_.end(); ++i) {
     if (i->command_id == command_id)
       return static_cast<int>(std::distance(items_.begin(), i));
   }
@@ -306,7 +315,7 @@ int SimpleMenuModel::GetIndexOfCommandId(int command_id) const {
 // SimpleMenuModel, MenuModel implementation:
 
 bool SimpleMenuModel::HasIcons() const {
-  for (ItemVector::const_iterator i = items_.begin(); i != items_.end(); ++i) {
+  for (auto i = items_.begin(); i != items_.end(); ++i) {
     if (!i->icon.IsEmpty())
       return true;
   }
@@ -413,9 +422,9 @@ bool SimpleMenuModel::IsVisibleAt(int index) const {
          items_[ValidateItemIndex(index)].visible;
 }
 
-void SimpleMenuModel::HighlightChangedTo(int index) {
+void SimpleMenuModel::VivaldiHighlightChangedTo(int index) {
   if (delegate_)
-    delegate_->CommandIdHighlighted(GetCommandIdAt(index));
+    delegate_->VivaldiCommandIdHighlighted(GetCommandIdAt(index));
 }
 
 void SimpleMenuModel::ActivatedAt(int index) {

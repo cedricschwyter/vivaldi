@@ -50,7 +50,7 @@
 <translation id="2705137772291741111">Die (im Cache) gespeicherte Kopie dieser Website konnte nicht gelesen werden.</translation>
 <translation id="2784949926578158345">Die Verbindung wurde zurückgesetzt.</translation>
 <translation id="2826760142808435982">Die Verbindung ist mit <ph name="CIPHER" /> verschlüsselt und authentifiziert und verwendet <ph name="KX" /> als Mechanismus für den Schlüsselaustausch.</translation>
-<translation id="2856444702002559011">Hacker könnten versuchen, Ihre Daten von <ph name="BEGIN_BOLD" /><ph name="SITE" /><ph name="END_BOLD" /> zu stehen, zum Beispiel Passwörter, Nachrichten oder Kreditkartendaten. <ph name="BEGIN_LEARN_MORE_LINK" />Weitere Informationen<ph name="END_LEARN_MORE_LINK" /></translation>
+<translation id="2856444702002559011">Hacker könnten versuchen, Ihre Daten von <ph name="BEGIN_BOLD" /><ph name="SITE" /><ph name="END_BOLD" /> zu stehlen, zum Beispiel Passwörter, Nachrichten oder Kreditkartendaten. <ph name="BEGIN_LEARN_MORE_LINK" />Weitere Informationen<ph name="END_LEARN_MORE_LINK" /></translation>
 <translation id="2909946352844186028">Eine Netzwerkänderung ist aufgetreten.</translation>
 <translation id="2991571918955627853">Sie können <ph name="SITE" /> zurzeit nicht aufrufen, da die Website HSTS verwendet. Netzwerkfehler und Angriffe sind in der Regel nur vorübergehend, sodass die Seite wahrscheinlich später wieder funktioniert.</translation>
 <translation id="3005723025932146533">Gespeicherte Kopie anzeigen</translation>
@@ -74,7 +74,6 @@
 <translation id="3586931643579894722">Details ausblenden</translation>
 <translation id="3630155396527302611">Falls das Programm schon in der Liste mit erlaubtem Netzwerkzugriff eingetragen ist, entfernen Sie es aus der Liste und fügen Sie es noch einmal hinzu.</translation>
 <translation id="3658742229777143148">Überarbeitung</translation>
-<translation id="366094926047009040">Sie könnten den Zugriff auf Ihr Vivaldi-Konto verlieren oder zum Opfer von Identitätsdiebstahl werden. Vivaldi empfiehlt Ihnen, Ihr Passwort jetzt zu ändern.</translation>
 <translation id="3681007416295224113">Zertifikatinformationen</translation>
 <translation id="3717027428350673159"><ph name="BEGIN_LINK" />Proxy, Firewall und DNS-Konfiguration prüfen<ph name="END_LINK" /></translation>
 <translation id="382518646247711829">Falls Sie einen Proxyserver verwenden...</translation>
@@ -138,6 +137,7 @@
 <translation id="5838278095973806738">Sie sollten keine vertraulichen Informationen wie Passwörter oder Kreditkartendaten auf dieser Website eingeben, da sie von Angreifern gestohlen werden könnten.</translation>
 <translation id="5869405914158311789">Diese Website ist nicht erreichbar</translation>
 <translation id="5920262536204764679">{NUM_COOKIES, plural, =1 {1 wird verwendet} other {# werden verwendet}}</translation>
+<translation id="5932224571077948991">Website zeigt aufdringliche oder irreführende Werbung an</translation>
 <translation id="5990559369517809815">Anfragen an den Server wurden durch eine Erweiterung blockiert.</translation>
 <translation id="6051221802930200923">Sie können <ph name="SITE" /> zurzeit nicht aufrufen, da die Website Zertifikats-Pinning verwendet. Netzwerkfehler und Angriffe sind in der Regel nur vorübergehend, sodass die Seite wahrscheinlich später wieder funktioniert.</translation>
 <translation id="6146055958333702838">Überprüfen Sie alle Kabel und starten Sie alle verwendeten Router, Modems oder
@@ -193,11 +193,11 @@
 <translation id="8025119109950072390">Angreifer auf dieser Website können Sie dazu verleiten, etwas Gefährliches zu tun, wie die Installation von Software oder die Offenlegung Ihrer persönlichen Daten (z. B. Passwörter, Telefonnummern oder Kreditkartendaten).</translation>
 <translation id="8037357227543935929">Nachfragen (Standardeinstellung)</translation>
 <translation id="8041940743680923270">Globalen Standard verwenden (Nachfragen)</translation>
+<translation id="808894953321890993">Passwort ändern</translation>
 <translation id="8142868475871995937">Unter &lt;strong&gt;vivaldi://policy&lt;/strong&gt; finden Sie eine Liste der blockierten URLs und andere Richtlinien, die durch Ihren Systemadministrator in Kraft gesetzt wurden.</translation>
 <translation id="8149426793427495338">Ihr Computer geht in den Ruhemodus.</translation>
 <translation id="8150722005171944719">Die Datei unter <ph name="URL" /> kann nicht gelesen werden. Sie wurde möglicherweise entfernt oder verschoben oder die Dateiberechtigungen verhindern den Zugriff.</translation>
 <translation id="8184538546369750125">Globalen Standard verwenden (Zulassen)</translation>
-<translation id="8205463626947051446">Website zeigt für gewöhnlich aufdringliche Werbeanzeigen an</translation>
 <translation id="8211406090763984747">Verbindung ist sicher</translation>
 <translation id="8225771182978767009">Die Person, die diesen Computer eingerichtet hat, hat diese Website gesperrt.</translation>
 <translation id="8241712895048303527">Auf dieser Website blockieren</translation>
@@ -215,10 +215,10 @@
 <translation id="9025348182339809926">(Ungültig)</translation>
 <translation id="9039213469156557790">Darüber hinaus enthält diese Seite auch andere Ressourcen, die nicht sicher sind. Diese Ressourcen können von anderen während der Übertragung abgefangen und von einem Angreifer modifiziert werden, um das Verhalten der Seite zu ändern.</translation>
 <translation id="9069693763241529744">Von einer Erweiterung blockiert</translation>
-<translation id="910908805481542201">Helfen Sie mir, dieses Problem zu beheben</translation>
 <translation id="9169664750068251925">Auf dieser Website immer blockieren</translation>
 <translation id="9183425211371246419"><ph name="HOST_NAME" /> verwendet ein nicht unterstütztes Protokoll.</translation>
 <translation id="9219103736887031265">Bilder</translation>
+<translation id="936602727769022409">Sie könnten den Zugriff auf Ihr Google-Konto verlieren. Vivaldi empfiehlt Ihnen, Ihr Passwort jetzt zu ändern. Sie werden dazu aufgefordert, sich anzumelden.</translation>
 <translation id="969892804517981540">Offizieller Build</translation>
 <translation id="988159990683914416">Entwickler-Build</translation>
 </translationbundle>

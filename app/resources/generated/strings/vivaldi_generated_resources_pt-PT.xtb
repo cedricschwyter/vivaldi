@@ -30,13 +30,13 @@
 <translation id="1603914832182249871">(Modo Privado)</translation>
 <translation id="1620510694547887537">Câmara</translation>
 <translation id="1635033183663317347">Instalada pelo supervisor.</translation>
+<translation id="1682548588986054654">Nova janela privada</translation>
 <translation id="1698122934742150150">Apenas para a sessão no modo de navegação privada atual</translation>
 <translation id="1706625117072057435">Níveis de ampliação</translation>
 <translation id="1708338024780164500">(Inativa)</translation>
 <translation id="1708713382908678956"><ph name="NAME_PH" /> (ID: <ph name="ID_PH" />)</translation>
 <translation id="1723824996674794290">&amp;Nova janela</translation>
 <translation id="1729533290416704613">Também controla a página apresentada quando pesquisa a partir da Caixa geral.</translation>
-<translation id="1731589410171062430">Total: <ph name="NUMBER_OF_SHEETS" /> <ph name="SHEETS_LABEL" /> ( <ph name="NUMBER_OF_PAGES" /> <ph name="PAGE_OR_PAGES_LABEL" /> )</translation>
 <translation id="1744108098763830590">página de fundo</translation>
 <translation id="1805822111539868586">Inspecionar vistas</translation>
 <translation id="1828901632669367785">Imprimir utilizando a janela de diálogo do sistema...</translation>
@@ -46,7 +46,6 @@
 <translation id="1901303067676059328">Seleccion&amp;ar tudo</translation>
 <translation id="1921584744613111023"><ph name="DPI" /> ppp</translation>
 <translation id="1963227389609234879">Remover tudo</translation>
-<translation id="1974060860693918893">Avançadas</translation>
 <translation id="1989112275319619282">Navegar</translation>
 <translation id="1992397118740194946">Não definida</translation>
 <translation id="1994173015038366702">URL do site</translation>
@@ -93,9 +92,7 @@
 <translation id="26224892172169984">Não permitir que os sites processem protocolos</translation>
 <translation id="2662876636500006917">Web Store do Chrome</translation>
 <translation id="2678063897982469759">Reactivar</translation>
-<translation id="2679385451463308372">Imprimir utilizando o menu de diálogo do sistema…</translation>
 <translation id="2721037002783622288">Pe&amp;squisar imagem no <ph name="SEARCH_ENGINE" /></translation>
-<translation id="2726934403674109201">(total de <ph name="COUNT" />)</translation>
 <translation id="2785873697295365461">Descritores de ficheiros</translation>
 <translation id="2809586584051668049">e mais <ph name="NUMBER_ADDITIONAL_DISABLED" /></translation>
 <translation id="2812989263793994277">Não mostrar imagens</translation>
@@ -103,7 +100,6 @@
 <translation id="2850541429955027218">Adicionar tema</translation>
 <translation id="2861941300086904918">Gestor de segurança Native Client</translation>
 <translation id="2889064240420137087">Abrir ligação com...</translation>
-<translation id="2890678560483811744">Referência da página fora dos limites</translation>
 <translation id="2902127500170292085">A extensão <ph name="EXTENSION_NAME" /> não conseguiu comunicar com esta impressora. Certifique-se de que a impressora está ligada à corrente e tente novamente.</translation>
 <translation id="2904456025988372123">Perguntar sempre que um site tentar transferir ficheiros automaticamente após o primeiro ficheiro</translation>
 <translation id="2913331724188855103">Permitir que os sites guardem e leiam dados de cookies (recomendado)</translation>
@@ -143,7 +139,6 @@
 <translation id="3360297538363969800">Falha ao imprimir. Verifique a impressora e tente novamente.</translation>
 <translation id="3378503599595235699">Manter os dados locais apenas até sair do seu navegador</translation>
 <translation id="3378572629723696641">Esta extensão pode ter sido danificada.</translation>
-<translation id="3396331542604645348">A impressora selecionada não está disponível ou não está instalada corretamente. Verifique a impressora ou tente selecionar outra impressora.</translation>
 <translation id="3432227430032737297">Remover tudo o que é mostrado</translation>
 <translation id="3435896845095436175">Ativar</translation>
 <translation id="3440761377721825626">Perguntar quando um site pretender utilizar um plug-in para aceder ao seu computador</translation>
@@ -210,7 +205,6 @@
 <translation id="4593021220803146968">&amp;Ir para <ph name="URL" /></translation>
 <translation id="4595560905247879544">Apenas o gestor (<ph name="CUSTODIAN_NAME" />) pode modificar as aplicações e as extensões.</translation>
 <translation id="4613271546271159013">Uma extensão alterou a página que é apresentada quando abre um novo separador.</translation>
-<translation id="4628314759732363424">Alterar...</translation>
 <translation id="4677772697204437347">Memória de GPU</translation>
 <translation id="4681930562518940301">Abrir &amp;imagem original num novo separador</translation>
 <translation id="4688541352655220763">Pode utilizar esta funcionalidade para apresentar conteúdo do Vivaldi na sua TV ou noutros dispositivos.</translation>
@@ -242,7 +236,6 @@
 <translation id="5233736638227740678">&amp;Colar</translation>
 <translation id="5265562206369321422">Offline durante mais de uma semana</translation>
 <translation id="5269977353971873915">Falha de Impressão</translation>
-<translation id="5271549068863921519">Guardar palavra-passe</translation>
 <translation id="52912272896845572">O ficheiro de chave privada é inválido.</translation>
 <translation id="5301954838959518834">OK, já percebi</translation>
 <translation id="5317780077021120954">Guardar</translation>
@@ -252,7 +245,6 @@
 <translation id="5370819323174483825">&amp;Recarregar</translation>
 <translation id="5398572795982417028">A referência da página está fora dos limites. O limite é <ph name="MAXIMUM_PAGE" /></translation>
 <translation id="5431318178759467895">Cor</translation>
-<translation id="5451285724299252438">caixa de texto do intervalo de páginas</translation>
 <translation id="5483785310822538350">Revogar o acesso a ficheiros e a dispositivos</translation>
 <translation id="5485102783864353244">Adicionar aplicação</translation>
 <translation id="5487521232677179737">Limpar dados</translation>
@@ -262,7 +254,6 @@
 <translation id="5542132724887566711">Perfil</translation>
 <translation id="5556459405103347317">Atualizar</translation>
 <translation id="5575473780076478375">Extensão da navegação anónima: <ph name="EXTENSION_NAME" /></translation>
-<translation id="5581700288664681403">A carregar o <ph name="CLOUD_PRINT_NAME" /></translation>
 <translation id="5614553682702429503">Pretende guardar a senha?</translation>
 <translation id="5623842676595125836">Registo</translation>
 <translation id="5627086634964711283">Também controla a página apresentada quando clica no botão Página Inicial.</translation>
@@ -279,9 +270,9 @@
 <translation id="5780973441651030252">Prioridade do processo</translation>
 <translation id="5804241973901381774">Permissões</translation>
 <translation id="5828633471261496623">A imprimir...</translation>
-<translation id="5829401023154985950">Gerir...</translation>
 <translation id="583281660410589416">Desconhecido</translation>
 <translation id="5838456317242088717">Sessão no modo de navegação privada atual</translation>
+<translation id="5877584842898320529">A impressora selecionada não está disponível ou não está instalada corretamente. <ph name="BR" /> Verifique a impressora ou tente selecionar outra impressora.</translation>
 <translation id="5908769186679515905">Impedir que os sites executem o Flash</translation>
 <translation id="5956585768868398362">É esta a página de pesquisa de que estava à espera?</translation>
 <translation id="5963453369025043595"><ph name="NUM_HANDLES" /> (pico de <ph name="NUM_KILOBYTES_LIVE" />)</translation>
@@ -334,7 +325,6 @@
 <translation id="6787839852456839824">Atalhos de teclado</translation>
 <translation id="6788210894632713004">Extensão descompactada</translation>
 <translation id="6798954102094737107">Plug-in: <ph name="PLUGIN_NAME" /></translation>
-<translation id="6807889908376551050">Mostrar todos...</translation>
 <translation id="6812841287760418429">Manter alterações</translation>
 <translation id="6817174620439930047">Perguntar sempre que um site pretender utilizar mensagens exclusivas do sistema para aceder a dispositivos MIDI (recomendado)</translation>
 <translation id="682123305478866682">Transmitir ambiente de trabalho</translation>
@@ -412,7 +402,6 @@ Mantenha o seu ficheiro de chave num local seguro, pois irá precisar dele para 
 <translation id="8339059274628563283">Dados de <ph name="SITE" /> armazenados localmente</translation>
 <translation id="8351419472474436977">Esta extensão apoderou-se das suas definições de proxy, o que significa que pode alterar, interromper ou intercetar qualquer coisa que esteja a fazer online. Se não tem a certeza do motivo pelo qual aconteceu esta alteração, é provável que não a queira.</translation>
 <translation id="8382913212082956454">Copiar &amp;endereço de correio eletrónico</translation>
-<translation id="839736845446313156">Registar-se</translation>
 <translation id="8413385045638830869">Perguntar primeiro (recomendado)</translation>
 <translation id="8523849605371521713">Adicionado por uma política administrativa</translation>
 <translation id="8546306075665861288">Cache de imagem</translation>
@@ -422,8 +411,6 @@ Mantenha o seu ficheiro de chave num local seguro, pois irá precisar dele para 
 <translation id="8615618338313291042">Aplicação em navegação anónima: <ph name="APP_NAME" /></translation>
 <translation id="8627151598708688654">Selecionar fonte</translation>
 <translation id="862750493060684461">Cache CSS</translation>
-<translation id="8652487083013326477">botão de opção do intervalo de páginas</translation>
-<translation id="8658595122208653918">Alterar opções da impressora…</translation>
 <translation id="8664389313780386848">&amp;Ver fonte da página</translation>
 <translation id="8708000541097332489">Limpar à saída</translation>
 <translation id="8714838604780058252">Imagens em segundo plano</translation>
@@ -437,8 +424,8 @@ Mantenha o seu ficheiro de chave num local seguro, pois irá precisar dele para 
 <translation id="8808478386290700967">Web Store</translation>
 <translation id="8813811964357448561">folha de papel</translation>
 <translation id="8823514049557262177">Copiar te&amp;xto da ligação</translation>
+<translation id="8823704566850948458">Sugerir senha…</translation>
 <translation id="8859174528519900719">Subestrutura: <ph name="SUBFRAME_SITE" /></translation>
-<translation id="8876309039915144086">Gerar senha...</translation>
 <translation id="8899851313684471736">Abrir link numa nova &amp;janela</translation>
 <translation id="8910146161325739742">Partilhar o seu ecrã</translation>
 <translation id="8915370057835397490">A carregar sugestão</translation>

@@ -75,7 +75,6 @@
 <translation id="3630155396527302611">Si ya está incluido como programa autorizado para acceder a la red,
       elimínalo de la lista y vuelve a añadirlo.</translation>
 <translation id="3658742229777143148">Revisión</translation>
-<translation id="366094926047009040">Podrías perder el acceso a tu cuenta de Vivaldi o experimentar problemas de suplantación de identidad. Vivaldi te recomienda que cambies la contraseña ahora.</translation>
 <translation id="3681007416295224113">Datos del certificado</translation>
 <translation id="3717027428350673159"><ph name="BEGIN_LINK" />Comprobando el proxy, el cortafuegos y la configuración DNS<ph name="END_LINK" /></translation>
 <translation id="382518646247711829">Si utilizas un servidor proxy...</translation>
@@ -139,6 +138,7 @@
 <translation id="5838278095973806738">No deberías introducir información confidencial en este sitio web (por ejemplo, contraseñas o tarjetas de crédito) porque los atacantes podrían robarla.</translation>
 <translation id="5869405914158311789">No se puede acceder a este sitio web</translation>
 <translation id="5920262536204764679">{NUM_COOKIES,plural, =1{1 en uso}other{# en uso}}</translation>
+<translation id="5932224571077948991">El sitio web muestra anuncios invasivos o engañosos</translation>
 <translation id="5990559369517809815">Una extensión ha bloqueado el envío de solicitudes al servidor.</translation>
 <translation id="6051221802930200923">Ahora mismo no puedes acceder a <ph name="SITE" /> porque el sitio web utiliza la fijación de certificados (certificate pinning). Los ataques y los errores de red suelen ser temporales, por lo que es probable que esta página funcione más tarde.</translation>
 <translation id="6146055958333702838">Comprueba los cables y reinicia los routers, módems o cualquier otro dispositivo
@@ -194,11 +194,11 @@
 <translation id="8025119109950072390">Los atacantes a este sitio web podrían engañarte para que realices una acción peligrosa, como instalar programas o revelar tu información personal (por ejemplo, contraseñas, números de teléfono o tarjetas de crédito).</translation>
 <translation id="8037357227543935929">Preguntar (predeterminado)</translation>
 <translation id="8041940743680923270">Usar valor predeterminado global (Preguntar)</translation>
+<translation id="808894953321890993">Cambiar contraseña</translation>
 <translation id="8142868475871995937">Accede a la página &lt;strong&gt;vivaldi://policy&lt;/strong&gt; para ver la lista de URLs no admitidas y otras políticas establecidas por el administrador del sistema.</translation>
 <translation id="8149426793427495338">El ordenador entró en suspensión.</translation>
 <translation id="8150722005171944719">El archivo que se encuentra en <ph name="URL" /> no se puede leer. Puede que se haya eliminado o movido o que los permisos del archivo impidan acceder a él.</translation>
 <translation id="8184538546369750125">Usar valor predeterminado global (Permitir)</translation>
-<translation id="8205463626947051446">El sitio web suele mostrar anuncios invasivos</translation>
 <translation id="8211406090763984747">La conexión es segura</translation>
 <translation id="8225771182978767009">La persona que ha configurado este ordenador ha elegido bloquear este sitio web.</translation>
 <translation id="8241712895048303527">Bloquear en este sitio web</translation>
@@ -216,10 +216,10 @@
 <translation id="9025348182339809926">(no válido)</translation>
 <translation id="9039213469156557790">Además, esta página incluye otros recursos que no son seguros. Otros usuarios pueden acceder a estos recursos mientras se te están enviando y un atacante puede modificarlos para cambiar el comportamiento de la página.</translation>
 <translation id="9069693763241529744">Bloqueado por una extensión</translation>
-<translation id="910908805481542201">Ayúdame para solucionarlo</translation>
 <translation id="9169664750068251925">Bloquear siempre en este sitio</translation>
 <translation id="9183425211371246419">La página <ph name="HOST_NAME" /> utiliza un protocolo no admitido.</translation>
 <translation id="9219103736887031265">Imágenes</translation>
+<translation id="936602727769022409">Podrías perder el acceso a tu cuenta de Google. Chromium te recomienda que cambies la contraseña ya. Se te pedirá que inicies sesión.</translation>
 <translation id="969892804517981540">Build oficial</translation>
 <translation id="988159990683914416">Build para desarrolladores</translation>
 </translationbundle>

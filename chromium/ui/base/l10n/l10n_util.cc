@@ -19,7 +19,7 @@
 #include "base/i18n/rtl.h"
 #include "base/i18n/string_compare.h"
 #include "base/lazy_instance.h"
-#include "base/macros.h"
+#include "base/stl_util.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_split.h"
 #include "base/strings/string_util.h"
@@ -270,15 +270,7 @@ bool IsLocaleAvailable(const std::string& locale) {
   if (!l10n_util::IsLocaleSupportedByOS(locale))
     return false;
 
-  // If the ResourceBundle is not yet initialized, return false to avoid the
-  // CHECK failure in ResourceBundle::GetSharedInstance().
-  if (!ui::ResourceBundle::HasSharedInstance())
-    return false;
-
-  // TODO(hshi): make ResourceBundle::LocaleDataPakExists() a static function
-  // so that this can be invoked without initializing the global instance.
-  // See crbug.com/230432: CHECK failure in GetUserDataDir().
-  return ui::ResourceBundle::GetSharedInstance().LocaleDataPakExists(locale);
+  return ui::ResourceBundle::LocaleDataPakExists(locale);
 }
 #endif
 
@@ -437,14 +429,6 @@ bool CheckAndResolveLocale(const std::string& locale,
 
 std::string GetApplicationLocaleInternal(const std::string& pref_locale) {
 #if defined(OS_MACOSX)
-  if (vivaldi::IsVivaldiRunning()) {
-    if (!pref_locale.empty()) {
-      std::string app_locale = base::i18n::GetCanonicalLocale(pref_locale);
-      if (!app_locale.empty())
-        return app_locale;
-    }
-  }
-
   // Use any override (Cocoa for the browser), otherwise use the preference
   // passed to the function.
   std::string app_locale = l10n_util::GetLocaleOverride();
@@ -487,6 +471,10 @@ std::string GetApplicationLocaleInternal(const std::string& pref_locale) {
   }
 
 #elif defined(OS_ANDROID)
+
+  // Try pref_locale first.
+  if (!pref_locale.empty())
+    candidates.push_back(base::i18n::GetCanonicalLocale(pref_locale));
 
   // On Android, query java.util.Locale for the default locale.
   candidates.push_back(base::android::GetDefaultLocaleString());
@@ -935,7 +923,7 @@ const char* const* GetAcceptLanguageListForTesting() {
 }
 
 size_t GetAcceptLanguageListSizeForTesting() {
-  return arraysize(kAcceptLanguageList);
+  return base::size(kAcceptLanguageList);
 }
 
 }  // namespace l10n_util

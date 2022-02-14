@@ -74,6 +74,9 @@ class ThumbnailsCaptureUIFunction : public ChromeAsyncExtensionFunction {
   base::FilePath file_path_;
   bool save_to_disk_ = false;
   std::string save_folder_;
+  std::string save_file_pattern_;
+  GURL url_;
+  std::string title_;
 
   DISALLOW_COPY_AND_ASSIGN(ThumbnailsCaptureUIFunction);
 };
@@ -117,6 +120,9 @@ class ThumbnailsCaptureTabFunction : public ChromeAsyncExtensionFunction {
   std::string save_folder_;
   int width_ = 0;
   int height_ = 0;
+  std::string save_file_pattern_;
+  GURL url_;
+  std::string title_;
 
   DISALLOW_COPY_AND_ASSIGN(ThumbnailsCaptureTabFunction);
 };

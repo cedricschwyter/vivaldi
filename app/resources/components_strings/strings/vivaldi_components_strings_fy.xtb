@@ -57,7 +57,7 @@
 <translation id="301521992641321250">Automatysk tsjinkeard</translation>
 <translation id="3109728660330352905">Jo ha gjin tastimming om dizze side te besjen.</translation>
 <translation id="3154506275960390542">Dizze webstee befettet in formulier dat mooglik net befeilige ferstjoerd wurdt. Gegevens dy jo stjoere kinne besjoen wurde troch oaren of oanpast wurde troch in oanfaller om te feroarjen wat de tsjinner ûntfangt.</translation>
-<translation id="3176929007561373547">Kontrolearje jo proksy ynstellings of nim kontakt op mei jo netwurkbehearder
+<translation id="3176929007561373547">Kontrolearje jo proksy ynstellingen of nim kontakt op mei jo netwurkbehearder
  om te hifkjen dat de proksy tsjinner wurket. As jo tinke dat jo gjin proksy tsjinner
 nedich ha: <ph name="PLATFORM_TEXT" /></translation>
 <translation id="3226128629678568754">Druk de ferfarsk knop om de gegevens dy nedich binne om de side te laden op 'e nij te ferstjoeren.</translation>
@@ -74,7 +74,6 @@ nedich ha: <ph name="PLATFORM_TEXT" /></translation>
 <translation id="3630155396527302611">As dit programma al op de list stiet as in programma dat tagong hat ta
       it netwurk, helje it dan út de list en heakje it op 'e nij ta.</translation>
 <translation id="3658742229777143148">Revysje</translation>
-<translation id="366094926047009040">Jo kinne tagong ta jo Vivaldi akkount kwyt reitsje of slachtoffer wurde fan identiteitsstellerij . Vivaldi ried oan om it wachtwurd te feroarjen.</translation>
 <translation id="3681007416295224113">Sertifikaat ynformaasje</translation>
 <translation id="3717027428350673159"><ph name="BEGIN_LINK" />Kontrolearje de proksy, brânmourre, en DNS ynstellings<ph name="END_LINK" /></translation>
 <translation id="382518646247711829">As jo in proksy tsjinner brûke...</translation>
@@ -138,6 +137,7 @@ nedich ha: <ph name="PLATFORM_TEXT" /></translation>
 <translation id="5838278095973806738">Jo moatte gjin gefoelige ynformaasje (lykas wachtwurden of kredytkaart) ynfiere op dizze webstee, omdat se stellen kinne wurde troch oanfallers.</translation>
 <translation id="5869405914158311789">Dizze webstee is net berikber</translation>
 <translation id="5920262536204764679">{NUM_COOKIES, plural, =1 {1 yn brûkme} other {# yn brûkme}}</translation>
+<translation id="5932224571077948991">Webstee lit opdringerige of misliedene reklame sjen</translation>
 <translation id="5990559369517809815">Fersiken nei de tsjinner binne tsjinkeard troch in tafoeging.</translation>
 <translation id="6051221802930200923">Jo kinne <ph name="SITE" /> net besykje omdat de webstee brûkme makket fan sertifikaat pinning. Netwurk flaters en oanfollen binne meastentiids tydlik, dus dizze side wurket letter wierskynlik wer goed.</translation>
 <translation id="6146055958333702838">Kontrolearje de kabels en werstart de routers,modems of oare netwurk
@@ -149,7 +149,7 @@ nedich ha: <ph name="PLATFORM_TEXT" /></translation>
 <translation id="625755898061068298">Jo ha de kar makke om befeiliging warskôgingen fan dizze webstee út te skeakeljen.</translation>
 <translation id="6264485186158353794">Tebek nei feilige webstee</translation>
 <translation id="6305205051461490394"><ph name="URL" /> is net te berikken.</translation>
-<translation id="6321917430147971392">Kontrolearje jo DNS ynstellings</translation>
+<translation id="6321917430147971392">Kontrolearje jo DNS ynstellingen</translation>
 <translation id="6328639280570009161">Besykje netwurk foarsizzing út te skeakeljen</translation>
 <translation id="6328786501058569169">Dizze webstee ferrifelet</translation>
 <translation id="6358450015545214790">Wat hâld it yn?</translation>
@@ -193,11 +193,11 @@ nedich ha: <ph name="PLATFORM_TEXT" /></translation>
 <translation id="8025119109950072390">Oanfallers op dizze webstee besykje jo te ferrifeljen om eat gefaarliks te dwaan, lykas sêftguod ynstallearje of jo persoanlike gegevens bekend meitsje (lykas wachtwurden, telefoannûmers of kredytkaarten).</translation>
 <translation id="8037357227543935929">Freegje (standert)</translation>
 <translation id="8041940743680923270">Algemiene standert ynstelling brûke (Freegje)</translation>
+<translation id="808894953321890993">Wachtwurd feroarje</translation>
 <translation id="8142868475871995937">Gean nei &lt;strong&gt;vivaldi://policy&lt;/strong&gt; om de list fan URL-adressen op de swarte list te sjen en oare betingsten dy't twongen wurde troch de systeembehearder.</translation>
 <translation id="8149426793427495338">Jo kompjûter is gien sliepen.</translation>
 <translation id="8150722005171944719">De triem op <ph name="URL" /> is net te berikken. It is miskien wol wiske, ferpleatst, of de triem foech beheind de tagong.</translation>
 <translation id="8184538546369750125">Algemiene standert ynstelling brûke (Tastean)</translation>
-<translation id="8205463626947051446">Webstee lit optwingerige advertinsjes sjen</translation>
 <translation id="8211406090763984747">Ferbining is feilich</translation>
 <translation id="8225771182978767009">De persoan dy't dizze kompjûter opsetten hat, hat dizze webstee tsjinkeard.</translation>
 <translation id="8241712895048303527">Op dizze webstee tsjinkeare</translation>
@@ -215,10 +215,10 @@ nedich ha: <ph name="PLATFORM_TEXT" /></translation>
 <translation id="9025348182339809926">(Unjildich)</translation>
 <translation id="9039213469156557790">Ek befettet dizze webstee boarnen dy net befeilige binne. Dizze boarnen kinne ûnder ferstjoeren troch oaren besjoen wurde en kinne troch in oanfaller oanpast wurde om it gedrach fan de webstee te feroarjen.</translation>
 <translation id="9069693763241529744">Tsjinkeard troch in tafoeging</translation>
-<translation id="910908805481542201">Help my om dit op te lossen</translation>
 <translation id="9169664750068251925">Altyd tsjinkeare op dizze webstee</translation>
 <translation id="9183425211371246419"><ph name="HOST_NAME" /> brûkt in net stipe protokol.</translation>
 <translation id="9219103736887031265">Ofbyldingen</translation>
+<translation id="936602727769022409">Jo kinne de tagong ta jo Google akkount ferlieze. Chromium ried oan om jo wachtwurd te feroarjen. Der sil frege wurde om op jo akkount yn te loggen.</translation>
 <translation id="969892804517981540">Offisjele bou</translation>
 <translation id="988159990683914416">Untwikkelders bou</translation>
 </translationbundle>

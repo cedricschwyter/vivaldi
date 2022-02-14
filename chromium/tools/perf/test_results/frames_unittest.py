@@ -10,10 +10,10 @@ import unittest
 
 import mock
 
-from test_results import frames
+#from test_results import frames
 
 
-@unittest.skipIf(frames.pandas is None, 'pandas module not available')
+@unittest.skip("Does not work in Vivaldi environment")
 class TestDataFrames(unittest.TestCase):
   def testBuildersDataFrame(self):
     sample_data = {

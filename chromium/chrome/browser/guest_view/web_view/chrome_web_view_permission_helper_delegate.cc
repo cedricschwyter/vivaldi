@@ -23,8 +23,11 @@
 #include "extensions/browser/guest_view/web_view/web_view_guest.h"
 #include "ppapi/buildflags/buildflags.h"
 
+#include "base/task/post_task.h"
 #include "chrome/browser/notifications/notification_permission_context.h"
 #include "components/guest_view/vivaldi_guest_view_constants.h"
+#include "content/public/browser/browser_task_traits.h"
+#include "content/public/browser/browser_thread.h"
 #include "content/public/browser/permission_type.h"
 
 namespace extensions {
@@ -126,9 +129,9 @@ void ChromeWebViewPermissionHelperDelegate::OnDownloadPermissionResponse(
   bool open_when_done = user_input == "open";
   bool ask_for_target = user_input == "saveas";
   if (!open_flags_cb.is_null()) {
-    content::BrowserThread::PostTask(
-      content::BrowserThread::IO, FROM_HERE,
-      base::Bind(open_flags_cb, open_when_done, ask_for_target));
+    base::PostTaskWithTraits(
+        FROM_HERE, {content::BrowserThread::IO},
+        base::Bind(open_flags_cb, open_when_done, ask_for_target));
   }
 
   callback.Run(allow && web_view_guest()->attached());
@@ -304,8 +307,7 @@ void ChromeWebViewPermissionHelperDelegate::CancelNotificationPermissionRequest(
 }
 
 int ChromeWebViewPermissionHelperDelegate::RemoveBridgeID(int bridge_id) {
-  std::map<int, int>::iterator bridge_itr =
-      bridge_id_to_request_id_map_.find(bridge_id);
+  auto bridge_itr = bridge_id_to_request_id_map_.find(bridge_id);
   if (bridge_itr == bridge_id_to_request_id_map_.end())
     return webview::kInvalidPermissionRequestID;
 

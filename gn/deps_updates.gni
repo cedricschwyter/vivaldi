@@ -58,6 +58,14 @@ update_template_instance("//components/sync:sync") {
   ]
 }
 
+if (!is_android) {
+  update_template_instance("//chrome/test:interactive_ui_tests") {
+    deps -= [
+      ":captured_sites_interactive_tests",
+    ]
+  }
+}
+
 _targets = [
   "//chrome/browser:test_support",
   "//chrome/browser/ui:test_support",
@@ -109,6 +117,7 @@ update_template_instance("//components:components_unittests") {
     "//vivaldi/importer",
     "//vivaldi/importer:browser",
     "//vivaldi/notes",
+    "//vivaldi/prefs:prefs_files_generated",
     "//vivaldi/sync:sync",
   ]
 }

@@ -75,7 +75,6 @@
 <translation id="3630155396527302611">Jeśli ten program jest już na liście programów mogących korzystać z sieci,
     spróbuj go z niej usunąć i dodać ponownie.</translation>
 <translation id="3658742229777143148">Rewizja</translation>
-<translation id="366094926047009040">Możesz utracić dostęp do swojego konta Vivaldi lub paść ofiarą kradzieży tożsamości. Vivaldi zaleca natychmiastową zmianę hasła.</translation>
 <translation id="3681007416295224113">Informacje o certyfikacie</translation>
 <translation id="3717027428350673159"><ph name="BEGIN_LINK" />Sprawdź serwer proxy, zaporę sieciową i konfigurację DNS<ph name="END_LINK" /></translation>
 <translation id="382518646247711829">Jeśli używasz serwera proxy...</translation>
@@ -139,6 +138,7 @@
 <translation id="5838278095973806738">Nie podawaj żadnych informacji poufnych (takich jak hasła czy karty kredytowe) w tej witrynie, bo osoby atakujące będą mogły je wykraść.</translation>
 <translation id="5869405914158311789">Ta strona jest nieosiągalna</translation>
 <translation id="5920262536204764679">{NUM_COOKIES,plural, =1{W użyciu: 1}few{W użyciu: #}many{W użyciu: #}other{W użyciu: #}}</translation>
+<translation id="5932224571077948991">Na tej stronie wyświetlają się uciążliwe lub wprowadzające w błąd reklamy</translation>
 <translation id="5990559369517809815">Żądania do serwera zostały zablokowane przez rozszerzenie.</translation>
 <translation id="6051221802930200923">Nie możesz teraz otworzyć strony <ph name="SITE" />, ponieważ stosuje ona przypinanie certyfikatów. Błędy sieciowe i ataki są zazwyczaj tymczasowe, więc prawdopodobnie strona będzie dostępna później.</translation>
 <translation id="6146055958333702838">Sprawdź wszystkie kable i uruchom ponownie wszelkie używane routery, modemy
@@ -194,11 +194,11 @@
 <translation id="8025119109950072390">Osoby atakujące tę stronę mogą podstępem nakłonić cię do zrobienia czegoś niebezpiecznego, np. zainstalowania oprogramowania lub ujawnienia danych osobowych (takich jak hasła, numery telefonów czy dane kart kredytowych).</translation>
 <translation id="8037357227543935929">Pytaj (domyślnie)</translation>
 <translation id="8041940743680923270">Użyj globalnej wartości domyślnej (Pytaj)</translation>
+<translation id="808894953321890993">Zmień hasło</translation>
 <translation id="8142868475871995937">Wejdź na stronę &lt;strong&gt;vivaldi://policy&lt;/strong&gt;, aby wyświetlić listę zablokowanych adresów URL oraz inne zasady egzekwowane przez administratora twojego systemu.</translation>
 <translation id="8149426793427495338">Twój komputer przeszedł w tryb uśpienia.</translation>
 <translation id="8150722005171944719">Nie można odczytać pliku <ph name="URL" />. Być może został usunięty, przeniesiony lub uprawnienia dostępu uniemożliwiają jego odczyt.</translation>
 <translation id="8184538546369750125">Użyj globalnej wartości domyślnej (Zezwalaj)</translation>
-<translation id="8205463626947051446">Na stronie wyświetlane są uciążliwe reklamy</translation>
 <translation id="8211406090763984747">Połączenie jest bezpieczne</translation>
 <translation id="8225771182978767009">Administrator tego komputera zablokował tę witrynę.</translation>
 <translation id="8241712895048303527">Blokuj na tej stronie</translation>
@@ -216,10 +216,10 @@
 <translation id="9025348182339809926">(Nieważny)</translation>
 <translation id="9039213469156557790">Ta strona zawiera niezabezpieczone zasoby. Podczas przesyłania danych mogą je wyświetlić inni użytkownicy, a osoby atakujące mogą je zmodyfikować, by zmienić sposób działania strony.</translation>
 <translation id="9069693763241529744">Zablokowane przez rozszerzenie</translation>
-<translation id="910908805481542201">Pomóż mi to naprawić</translation>
 <translation id="9169664750068251925">Zawsze blokuj na tej stronie</translation>
 <translation id="9183425211371246419">Serwer <ph name="HOST_NAME" /> używa nieobsługiwanego protokołu.</translation>
 <translation id="9219103736887031265">Obrazy</translation>
+<translation id="936602727769022409">Możesz stracić dostęp do swojego konta Google. Chromium zaleca natychmiastową zmianę hasła. Zobaczysz prośbę, by się zalogować.</translation>
 <translation id="969892804517981540">Oficjalna wersja</translation>
 <translation id="988159990683914416">Wersja rozwojowa</translation>
 </translationbundle>

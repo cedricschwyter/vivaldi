@@ -19,7 +19,6 @@
 #include "extensions/browser/browser_context_keyed_api_factory.h"
 #include "extensions/browser/event_router.h"
 #include "extensions/schema/show_menu.h"
-#include "third_party/icu/source/i18n/unicode/coll.h"
 
 namespace bookmarks {
 class BookmarkModel;
@@ -39,41 +38,11 @@ struct FaviconImageResult;
 }
 
 namespace vivaldi {
+class BookmarkSorter;
 class VivaldiContextMenu;
 }
 
 namespace extensions {
-
-class BookmarkSorter {
- public:
-  ~BookmarkSorter();
-
-  BookmarkSorter(vivaldi::show_menu::SortField sort_field,
-                 vivaldi::show_menu::SortOrder sort_order_test,
-                 bool group_folders);
-  void sort(std::vector<bookmarks::BookmarkNode*>& vector);
-  void setGroupFolders(bool group_folders) {group_folders_ = group_folders;}
-  bool isManualOrder() const
-      { return sort_field_ == vivaldi::show_menu::SORT_FIELD_NONE; }
-
- private:
-  bool fallbackToTitleSort(const icu::Collator* collator,
-                           bookmarks::BookmarkNode *b1,
-                           bookmarks::BookmarkNode *b2,
-                           int l1,
-                           int l2);
-  bool fallbackToDateSort(bookmarks::BookmarkNode *b1,
-                          bookmarks::BookmarkNode *b2,
-                          int l1,
-                          int l2);
-
-  vivaldi::show_menu::SortField sort_field_;
-  vivaldi::show_menu::SortOrder sort_order_;
-  bool group_folders_;
-  std::unique_ptr<icu::Collator> collator_;
-};
-
-class ShowMenuCreateFunction;
 
 class VivaldiMenuController : public ui::SimpleMenuModel::Delegate,
                               public bookmarks::BookmarkModelObserver {
@@ -120,7 +89,7 @@ class VivaldiMenuController : public ui::SimpleMenuModel::Delegate,
   bool GetAcceleratorForCommandId(int command_id,
                                   ui::Accelerator* accelerator) const override;
   bool GetIconForCommandId(int command_id, gfx::Image* icon) const override;
-  void CommandIdHighlighted(int command_id) override;
+  void VivaldiCommandIdHighlighted(int command_id) override;
   void ExecuteCommand(int command_id, int event_flags) override;
   void OnMenuWillShow(ui::SimpleMenuModel* source) override;
   void MenuClosed(ui::SimpleMenuModel* source) override;
@@ -190,7 +159,7 @@ class VivaldiMenuController : public ui::SimpleMenuModel::Delegate,
   std::vector<std::unique_ptr<ui::SimpleMenuModel>> models_;
   base::string16 separator_;
   base::string16 separator_description_;
-  std::unique_ptr<BookmarkSorter> bookmark_sorter_;
+  std::unique_ptr<::vivaldi::BookmarkSorter> bookmark_sorter_;
   content::WebContents* web_contents_;  // Not owned by us.
   Profile* profile_;
   std::map<int, std::string*> url_map_;
@@ -204,54 +173,17 @@ class VivaldiMenuController : public ui::SimpleMenuModel::Delegate,
   BookmarkSupport bookmark_support_;
 };
 
-// Based on BookmarkEventRouter, send command events to the javascript.
-class CommandEventRouter {
+class ShowMenuAPI {
  public:
-  explicit CommandEventRouter(Profile* profile);
-  ~CommandEventRouter();
-
-  // Helper to actually dispatch an event to extension listeners.
-  void DispatchEvent(const std::string& event_name,
-                     std::unique_ptr<base::ListValue> event_args);
-
- private:
-  content::BrowserContext* browser_context_;
-  DISALLOW_COPY_AND_ASSIGN(CommandEventRouter);
-};
-
-class ShowMenuAPI : public BrowserContextKeyedAPI,
-                    public EventRouter::Observer {
- public:
-  explicit ShowMenuAPI(content::BrowserContext* context);
-  ~ShowMenuAPI() override;
-
-  // KeyedService implementation.
-  void Shutdown() override;
-
-  // BrowserContextKeyedAPI implementation.
-  static BrowserContextKeyedAPIFactory<ShowMenuAPI>* GetFactoryInstance();
-
-  // EventRouter::Observer implementation.
-  void OnListenerAdded(const EventListenerInfo& details) override;
-
-  void CommandExecuted(int command_id, const std::string& parameter = "");
-  void OnOpen();
-  void OnUrlHighlighted(const std::string& url);
-  void OnBookmarkActivated(int id, int event_flags);
-  void OnAddBookmark(int id);
-
- private:
-  friend class BrowserContextKeyedAPIFactory<ShowMenuAPI>;
-
-  content::BrowserContext* browser_context_;
-
-  // BrowserContextKeyedAPI implementation.
-  static const char* service_name() { return "ShowMenuAPI"; }
-  static const bool kServiceIsNULLWhileTesting = true;
-  static const bool kServiceRedirectedInIncognito = true;
-
-  // Created lazily upon OnListenerAdded.
-  std::unique_ptr<CommandEventRouter> command_event_router_;
+  static void SendCommandExecuted(Profile* profile,
+                                  int window_id,
+                                  int command_id,
+                                  const std::string& parameter = "");
+  static void SendOpen(Profile* profile);
+  static void SendClose(Profile* profile);
+  static void SendUrlHighlighted(Profile* profile, const std::string& url);
+  static void SendBookmarkActivated(Profile* profile, int id, int event_flags);
+  static void SendAddBookmark(Profile* profile, int id);
 };
 
 class ShowMenuCreateFunction : public ChromeAsyncExtensionFunction,

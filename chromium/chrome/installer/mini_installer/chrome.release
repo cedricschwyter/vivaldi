@@ -7,6 +7,7 @@
 # Vivaldi Application dir entries, sorted alphabetically.
 #
 vivaldi.exe: %(ChromeDir)s\
+vivaldi_proxy.exe: %(ChromeDir)s\
 crash_service.exe: %(ChromeDir)s\
 update_notifier.exe: %(ChromeDir)s\
 #
@@ -73,6 +74,12 @@ SmallLogoDev.png: %(VersionDir)s\VisualElements\
 swiftshader\libEGL.dll: %(VersionDir)s\swiftshader\
 swiftshader\libGLESv2.dll: %(VersionDir)s\swiftshader\
 
+#
+# MEI Preload sub dir
+#
+MEIPreload\manifest.json: %(VersionDir)s\MEIPreload\
+MEIPreload\preloaded_data.pb: %(VersionDir)s\MEIPreload\
+
 [HIDPI]
 vivaldi_200_percent.pak: %(VersionDir)s\
 
@@ -84,13 +91,8 @@ SecondaryTile.png: %(VersionDir)s\
 # Widevine CDM sub-dir
 #
 WidevineCdm\manifest.json: %(VersionDir)s\WidevineCdm\
+WidevineCdm\LICENSE: %(VersionDir)s\WidevineCdm\
 WidevineCdm\_platform_specific\win_x86\widevinecdm.dll: %(VersionDir)s\WidevineCdm\_platform_specific\win_x86\
 WidevineCdm\_platform_specific\win_x86\widevinecdm.dll.sig: %(VersionDir)s\WidevineCdm\_platform_specific\win_x86\
 WidevineCdm\_platform_specific\win_x64\widevinecdm.dll: %(VersionDir)s\WidevineCdm\_platform_specific\win_x64\
 WidevineCdm\_platform_specific\win_x64\widevinecdm.dll.sig: %(VersionDir)s\WidevineCdm\_platform_specific\win_x64\
-
-#
-# MEI Preload sub dir
-#
-MEIPreload\manifest.json: %(VersionDir)s\MEIPreload\
-MEIPreload\preloaded_data.pb: %(VersionDir)s\MEIPreload\

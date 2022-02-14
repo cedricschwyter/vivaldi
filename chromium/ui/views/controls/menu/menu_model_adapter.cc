@@ -83,6 +83,9 @@ MenuItemView* MenuModelAdapter::AddMenuItemFromModelAt(ui::MenuModel* model,
     case ui::MenuModel::TYPE_ACTIONABLE_SUBMENU:
       type = MenuItemView::ACTIONABLE_SUBMENU;
       break;
+    case ui::MenuModel::TYPE_HIGHLIGHTED:
+      type = MenuItemView::HIGHLIGHTED;
+      break;
   }
 
   if (*type == MenuItemView::SEPARATOR) {
@@ -217,7 +220,7 @@ bool MenuModelAdapter::IsItemChecked(int id) const {
   return false;
 }
 
-void MenuModelAdapter::SelectionChanged(MenuItemView* menu) {
+void MenuModelAdapter::VivaldiSelectionChanged(MenuItemView* menu) {
   // Ignore selection of the root menu.
   if (menu == menu->GetRootMenuItem())
     return;
@@ -226,12 +229,13 @@ void MenuModelAdapter::SelectionChanged(MenuItemView* menu) {
   ui::MenuModel* model = menu_model_;
   int index = 0;
   if (ui::MenuModel::GetModelAndIndexForCommandId(id, &model, &index)) {
-    model->HighlightChangedTo(index);
+    model->VivaldiHighlightChangedTo(index);
     return;
   }
 
   NOTREACHED();
 }
+
 
 void MenuModelAdapter::WillShowMenu(MenuItemView* menu) {
   // Look up the menu model for this menu.

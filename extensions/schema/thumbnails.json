@@ -74,6 +74,11 @@
             "type": "boolean",
             "optional": true,
             "description": "If true, will copy the image to clipboard in a raw and uncompressed format. This will override any file path arguments. Default is false."
+          },
+          "saveFilePattern":  {
+            "type": "string",
+            "optional": true,
+            "description": "If set, will use this pattern to contruct the filename. Note that the file name is still guaranteed to be unique, and (1), (2) etc might be appended if needed."
           }
         }
       },
@@ -121,6 +126,11 @@
             "type": "boolean",
             "optional": true,
             "description": "If true, will copy the image to clipboard in a raw and uncompressed format. This will override any file path arguments. Default is false."
+          },
+          "saveFilePattern":  {
+            "type": "string",
+            "optional": true,
+            "description": "If set, will use this pattern to contruct the filename. Note that the file name is still guaranteed to be unique, and (1), (2) etc might be appended if needed."
           }
         }
       }
@@ -133,13 +143,8 @@
         "parameters": [
           {
             "name": "bookmarkId",
-            "type": "string",
+            "type": "integer",
             "description": "The bookmark id to check for available thumbnail"
-          },
-          {
-            "name": "url",
-            "type": "string",
-            "description": "The url of a site to check for thumbnail availability"
           },
           {
             "type": "function",

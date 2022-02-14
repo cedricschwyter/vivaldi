@@ -75,7 +75,6 @@
 <translation id="3630155396527302611">Hvis programmet allerede står på listen over programmer, der har adgang til netværket, kan du prøve
     at fjerne det fra listen og tilføje det igen.</translation>
 <translation id="3658742229777143148">Revision</translation>
-<translation id="366094926047009040">Du kan miste adgang til din Vivaldi-konto eller opleve identitetstyveri. Vivaldi anbefaler, at du skifter din adgangskode nu.</translation>
 <translation id="3681007416295224113">Certifikatoplysninger</translation>
 <translation id="3717027428350673159"><ph name="BEGIN_LINK" />Kontrollerer proxy-, firewall- og DNS-konfigurationen<ph name="END_LINK" /></translation>
 <translation id="382518646247711829">Hvis du bruger en proxyserver...</translation>
@@ -139,6 +138,7 @@
 <translation id="5838278095973806738">Du bør ikke indtaste følsomme oplysninger på dette website (f.eks. adgangskoder eller kreditkortoplysninger), da de kan blive stjålet af hackere.</translation>
 <translation id="5869405914158311789">Der kan ikke oprettes forbindelse til dette website</translation>
 <translation id="5920262536204764679">{NUM_COOKIES,plural, =1{1 i brug}other{# i brug}}</translation>
+<translation id="5932224571077948991">Websitet viser påtrængende eller vildledende annoncer</translation>
 <translation id="5990559369517809815">Anmodninger til serveren er blokeret af en udvidelse.</translation>
 <translation id="6051221802930200923">Du kan ikke besøge <ph name="SITE" /> lige nu, da websitet bruger certifikatlåsning. Netværksfejl og angreb er normalt midlertidige, så siden vil sandsynligvis fungere igen senere.</translation>
 <translation id="6146055958333702838">Kontrollér eventuelle kabler, og genstart alle routere, modemmer eller andre
@@ -194,11 +194,11 @@
 <translation id="8025119109950072390">Hackere på dette website kan narre dig til at gøre noget farligt, såsom at installere software eller afsløre dine personlige oplysninger (f.eks. adgangskoder, telefonnumre eller kreditkort).</translation>
 <translation id="8037357227543935929">Spørg (standard)</translation>
 <translation id="8041940743680923270">Brug global standard (spørg)</translation>
+<translation id="808894953321890993">Skift adgangskode</translation>
 <translation id="8142868475871995937">Gå til &lt;strong&gt;vivaldi://policy&lt;/strong&gt; for at se listen over sortlistede webadresser og andre politikker, din systemadministrator har igangsat.</translation>
 <translation id="8149426793427495338">Din computer gik i dvale.</translation>
 <translation id="8150722005171944719">Filen i <ph name="URL" /> kan ikke læses. Den kan være blevet fjernet, flyttet, eller også forhindrer filtilladelser muligvis adgangen.</translation>
 <translation id="8184538546369750125">Brug global standard (tillad)</translation>
-<translation id="8205463626947051446">Websitet har tendens til at vise påtrængende annoncer</translation>
 <translation id="8211406090763984747">Forbindelsen er sikker</translation>
 <translation id="8225771182978767009">Den person, der har konfigureret denne computer, har valgt at blokere dette website.</translation>
 <translation id="8241712895048303527">Bloker på dette website</translation>
@@ -216,10 +216,10 @@
 <translation id="9025348182339809926">(ugyldigt)</translation>
 <translation id="9039213469156557790">Desuden indeholder denne side andre ressourcer, som ikke er sikre. Disse ressourcer kan ses af andre under overførslen og kan ændres af en hacker, så siden opfører sig anderledes.</translation>
 <translation id="9069693763241529744">Blokeret af en udvidelse</translation>
-<translation id="910908805481542201">Hjælp mig med at løse dette</translation>
 <translation id="9169664750068251925">Bloker altid på dette website</translation>
 <translation id="9183425211371246419"><ph name="HOST_NAME" /> anvender en ikke-understøttet protokol.</translation>
 <translation id="9219103736887031265">Billeder</translation>
+<translation id="936602727769022409">Du kan miste adgangen til din Google-konto. Chromium anbefaler, at du skifter din adgangskode nu. Du bliver bedt om at logge ind.</translation>
 <translation id="969892804517981540">Officiel version</translation>
 <translation id="988159990683914416">Udviklerversion</translation>
 </translationbundle>

@@ -15,7 +15,6 @@
 
 #include "base/bind_helpers.h"
 #include "base/command_line.h"
-#include "base/containers/hash_tables.h"
 #include "base/environment.h"
 #include "base/files/file_util.h"
 #include "base/files/scoped_temp_dir.h"
@@ -42,8 +41,8 @@
 #include "gpu/config/gpu_switches.h"
 #include "net/base/escape.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "ui/base/buildflags.h"
 #include "ui/base/ui_base_features.h"
-#include "ui/base/ui_features.h"
 
 #if defined(OS_POSIX)
 #include "base/files/file_descriptor_watcher_posix.h"
@@ -58,6 +57,11 @@
 #elif defined(OS_MACOSX)
 #include "base/mac/scoped_nsautorelease_pool.h"
 #include "sandbox/mac/seatbelt_exec.h"
+#endif
+
+#if defined(VIVALDI_BUILD)
+#include "app/vivaldi_apptools.h"
+#include "base/vivaldi_switches.h"
 #endif
 
 namespace content {
@@ -508,7 +512,8 @@ void WrapperTestLauncherDelegate::GTestCallback(
   // parsing failed.
   if (have_test_results && !parsed_results.empty()) {
     // We expect only one test result here.
-    DCHECK_EQ(1U, parsed_results.size());
+    DCHECK_EQ(1U, parsed_results.size())
+        << "Unexpectedly ran test more than once: " << test_name;
     DCHECK_EQ(test_name, parsed_results.front().full_name);
 
     result = parsed_results.front();
@@ -572,6 +577,8 @@ const char kRunManualTestsFlag[] = "run-manual";
 
 const char kSingleProcessTestsFlag[]   = "single_process";
 
+const char kWaitForDebuggerWebUI[] = "wait-for-debugger-webui";
+
 std::unique_ptr<TestState> TestLauncherDelegate::PreRunTest(
     base::CommandLine* command_line,
     base::TestLauncher::LaunchOptions* test_launch_options) {
@@ -604,6 +611,11 @@ int LaunchTests(TestLauncherDelegate* launcher_delegate,
     PrintUsage();
     return 0;
   }
+
+#if defined(VIVALDI_BUILD)
+  vivaldi::CommandLineAppendSwitchNoDup(base::CommandLine::ForCurrentProcess(),
+    switches::kDisableVivaldi);
+#endif
 
   std::unique_ptr<ContentMainDelegate> content_main_delegate(
       launcher_delegate->CreateContentMainDelegate());
@@ -659,7 +671,8 @@ int LaunchTests(TestLauncherDelegate* launcher_delegate,
 
   base::MessageLoopForIO message_loop;
 #if defined(OS_POSIX)
-  base::FileDescriptorWatcher file_descriptor_watcher(&message_loop);
+  base::FileDescriptorWatcher file_descriptor_watcher(
+      message_loop.task_runner());
 #endif
 
   launcher_delegate->PreSharding();

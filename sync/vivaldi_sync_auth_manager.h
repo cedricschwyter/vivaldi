@@ -9,12 +9,14 @@
 #include <string>
 
 #include "components/browser_sync/sync_auth_manager.h"
+#include "vivaldi_account/vivaldi_account_manager.h"
 
 namespace vivaldi {
 
-class VivaldiSyncManager;
+class VivaldiAccountManager;
 
-class VivaldiSyncAuthManager : public browser_sync::SyncAuthManager {
+class VivaldiSyncAuthManager : public browser_sync::SyncAuthManager,
+                               public VivaldiAccountManager::Observer {
  public:
   using NotifyTokenRequestedCallback = base::RepeatingClosure;
 
@@ -23,23 +25,26 @@ class VivaldiSyncAuthManager : public browser_sync::SyncAuthManager {
       identity::IdentityManager* identity_manager,
       const AccountStateChangedCallback& account_state_changed,
       const CredentialsChangedCallback& credentials_changed,
-      const NotifyTokenRequestedCallback& notify_token_requested,
-      const std::string& saved_username);
+      VivaldiAccountManager* account_manager);
 
   ~VivaldiSyncAuthManager() override;
 
   void RegisterForAuthNotifications() override;
-  SyncAccountInfo GetActiveAccountInfo() const override;
+  syncer::SyncAccountInfo GetActiveAccountInfo() const override;
+  syncer::SyncTokenStatus GetSyncTokenStatus() const override;
   void ConnectionStatusChanged(syncer::ConnectionStatus status) override;
 
-  void SetLoginInfo(const std::string& username,
-                    const std::string& access_token);
-  void ResetLoginInfo();
+  // VivaldiAccountManager::Observer implementation
+  void OnVivaldiAccountUpdated() override;
+  void OnTokenFetchSucceeded() override;
+  void OnTokenFetchFailed() override;
+  void OnVivaldiAccountShutdown() override;
 
  private:
-  const NotifyTokenRequestedCallback notify_token_requested_;
+  VivaldiAccountManager* account_manager_; // Not owning.
+  bool registered_for_account_notifications_ = false;
 
-  SyncAccountInfo account_info_;
+  AccountInfo account_info_;
 
   DISALLOW_COPY_AND_ASSIGN(VivaldiSyncAuthManager);
 };

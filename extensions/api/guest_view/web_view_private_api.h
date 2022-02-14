@@ -10,8 +10,6 @@
 #include <vector>
 
 #include "chrome/browser/extensions/chrome_extension_function.h"
-#include "chrome/browser/thumbnails/thumbnail_service.h"
-#include "chrome/browser/thumbnails/thumbnailing_context.h"
 #include "extensions/browser/extension_function.h"
 #include "extensions/schema/web_view_private.h"
 
@@ -56,8 +54,7 @@ class WebViewInternalThumbnailFunction
  protected:
   ~WebViewInternalThumbnailFunction() override;
   virtual void SendResultFromBitmap(const SkBitmap& screen_capture);
-  bool InternalRunAsyncSafe(
-      const std::unique_ptr<web_view_private::ThumbnailParams>& params);
+  bool InternalRunAsyncSafe(const web_view_private::ThumbnailParams& params);
 
   // Quality setting to use when encoding jpegs.  Set in RunImpl().
   int image_quality_;
@@ -66,6 +63,7 @@ class WebViewInternalThumbnailFunction
   int width_;
   // Are we running in incognito mode?
   bool is_incognito_;
+  int bookmark_id_ = 0;
 
   // The format (JPEG vs PNG) of the resulting image.  Set in RunImpl().
   api::extension_types::ImageFormat image_format_;
@@ -105,9 +103,11 @@ class WebViewPrivateGetThumbnailFromServiceFunction
   ~WebViewPrivateGetThumbnailFromServiceFunction() override;
   bool RunAsync() override;
   void SendResultFromBitmap(const SkBitmap& screen_capture) override;
+  void OnBookmarkThumbnailStored(int bookmark_id, std::string& image_url);
 
   GURL url_;
   bool incognito = false;
+  std::unique_ptr<SkBitmap> bitmap_;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(WebViewPrivateGetThumbnailFromServiceFunction);
@@ -125,15 +125,11 @@ class WebViewPrivateAddToThumbnailServiceFunction
   ~WebViewPrivateAddToThumbnailServiceFunction() override;
   bool RunAsync() override;
   void SendResultFromBitmap(const SkBitmap& screen_capture) override;
-  void SetPageThumbnailOnUIThread(
-      bool send_result,
-      scoped_refptr<::thumbnails::ThumbnailService> thumbnail_service,
-      scoped_refptr<::thumbnails::ThumbnailingContext> context,
-      const gfx::Image& thumbnail);
+  void OnBookmarkThumbnailStored(int bookmark_id, std::string& image_url);
 
-  std::string key_;
   GURL url_;
   bool incognito = false;
+  std::unique_ptr<SkBitmap> bitmap_;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(WebViewPrivateAddToThumbnailServiceFunction);

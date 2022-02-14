@@ -2,10 +2,11 @@
 
 #include "sync/vivaldi_syncmanager_factory.h"
 
-#include <string>
 #include <memory>
+#include <string>
 
 #include "base/memory/ptr_util.h"
+#include "base/task/post_task.h"
 #include "chrome/browser/autofill/personal_data_manager_factory.h"
 #include "chrome/browser/bookmarks/bookmark_model_factory.h"
 #include "chrome/browser/browser_process.h"
@@ -23,14 +24,16 @@
 #include "components/keyed_service/content/browser_context_dependency_manager.h"
 #include "components/network_time/network_time_tracker.h"
 #include "components/signin/core/browser/signin_manager.h"
-#include "content/public/browser/browser_context.h"
+#include "content/public/browser/browser_task_traits.h"
 #include "content/public/browser/browser_thread.h"
+#include "content/public/browser/network_service_instance.h"
 #include "content/public/browser/storage_partition.h"
 #include "extensions/browser/extension_system_provider.h"
 #include "extensions/browser/extensions_browser_client.h"
 #include "notes/notes_factory.h"
 #include "sync/vivaldi_sync_client.h"
 #include "sync/vivaldi_syncmanager.h"
+#include "vivaldi_account/vivaldi_account_manager_factory.h"
 
 namespace vivaldi {
 
@@ -47,8 +50,8 @@ void UpdateNetworkTimeOnUIThread(base::Time network_time,
 void UpdateNetworkTime(const base::Time& network_time,
                        const base::TimeDelta& resolution,
                        const base::TimeDelta& latency) {
-  content::BrowserThread::PostTask(
-      content::BrowserThread::UI, FROM_HERE,
+  base::PostTaskWithTraits(
+      FROM_HERE, {content::BrowserThread::UI},
       base::Bind(&UpdateNetworkTimeOnUIThread, network_time, resolution,
                  latency, base::TimeTicks::Now()));
 }
@@ -68,9 +71,6 @@ ProfileSyncService* VivaldiSyncManagerFactory::GetForProfile(Profile* profile) {
 // static
 VivaldiSyncManager* VivaldiSyncManagerFactory::GetForProfileVivaldi(
     Profile* profile) {
-  if (!VivaldiSyncManager::IsSyncEnabled())
-    return NULL;
-
   return static_cast<VivaldiSyncManager*>(
       GetInstance()->GetServiceForBrowserContext(profile, true));
 }
@@ -99,6 +99,7 @@ VivaldiSyncManagerFactory::VivaldiSyncManagerFactory()
       extensions::ExtensionsBrowserClient::Get()->GetExtensionSystemFactory());
 #endif
   DependsOn(NotesModelFactory::GetInstance());
+  DependsOn(VivaldiAccountManagerFactory::GetInstance());
 }
 
 VivaldiSyncManagerFactory::~VivaldiSyncManagerFactory() {}
@@ -113,28 +114,21 @@ KeyedService* VivaldiSyncManagerFactory::BuildServiceInstanceFor(
   init_params.url_loader_factory =
       content::BrowserContext::GetDefaultStoragePartition(profile)
           ->GetURLLoaderFactoryForBrowserProcess();
-#if defined(OS_WIN)
-  init_params.signin_scoped_device_id_callback =
-    base::BindRepeating([]() { return std::string("local_device"); });
-#else
-  // Note: base::Unretained(signin_client) is safe because the SigninClient is
-  // guaranteed to outlive the PSS, per a DependsOn() above (and because PSS
-  // clears the callback in its Shutdown()).
-  init_params.signin_scoped_device_id_callback =
-      base::BindRepeating(&GetSigninScopedDeviceIdForProfile, profile);
-#endif
 
   init_params.start_behavior = ProfileSyncService::MANUAL_START;
 
   VivaldiSyncClient* sync_client = new VivaldiSyncClient(profile);
+  sync_client->Initialize();
   init_params.sync_client = base::WrapUnique(sync_client);
 
   init_params.network_time_update_callback = base::Bind(&UpdateNetworkTime);
+  init_params.network_connection_tracker =
+      content::GetNetworkConnectionTracker();
   init_params.debug_identifier = profile->GetDebugName();
-  init_params.channel = chrome::GetChannel();
 
   auto vss = base::WrapUnique(new VivaldiSyncManager(
-      &init_params, sync_client->GetVivaldiInvalidationService()));
+      &init_params, profile, sync_client->GetVivaldiInvalidationService(),
+      VivaldiAccountManagerFactory::GetForProfile(profile)));
 
   vss->Initialize();
 

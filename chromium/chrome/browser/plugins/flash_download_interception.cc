@@ -108,12 +108,11 @@ void FlashDownloadInterception::InterceptFlashDownloadNavigation(
             WEB_VIEW_PERMISSION_TYPE_LOAD_PLUGIN, request_info,
             base::Bind(&PluginLoadResponse, web_contents), false);
       }
-    } else {
+    }
     PermissionManager* manager = PermissionManager::Get(profile);
     manager->RequestPermission(
         CONTENT_SETTINGS_TYPE_PLUGINS, web_contents->GetMainFrame(),
         web_contents->GetLastCommittedURL(), true, base::DoNothing());
-    }
   } else if (flash_setting == CONTENT_SETTING_BLOCK) {
     auto* settings = TabSpecificContentSettings::FromWebContents(web_contents);
     if (settings)

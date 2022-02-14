@@ -118,12 +118,6 @@ class ExtensionActionUtil
       const extensions::Extension* extension,
       extensions::UnloadedExtensionReason reason) override;
 
-  // Overridden from TabStripModelObserver:
-  void ActiveTabChanged(content::WebContents* old_contents,
-                        content::WebContents* new_contents,
-                        int index,
-                        int reason) override;
-
   // ToolbarActionViewDelegate:
   content::WebContents* GetCurrentWebContents() const override;
 
@@ -131,6 +125,12 @@ class ExtensionActionUtil
   void AddComponentAction(const std::string& action_id) override;
   void RemoveComponentAction(const std::string& action_id) override;
   bool HasComponentAction(const std::string& action_id) const override;
+
+  // Overridden from TabStripModelObserver:
+  void OnTabStripModelChanged(
+    TabStripModel* tab_strip_model,
+    const TabStripModelChange& change,
+    const TabStripSelectionChange& selection) override;
 
   // Updates the view to reflect current state.
   void UpdateState() override;

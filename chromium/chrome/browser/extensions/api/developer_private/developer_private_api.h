@@ -789,6 +789,8 @@ class DeveloperPrivateAddHostPermissionFunction
 
   ResponseAction Run() override;
 
+  void OnRuntimePermissionsGranted();
+
   DISALLOW_COPY_AND_ASSIGN(DeveloperPrivateAddHostPermissionFunction);
 };
 
@@ -803,6 +805,8 @@ class DeveloperPrivateRemoveHostPermissionFunction
   ~DeveloperPrivateRemoveHostPermissionFunction() override;
 
   ResponseAction Run() override;
+
+  void OnRuntimePermissionsRevoked();
 
   DISALLOW_COPY_AND_ASSIGN(DeveloperPrivateRemoveHostPermissionFunction);
 };

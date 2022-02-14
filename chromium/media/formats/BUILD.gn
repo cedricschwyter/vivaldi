@@ -14,6 +14,7 @@ source_set("formats") {
     "//media/cdm",
     "//media/filters",
     "//media/muxers",
+    "//media/ffmpeg",
   ]
 
   sources = [
@@ -76,6 +77,7 @@ source_set("formats") {
     "//media/base",
     "//skia",
     "//third_party/libaom:av1_buildflags",
+    "//third_party/libwebm",
   ]
 
   configs += [

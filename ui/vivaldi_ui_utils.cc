@@ -241,6 +241,10 @@ Browser* FindBrowserForPinnedTabs(Browser* current_browser) {
     if (browser->is_devtools()) {
       continue;
     }
+    // Only move within the same profile.
+    if (current_browser->profile() != browser->profile()) {
+      continue;
+    }
     if (!IsMainVivaldiBrowserWindow(browser)) {
       continue;
     }

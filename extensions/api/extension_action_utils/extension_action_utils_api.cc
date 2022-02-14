@@ -327,9 +327,9 @@ bool ExtensionActionUtil::FillInfoForTabId(
   const SkBitmap* bitmap = nullptr;
 
   if (!explicitIcon.IsEmpty()) {
-    bitmap = explicitIcon.CopySkBitmap();
+    bitmap = explicitIcon.ToSkBitmap();
   } else if (!declarativeIcon.IsEmpty()) {
-    bitmap = declarativeIcon.CopySkBitmap();
+    bitmap = declarativeIcon.ToSkBitmap();
   } else {
     if (defaultIconImage) {
       bitmap = defaultIconImage->image_skia().bitmap();
@@ -470,27 +470,29 @@ void ExtensionActionUtil::OnExtensionUnloaded(
                  std::move(args), browser_context);
 }
 
-void ExtensionActionUtil::ActiveTabChanged(content::WebContents* old_contents,
-                                           content::WebContents* new_contents,
-                                           int index,
-                                           int reason) {
-  set_current_webcontents(new_contents);
+void ExtensionActionUtil::OnTabStripModelChanged(
+    TabStripModel* tab_strip_model,
+    const TabStripModelChange& change,
+    const TabStripSelectionChange& selection) {
+  if (!selection.active_tab_changed())
+    return;
+
+  set_current_webcontents(selection.new_contents);
 
   // loop through the extensions and update the actions based on the tabid
   const extensions::ExtensionSet& extensions =
-      extensions::ExtensionRegistry::Get(profile_)->enabled_extensions();
+    extensions::ExtensionRegistry::Get(profile_)->enabled_extensions();
 
   extensions::ExtensionActionManager* action_manager =
-      extensions::ExtensionActionManager::Get(profile_);
+    extensions::ExtensionActionManager::Get(profile_);
 
   for (ExtensionSet::const_iterator it = extensions.begin();
-       it != extensions.end(); ++it) {
+    it != extensions.end(); ++it) {
     const Extension* extension = it->get();
 
     ExtensionAction* action = action_manager->GetExtensionAction(*extension);
     if (action) {
-      OnExtensionActionUpdated(action, new_contents,
-                               static_cast<content::BrowserContext*>(profile_));
+      OnExtensionActionUpdated(action, selection.new_contents, profile_);
     }
   }
 }
@@ -583,7 +585,7 @@ bool ExtensionActionUtil::FillInfoFromComponentExtension(
 
   const SkBitmap* bitmap = nullptr;
 
-  bitmap = icon_image.CopySkBitmap();
+  bitmap = icon_image.ToSkBitmap();
 
   if (bitmap)
     info->badge_icon.reset(EncodeBitmapToPng(bitmap));
@@ -882,8 +884,8 @@ class UninstallDialogHelper : public ExtensionUninstallDialog::Delegate {
   ~UninstallDialogHelper() override {}
 
   void BeginUninstall(Browser* browser, const Extension* extension) {
-    uninstall_dialog_.reset(ExtensionUninstallDialog::Create(
-        browser->profile(), browser->window()->GetNativeWindow(), this));
+    uninstall_dialog_ = ExtensionUninstallDialog::Create(
+        browser->profile(), browser->window()->GetNativeWindow(), this);
     uninstall_dialog_->ConfirmUninstall(extension,
                                         UNINSTALL_REASON_USER_INITIATED,
                                         UNINSTALL_SOURCE_TOOLBAR_CONTEXT_MENU);

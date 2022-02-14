@@ -114,6 +114,12 @@ bool IsYoutubeDomainUrl(const GURL& url,
 // unregistering themselves.
 const std::vector<std::string>& GetGoogleRegistrableDomains();
 
+// When called, this will ignore the PortPermission passed in the above methods
+// and ignore the port numbers. This makes it easier to run tests for features
+// that use these methods (directly or indirectly) with the EmbeddedTestServer,
+// which is more representative of production.
+void IgnorePortNumbersForGoogleURLChecksForTesting();
+
 // True if |host| is "[www.]<domain_in_lower_case>.<TLD>" with a valid TLD. If
 // |subdomain_permission| is ALLOW_SUBDOMAIN, we check against host
 // "*.<domain_in_lower_case>.<TLD>" instead.

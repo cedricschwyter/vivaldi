@@ -100,9 +100,11 @@ void DownloadShelfUIControllerDelegate::OnNewDownloadReady(
 
   if (browser && browser->window() &&
       DownloadItemModel(item).ShouldShowInShelf()) {
+    DownloadUIModel::DownloadUIModelPtr model = DownloadItemModel::Wrap(item);
+
     // GetDownloadShelf creates the download shelf if it was not yet created.
     if (browser->window()->GetDownloadShelf())
-      browser->window()->GetDownloadShelf()->AddDownload(item);
+    browser->window()->GetDownloadShelf()->AddDownload(std::move(model));
   }
 }
 
@@ -200,7 +202,8 @@ void DownloadUIController::OnDownloadUpdated(content::DownloadManager* manager,
       // GetDownloadShelf creates the download shelf if it was not yet created.
       DownloadShelf* shelf = browser && browser->window() ?  browser->window()->GetDownloadShelf() : NULL;
       if (shelf) {
-        shelf->AddDownload(item);
+        DownloadUIModel::DownloadUIModelPtr model = DownloadItemModel::Wrap(item);
+        shelf->AddDownload(std::move(model));
       }
     }
   }

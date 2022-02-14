@@ -75,7 +75,6 @@
 <translation id="3630155396527302611">Ağa erişmesine izin verilmiş bir program olarak zaten listeleniyorsa,
     listeden kaldırıp tekrar eklemeyi deneyin.</translation>
 <translation id="3658742229777143148">Düzeltme</translation>
-<translation id="366094926047009040">Vivaldi Hesabı'nıza erişimi kaybedebilir veya kimlik hırsızlığına maruz kalabilirsiniz. Vivaldi şifrenizi hemen değiştirmenizi önerir.</translation>
 <translation id="3681007416295224113">Sertifika bilgisi</translation>
 <translation id="3717027428350673159"><ph name="BEGIN_LINK" />Proxy, güvenlik duvarı ve DNS yapılandırmasını kontrol edin<ph name="END_LINK" /></translation>
 <translation id="382518646247711829">Proxy sunucu kullanıyorsanız...</translation>
@@ -139,6 +138,7 @@
 <translation id="5838278095973806738">Bu sitede hiçbir hassas bilginizi (örneğin şifrelerinizi veya kredi kartı bilgilerinizi) girmemelisiniz; çünkü bu bilgiler saldırganlar tarafından çalınabilir.</translation>
 <translation id="5869405914158311789">Bu siteye ulaşılamıyor</translation>
 <translation id="5920262536204764679">{NUM_COOKIES,plural, =1{1 çerez kullanımda}other{# çerez kullanımda}}</translation>
+<translation id="5932224571077948991">Site, rahatsız edici veya yanıltıcı reklamlar gösteriyor</translation>
 <translation id="5990559369517809815">Sunucuya gönderilen istekler bir eklenti tarafından engellendi.</translation>
 <translation id="6051221802930200923"><ph name="SITE" /> sitesi sertifika sabitleme yöntemi kullandığından siteyi şu anda ziyaret edemezsiniz. Ağ hataları ve saldırılar genellikle geçici olduğundan bu sayfa muhtemelen daha sonra çalışacaktır.</translation>
 <translation id="6146055958333702838">Kabloları kontrol edin ve kullandığınız yönlendiricileri, modemleri
@@ -194,11 +194,11 @@
 <translation id="8025119109950072390">Bu sitedeki saldırganlar sizi kandırarak yazılım yükleme veya kişisel bilgilerinizi (örneğin şifreler, telefon numaraları veya kredi kartları) ifşa etme gibi tehlikeli şeyler yaptırabilir.</translation>
 <translation id="8037357227543935929">Sor (varsayılan)</translation>
 <translation id="8041940743680923270">Genel varsayılanı kullan (Sor)</translation>
+<translation id="808894953321890993">Şifreyi değiştir</translation>
 <translation id="8142868475871995937">Kara listeye alınmış URL'lerin ve sistem yöneticinizin zorunlu tuttuğu diğer politikaların listesini görmek için &lt;strong&gt;vivaldi://policy&lt;/strong&gt; adresini ziyaret edin.</translation>
 <translation id="8149426793427495338">Bilgisayarınız uyku moduna geçti.</translation>
 <translation id="8150722005171944719"><ph name="URL" /> konumundaki dosya okunamıyor. Kaldırılmış ya da taşınmış olabilir veya dosya izinleri erişimi önlüyordur.</translation>
 <translation id="8184538546369750125">Genel varsayılanı kullan (İzin ver)</translation>
-<translation id="8205463626947051446">Site araya giren reklamlar gösterme eğiliminde</translation>
 <translation id="8211406090763984747">Bağlantı güvenli</translation>
 <translation id="8225771182978767009">Bu bilgisayarı kuran kişi bu siteyi engellemeyi seçmiş.</translation>
 <translation id="8241712895048303527">Bu sitede engelle</translation>
@@ -216,10 +216,10 @@
 <translation id="9025348182339809926">(Geçersiz)</translation>
 <translation id="9039213469156557790">Ayrıca, bu sayfa güvenli olmayan başka kaynaklar içeriyor. Bu kaynaklar, aktarım sırasında başkaları tarafından görülebilir ve bir saldırgan tarafından sayfanın davranışını değiştirmek üzere kullanılabilir.</translation>
 <translation id="9069693763241529744">Bir eklenti tarafından engellendi</translation>
-<translation id="910908805481542201">Bunu düzeltmeme yardım et</translation>
 <translation id="9169664750068251925">Bu sitede her zaman engelle</translation>
 <translation id="9183425211371246419"><ph name="HOST_NAME" /> desteklenmeyen bir protokol kullanıyor.</translation>
 <translation id="9219103736887031265">Resimler</translation>
+<translation id="936602727769022409">Google Hesabınıza erişimi kaybedebilirsiniz. Chromium, şifrenizi hemen değiştirmenizi önerir. Oturum açmanız istenecektir.</translation>
 <translation id="969892804517981540">Resmî Derleme</translation>
 <translation id="988159990683914416">Geliştirici Derlemesi</translation>
 </translationbundle>

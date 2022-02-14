@@ -10,6 +10,7 @@
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/utf_string_conversions.h"
 #include "chrome/browser/password_manager/password_store_factory.h"
+#include "chrome/browser/platform_util.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/common/pref_names.h"
 #include "components/autofill/core/common/password_form.h"
@@ -18,6 +19,7 @@
 #include "components/url_formatter/url_formatter.h"
 #include "content/public/browser/web_ui.h"
 #include "extensions/schema/savedpasswords.h"
+#include "extensions/api/vivaldi_utilities/vivaldi_utilities_api.h"
 
 namespace extensions {
 namespace passwords = vivaldi::savedpasswords;
@@ -41,12 +43,6 @@ Profile* SavedpasswordsGetListFunction::GetProfile() {
   return Profile::FromBrowserContext(browser_context());
 }
 
-#if !defined(OS_ANDROID)
-gfx::NativeWindow SavedpasswordsGetListFunction::GetNativeWindow() const {
-  return NULL;
-}
-#endif
-
 void SavedpasswordsGetListFunction::SetPasswordList(
     const std::vector<std::unique_ptr<autofill::PasswordForm>>& password_list) {
   std::vector<SavedPasswordItem> svd_pwd_entries;
@@ -68,6 +64,7 @@ SavedPasswordItem* SavedpasswordsGetListFunction::GetSavedPasswordItem(
     int id) {
   SavedPasswordItem* notes_tree_node = new SavedPasswordItem();
   notes_tree_node->username = base::UTF16ToUTF8(form->username_value);
+  notes_tree_node->password = base::UTF16ToUTF8(form->password_value);
   notes_tree_node->origin =
       base::UTF16ToUTF8(url_formatter::FormatUrl(form->origin));
   notes_tree_node->id = base::Int64ToString(id);
@@ -76,7 +73,7 @@ SavedPasswordItem* SavedpasswordsGetListFunction::GetSavedPasswordItem(
 }
 
 void SavedpasswordsGetListFunction::SendAsyncResponse() {
-  base::MessageLoop::current()->task_runner()->PostTask(
+  base::ThreadTaskRunnerHandle::Get()->PostTask(
       FROM_HERE,
       base::Bind(&SavedpasswordsGetListFunction::SendResponseToCallback, this));
 }
@@ -88,10 +85,6 @@ void SavedpasswordsGetListFunction::SendResponseToCallback() {
 void SavedpasswordsGetListFunction::SetPasswordExceptionList(
     const std::vector<std::unique_ptr<autofill::PasswordForm>>&
         password_exception_list) {}
-
-void SavedpasswordsGetListFunction::ShowPassword(
-    size_t index,
-    const base::string16& password_value) {}
 
 SavedpasswordsRemoveFunction::SavedpasswordsRemoveFunction()
     : password_manager_presenter_(this) {}
@@ -113,9 +106,6 @@ bool SavedpasswordsRemoveFunction::RunAsync() {
 Profile* SavedpasswordsRemoveFunction::GetProfile() {
   return Profile::FromBrowserContext(browser_context());
 }
-void SavedpasswordsRemoveFunction::ShowPassword(
-    size_t index,
-    const base::string16& password_value) {}
 
 void SavedpasswordsRemoveFunction::SetPasswordList(
     const std::vector<std::unique_ptr<autofill::PasswordForm>>& password_list) {
@@ -129,19 +119,13 @@ void SavedpasswordsRemoveFunction::SetPasswordExceptionList(
     const std::vector<std::unique_ptr<autofill::PasswordForm>>&
         password_exception_list) {}
 
-#if !defined(OS_ANDROID)
-gfx::NativeWindow SavedpasswordsRemoveFunction::GetNativeWindow() const {
-  return NULL;
-}
-#endif
-
 void SavedpasswordsRemoveFunction::SendResponseToCallback() {
   SendResponse(true);
   Release();  // Balanced in RunAsync().
 }
 
 void SavedpasswordsRemoveFunction::SendAsyncResponse() {
-  base::MessageLoop::current()->task_runner()->PostTask(
+  base::ThreadTaskRunnerHandle::Get()->PostTask(
       FROM_HERE,
       base::Bind(&SavedpasswordsRemoveFunction::SendResponseToCallback, this));
 }
@@ -238,6 +222,29 @@ bool SavedpasswordsDeleteFunction::RunAsync() {
       base::UTF8ToUTF16(params->password_form.username);
 
   password_store->RemoveLogin(password_form);
+
+  SendResponse(true);
+  return true;
+}
+
+SavedpasswordsAuthenticateFunction::SavedpasswordsAuthenticateFunction() {}
+
+SavedpasswordsAuthenticateFunction::~SavedpasswordsAuthenticateFunction() {}
+
+bool SavedpasswordsAuthenticateFunction::RunAsync() {
+  extensions::VivaldiUtilitiesAPI* utils_api =
+    extensions::VivaldiUtilitiesAPI::GetFactoryInstance()->Get(
+      browser_context());
+  DCHECK(utils_api);
+
+  content::WebContents* web_contents = dispatcher()->GetAssociatedWebContents();
+  gfx::NativeWindow window =
+      web_contents ? platform_util::GetTopLevel(web_contents->GetNativeView())
+                   : nullptr;
+
+  bool success = utils_api->AuthenticateUser(window);
+
+  results_ = vivaldi::savedpasswords::Authenticate::Results::Create(success);
 
   SendResponse(true);
   return true;

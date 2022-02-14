@@ -9,9 +9,11 @@
 
 #include "base/compiler_specific.h"
 #include "base/timer/timer.h"
+#include "chrome/browser/badging/badge_service_delegate.h"
 #include "chrome/browser/ui/browser.h"
 #include "chrome/browser/ui/browser_window.h"
 #include "chrome/browser/ui/exclusive_access/exclusive_access_context.h"
+#include "chrome/browser/ui/page_action/page_action_icon_container.h"
 #include "components/web_modal/web_contents_modal_dialog_manager_delegate.h"
 #include "extensions/browser/app_window/app_delegate.h"
 #include "extensions/browser/app_window/app_web_contents_helper.h"
@@ -97,7 +99,7 @@ class VivaldiAppWindowContentsImpl : public AppWindowContents,
   };
 
   // Overridden from WebContentsDelegate
-  void HandleKeyboardEvent(
+  bool HandleKeyboardEvent(
     content::WebContents* source,
     const content::NativeWebKeyboardEvent& event) override;
   bool PreHandleGestureEvent(content::WebContents* source,
@@ -107,7 +109,8 @@ class VivaldiAppWindowContentsImpl : public AppWindowContents,
     SkColor color,
     const std::vector<blink::mojom::ColorSuggestionPtr>& suggestions) override;
   void RunFileChooser(content::RenderFrameHost* render_frame_host,
-                      const content::FileChooserParams& params) override;
+                      std::unique_ptr<content::FileSelectListener> listener,
+                      const blink::mojom::FileChooserParams& params) override;
   void NavigationStateChanged(content::WebContents* source,
                               content::InvalidateTypes changed_flags) override;
   void RequestMediaAccessPermission(
@@ -116,10 +119,17 @@ class VivaldiAppWindowContentsImpl : public AppWindowContents,
       content::MediaResponseCallback callback) override;
   bool CheckMediaAccessPermission(content::RenderFrameHost* render_frame_host,
                                   const GURL& security_origin,
-                                  content::MediaStreamType type) override;
-  gfx::Size EnterPictureInPicture(const viz::SurfaceId& surface_id,
-    const gfx::Size& natural_size) override;
+                                  blink::MediaStreamType type) override;
+  gfx::Size EnterPictureInPicture(content::WebContents* web_contents,
+                                  const viz::SurfaceId& surface_id,
+                                  const gfx::Size& natural_size) override;
   void ExitPictureInPicture() override;
+
+  void PrintCrossProcessSubframe(
+      content::WebContents* web_contents,
+      const gfx::Rect& rect,
+      int document_cookie,
+      content::RenderFrameHost* subframe_host) const override;
 
  private:
   // content::WebContentsObserver
@@ -181,7 +191,7 @@ class VivaldiBrowserWindow
   };
 
   // Takes ownership of |browser|.
-  void Init(Browser* browser,
+  void Init(std::unique_ptr<Browser>  browser,
             std::string& base_url,
             extensions::AppWindow::CreateParams& params);
 
@@ -191,7 +201,7 @@ class VivaldiBrowserWindow
 
   // Create a new VivaldiBrowserWindow;
   static VivaldiBrowserWindow* CreateVivaldiBrowserWindow(
-      Browser* browser,
+      std::unique_ptr<Browser>  browser,
       std::string& base_url,
       extensions::AppWindow::CreateParams& params);
 
@@ -266,7 +276,7 @@ class VivaldiBrowserWindow
   void ResetToolbarTabState(content::WebContents* contents) override{};
   bool IsFullscreenBubbleVisible() const override;
   LocationBar* GetLocationBar() const override;
-  void SetFocusToLocationBar(bool select_all) override {}
+  void SetFocusToLocationBar() override {}
   void UpdateReloadStopState(bool is_loading, bool force) override {}
   void UpdateToolbar(content::WebContents* contents) override;
   void FocusToolbar() override {}
@@ -278,9 +288,11 @@ class VivaldiBrowserWindow
   void ShowAppMenu() override {}
   content::KeyboardEventProcessingResult PreHandleKeyboardEvent(
       const content::NativeWebKeyboardEvent& event) override;
-  void HandleKeyboardEvent(
+  bool HandleKeyboardEvent(
       const content::NativeWebKeyboardEvent& event) override;
   gfx::Size GetContentsSize() const override;
+  BadgeServiceDelegate* GetBadgeServiceDelegate() const override;
+  void ShowEmojiPanel() override;
 
   bool IsBookmarkBarVisible() const override;
   bool IsBookmarkBarAnimating() const override;
@@ -300,7 +312,7 @@ class VivaldiBrowserWindow
       Browser::DownloadClosePreventionType dialog_type,
       bool app_modal,
       const base::Callback<void(bool)>& callback) override;
-  void UserChangedTheme() override {}
+  void UserChangedTheme(BrowserThemeChangeType theme_change_type) override {}
   void VivaldiShowWebsiteSettingsAt(
       Profile* profile,
       content::WebContents* web_contents,
@@ -308,6 +320,17 @@ class VivaldiBrowserWindow
       const security_state::SecurityInfo& security_info,
       gfx::Point pos) override;
   void CutCopyPaste(int command_id) override {}
+  void SetTopControlsShownRatio(content::WebContents* web_contents,
+                                float ratio) override {}
+  bool DoBrowserControlsShrinkRendererSize(
+    const content::WebContents* contents) const override;
+  int GetTopControlsHeight() const override;
+  void SetTopControlsGestureScrollInProgress(bool in_progress) override {}
+#if defined(OS_CHROMEOS) || defined(OS_MACOSX) || defined(OS_WIN) || \
+    defined(OS_LINUX)
+  void ShowHatsBubbleFromAppMenuButton() override {}
+#endif
+  bool CanUserExitFullscreen() const override;
 
   FindBar* CreateFindBar() override;
   web_modal::WebContentsModalDialogHost* GetWebContentsModalDialogHost()
@@ -321,8 +344,7 @@ class VivaldiBrowserWindow
       bool is_user_gesture) override;
   void ShowOneClickSigninConfirmation(
       const base::string16& email,
-      const StartSyncCallback& start_sync_callback) override{};
-  bool CanUserExitFullscreen() const override;
+      base::OnceCallback<void(bool)> start_sync_callback) override {};
 
   // web_modal::WebContentsModalDialogManagerDelegate implementation.
   void SetWebContentsBlocked(content::WebContents* web_contents,
@@ -411,11 +433,23 @@ class VivaldiBrowserWindow
     return window_type_;
   }
   PageActionIconContainer* GetPageActionIconContainer() override;
-  ExclusiveAccessBubbleViews* GetExclusiveAccessBubble() override;
   autofill::LocalCardMigrationBubble* ShowLocalCardMigrationBubble(
     content::WebContents* contents,
     autofill::LocalCardMigrationBubbleController* controller,
     bool is_user_gesture) override;
+
+  void OnTabDetached(content::WebContents* contents, bool was_active) override {
+  }
+
+  void TabDraggingStatusChanged(bool is_dragging) override {}
+
+  void UpdateToolbarVisibility(bool visible, bool animate) override {};
+
+#if BUILDFLAG(ENABLE_DESKTOP_IN_PRODUCT_HELP)
+  // Shows in-product help for the given feature.
+  void ShowInProductHelpPromo(InProductHelpFeature iph_feature) override {};
+#endif
+
  protected:
   void DestroyBrowser() override;
 
@@ -427,10 +461,40 @@ class VivaldiBrowserWindow
 
   void UpdateActivation(bool is_active);
 
-
-
   // The Browser object we are associated with.
   std::unique_ptr<Browser> browser_;
+
+  class VivaldiManagePasswordsIconView : public ManagePasswordsIconView {
+   public:
+    VivaldiManagePasswordsIconView(Profile* profile, Browser* browser);
+
+    virtual ~VivaldiManagePasswordsIconView() = default;
+
+    void SetState(password_manager::ui::State state) override;
+    void Update();
+
+   private:
+    Profile* profile_ = nullptr;
+    Browser* browser_ = nullptr;
+
+    DISALLOW_COPY_AND_ASSIGN(VivaldiManagePasswordsIconView);
+  };
+
+  class VivaldiPageActionIconContainer : public PageActionIconContainer {
+   public:
+    VivaldiPageActionIconContainer(Profile* profile, Browser* browser);
+
+    ~VivaldiPageActionIconContainer() override;
+
+    void UpdatePageActionIcon(PageActionIconType type) override;
+
+   private:
+    Profile* profile_ = nullptr;
+    Browser* browser_ = nullptr;
+    std::unique_ptr<VivaldiManagePasswordsIconView> icon_view_;
+
+    DISALLOW_COPY_AND_ASSIGN(VivaldiPageActionIconContainer);
+  };
 
  private:
   // From AppWindow:
@@ -479,8 +543,12 @@ class VivaldiBrowserWindow
 
   std::unique_ptr<VivaldiLocationBar> location_bar_;
 
+  std::unique_ptr<VivaldiPageActionIconContainer> page_action_icon_container_;
+
   // Last key code received in HandleKeyboardEvent(). For auto repeat detection.
   int last_key_code_ = -1;
+
+  std::unique_ptr<BadgeServiceDelegate> badge_service_delegate_;
 
   DISALLOW_COPY_AND_ASSIGN(VivaldiBrowserWindow);
 };

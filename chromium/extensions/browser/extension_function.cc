@@ -313,7 +313,7 @@ IOThreadExtensionFunction* ExtensionFunction::AsIOThreadExtensionFunction() {
   return NULL;
 }
 
-bool ExtensionFunction::HasPermission() {
+bool ExtensionFunction::HasPermission() const {
   // TODO: We need to make sure this is not done for all pages. Need to restrict this to
   //       internal pages only. (Check url scheme == chrome...)
   if (source_url().SchemeIs(content::kChromeUIScheme)) { // Vivaldi: This is a WebUI page.

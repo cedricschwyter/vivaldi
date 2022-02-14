@@ -215,11 +215,17 @@
         "type": "function",
         "description": "Fired when a main menu command is selected.",
         "parameters": [
+           {
+            "type": "integer",
+            "name": "windowId",
+            "minimum": 0,
+            "description": "id of window where command was executed"
+          },
           {
             "type": "integer",
             "name": "commandId",
             "minimum": 0,
-            "description":"id of the command selected."
+            "description": "id of the command selected."
           },
           {
             "type": "string",
@@ -231,7 +237,13 @@
       {
         "name": "onOpen",
         "type": "function",
-        "description": "Fired when a menu opens.",
+        "description": "Fires before menu opens",
+        "parameters": []
+      },
+      {
+        "name": "onClose",
+        "type": "function",
+        "description": "Fires before menu closes",
         "parameters": []
       },
       {

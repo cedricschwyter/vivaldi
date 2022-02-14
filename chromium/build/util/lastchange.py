@@ -9,7 +9,7 @@ lastchange.py -- Chromium revision fetching utility.
 
 import re
 import logging
-import optparse
+import argparse
 import os
 import subprocess
 import sys
@@ -108,8 +108,7 @@ def GetHeaderGuard(path):
   else:
     guard = path
   guard = guard.upper()
-  return guard.replace('/', '_').replace('.', '_').replace('\\', '_').replace('-', '_') + '_'
-
+  return guard.replace('/', '_').replace('.', '_').replace('\\', '_') + '_'
 
 def GetHeaderContents(path, define, version):
   """
@@ -155,64 +154,62 @@ def main(argv=None):
   if argv is None:
     argv = sys.argv
 
-  parser = optparse.OptionParser(usage="lastchange.py [options]")
-  parser.add_option("-m", "--version-macro",
+  parser = argparse.ArgumentParser(usage="lastchange.py [options]")
+  parser.add_argument("-m", "--version-macro",
                     help="Name of C #define when using --header. Defaults to " +
                     "LAST_CHANGE.",
                     default="LAST_CHANGE")
-  parser.add_option("-o", "--output", metavar="FILE",
+  parser.add_argument("-o", "--output", metavar="FILE",
                     help="Write last change to FILE. " +
                     "Can be combined with --header to write both files.")
-  parser.add_option("", "--header", metavar="FILE",
-                    help="Write last change to FILE as a C/C++ header. " +
-                    "Can be combined with --output to write both files.")
-  parser.add_option("--revision-id-only", action='store_true',
-                    help="Output the revision as a VCS revision ID only (in " +
-                    "Git, a 40-character commit hash, excluding the " +
-                    "Cr-Commit-Position).")
-  parser.add_option("--print-only", action='store_true',
-                    help="Just print the revision string. Overrides any " +
-                    "file-output-related options.")
-  parser.add_option("-s", "--source-dir", metavar="DIR",
+  parser.add_argument("--header", metavar="FILE",
+                    help=("Write last change to FILE as a C/C++ header. "
+                          "Can be combined with --output to write both files."))
+  parser.add_argument("--revision-id-only", action='store_true',
+                    help=("Output the revision as a VCS revision ID only (in "
+                          "Git, a 40-character commit hash, excluding the "
+                          "Cr-Commit-Position)."))
+  parser.add_argument("--print-only", action='store_true',
+                    help=("Just print the revision string. Overrides any "
+                          "file-output-related options."))
+  parser.add_argument("-s", "--source-dir", metavar="DIR",
                     help="Use repository in the given directory.")
-  parser.add_option("", "--filter", metavar="REGEX",
-                    help="Only use log entries where the commit message " +
-                    "matches the supplied filter regex. Defaults to " +
-                    "'^Change-Id:' to suppress local commits.",
+  parser.add_argument("--filter", metavar="REGEX",
+                    help=("Only use log entries where the commit message "
+                          "matches the supplied filter regex. Defaults to "
+                          "'^Change-Id:' to suppress local commits."),
                     default='^Change-Id:')
-  parser.add_option("--name-suffix", default=None,
-                    help="Suffix for LASTCHANGE name in file.")
-  opts, args = parser.parse_args(argv[1:])
+  args, extras = parser.parse_known_args(argv[1:])
 
   logging.basicConfig(level=logging.WARNING)
 
-  out_file = opts.output
-  header = opts.header
-  filter=opts.filter
+  out_file = args.output
+  header = args.header
+  filter=args.filter
 
-  while len(args) and out_file is None:
+  while len(extras) and out_file is None:
     if out_file is None:
-      out_file = args.pop(0)
-  if args:
-    sys.stderr.write('Unexpected arguments: %r\n\n' % args)
+      out_file = extras.pop(0)
+  if extras:
+    sys.stderr.write('Unexpected arguments: %r\n\n' % extras)
     parser.print_help()
     sys.exit(2)
 
-  if opts.source_dir:
-    src_dir = opts.source_dir
+  if args.source_dir:
+    src_dir = args.source_dir
   else:
     src_dir = os.path.dirname(os.path.abspath(__file__))
 
   version_info = FetchVersionInfo(directory=src_dir, filter=filter)
   revision_string = version_info.revision
-  if opts.revision_id_only:
+  if args.revision_id_only:
     revision_string = version_info.revision_id
 
-  if opts.print_only:
+  if args.print_only:
     print revision_string
   else:
-    contents = "LASTCHANGE%s=%s\n" % (opts.name_suffix or "", revision_string)
-    if not out_file and not opts.header:
+    contents = "LASTCHANGE=%s\n" % revision_string
+    if not out_file and not args.header:
       sys.stdout.write(contents)
     else:
       if out_file:
@@ -223,7 +220,7 @@ def main(argv=None):
             timefile.write(str(version_info.timestamp))
       if header:
         WriteIfChanged(header,
-                       GetHeaderContents(header, opts.version_macro,
+                       GetHeaderContents(header, args.version_macro,
                                          revision_string))
 
   return 0

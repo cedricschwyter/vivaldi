@@ -542,6 +542,8 @@ int HandlerMain(int argc,
 #endif
     kOptionURL,
 
+    kDisableVivaldi,
+
     // Standard options.
     kOptionHelp = -2,
     kOptionVersion = -3,
@@ -602,6 +604,7 @@ int HandlerMain(int argc,
     {"url", required_argument, nullptr, kOptionURL},
     {"help", no_argument, nullptr, kOptionHelp},
     {"version", no_argument, nullptr, kOptionVersion},
+    {"disable-vivaldi", no_argument, nullptr, kDisableVivaldi},
     {nullptr, 0, nullptr, 0},
   };
 
@@ -746,6 +749,9 @@ int HandlerMain(int argc,
         ToolSupport::Version(me);
         MetricsRecordExit(Metrics::LifetimeMilestone::kExitedEarly);
         return EXIT_SUCCESS;
+      }
+      case kDisableVivaldi: {
+        break;
       }
       default: {
         ToolSupport::UsageHint(me, nullptr);

@@ -43,17 +43,18 @@ HTMLFormElement* AssociatedFormElement(HTMLElement& element) {
 
 // Scans logically forward from "start", including any child frames.
 HTMLFormElement* ScanForForm(const Node* start) {
-  if (!start)
+  if (!start || !start->IsHTMLElement())
     return nullptr;
 
+  const HTMLElement* start_element = ToHTMLElement(start);
+
   for (HTMLElement& element : Traversal<HTMLElement>::StartsAt(
-           start->IsHTMLElement() ? ToHTMLElement(start)
-                                  : Traversal<HTMLElement>::Next(*start))) {
+           *Traversal<HTMLElement>::Next(*start_element))) {
     if (HTMLFormElement* form = AssociatedFormElement(element))
       return form;
 
     if (IsHTMLFrameElementBase(element)) {
-      Node* child_document = ToHTMLFrameElementBase(element).contentDocument();
+      blink::HTMLElement* child_document = &element;
       if (HTMLFormElement* frame_result = ScanForForm(child_document))
         return frame_result;
     }

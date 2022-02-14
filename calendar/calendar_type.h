@@ -37,6 +37,8 @@ enum UpdateCalendarFields {
   CALENDAR_ORDERINDEX = 1 << 4,
   CALENDAR_COLOR = 1 << 5,
   CALENDAR_HIDDEN = 1 << 6,
+  CALENDAR_ACTIVE = 1 << 7,
+  CALENDAR_ICONINDEX = 1 << 8,
 };
 
 // Holds all information associated with a specific Calendar.
@@ -51,6 +53,8 @@ class CalendarRow {
               int orderindex,
               std::string color,
               bool hidden,
+              bool active,
+              int iconindex,
               base::Time created,
               base::Time lastmodified);
   ~CalendarRow();
@@ -83,6 +87,12 @@ class CalendarRow {
   bool hidden() const { return hidden_; }
   void set_hidden(bool hidden) { hidden_ = hidden; }
 
+  bool active() const { return active_; }
+  void set_active(bool active) { active_ = active; }
+
+  int iconindex() const { return iconindex_; }
+  void set_iconindex(int iconindex) { iconindex_ = iconindex; }
+
   base::Time created() const { return created_; }
   void set_created(base::Time created) { created_ = created; }
 
@@ -100,6 +110,8 @@ class CalendarRow {
   int orderindex_;
   std::string color_;
   bool hidden_;
+  bool active_;
+  int iconindex_;
   base::Time created_;
   base::Time lastmodified_;
 };
@@ -125,10 +137,12 @@ struct Calendar {
   base::string16 name;
   base::string16 description;
   GURL url;
-  base::string16 ctag;
+  std::string ctag;
   int orderindex;
   std::string color;
   bool hidden;
+  bool active;
+  int iconindex;
   base::Time created;
   base::Time lastmodified;
   int updateFields;

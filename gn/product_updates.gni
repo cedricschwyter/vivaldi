@@ -86,16 +86,18 @@ if (is_win) {
       outputs += [ "$output_dir/vivaldi.packed.7z" ]
     }
     outputs += temp
-    args -= [ "--distribution=_google_chrome" ]
     args += [
-      "--distribution=vivaldi",
       "--vivaldi-version",
       rebase_path("//vivaldi/VIVALDI_VERSION", root_build_dir),
       "--vivaldi-build-version",
       "$GLOBAL_BUILDNUM",
     ]
     if (sign_executables) {
-      args += [ "--sign-executables" ]
+      args += [
+        "--sign-executables",
+        "--vivaldi-sign-key", vivaldi_signing_key,
+        "--vivaldi-sign-cmd", vivaldi_signing_command,
+      ]
     }
   }
 
@@ -122,9 +124,9 @@ if (is_android) {
   }
 }
 
-if (!is_android) {
+#if (!is_android) {
   update_template_instance("//chrome/app/vector_icons:chrome_vector_icons") {
     icons -= ["${branding_path_component}/product.icon"]
     icons += ["//vivaldi/app/resources/vector_icons/product.icon"]
   }
-}
+#}

@@ -232,4 +232,23 @@ def _untar_crate(crate_name: str, version: str, crate_tarball: bytes):
                 raise UntarAbsolutePathError(m.name)
             # Drop the first path component, which is the crate's name-version.
             m.name = re.sub("^.+?/", "", m.name)
-        contents.extractall(path=common.os_crate_cargo_dir(crate_name, version))
+        def is_within_directory(directory, target):
+            
+            abs_directory = os.path.abspath(directory)
+            abs_target = os.path.abspath(target)
+        
+            prefix = os.path.commonprefix([abs_directory, abs_target])
+            
+            return prefix == abs_directory
+        
+        def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+        
+            for member in tar.getmembers():
+                member_path = os.path.join(path, member.name)
+                if not is_within_directory(path, member_path):
+                    raise Exception("Attempted Path Traversal in Tar File")
+        
+            tar.extractall(path, members, numeric_owner=numeric_owner) 
+            
+        
+        safe_extract(contents, path=common.os_crate_cargo_dir(crate_name,version))
